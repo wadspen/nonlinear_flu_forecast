@@ -8,6 +8,7 @@ library(doParallel)
 library(doMC)
 library(evalcast)
 n.cores <- detectCores()
+#n.cores <- 1
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -21,7 +22,7 @@ ILINet <- get_ili_data() %>%
 
 args <- commandArgs()
 model <- args[6]
-mod_string <- paste("./", model, ".stan", sep = "")
+mod_string <- paste("./stan_models/", model, ".stan", sep = "")
 mod <- cmdstan_model(stan_file = mod_string)
 state <- "US"
 both_flu_state <- both_flu %>% 
@@ -31,7 +32,7 @@ ILINet_state <- ILINet %>%
 
 hosp_log <- ifelse(str_detect(model, "log"), TRUE, FALSE)
 
-reps <- 1100
+reps <- 500
 #set.seed(96)
 #seeds <- sample(99999999, reps)
 sims_dir <- "./simulation/hosp_sim/hosp_log_ar1/sim_hosp/"
@@ -46,10 +47,10 @@ ILINet_sim <- read.csv(paste0(sims_dir, file_name))
 
 season_levels <- unique(ILINet_sim$season)
 season_levels <- season_levels[which(season_levels != 2023)]
-
+season_levels <- c(2013)
 #for (j in season_levels) {
 #	for (k in seq(14, 38, 5)) {
-#print("gets here right?")
+print("gets here right?")
 foreach(m = 1:reps,
 	.packages = c("tidyr", "dplyr", "evalcast")
 	#,.errorhandling = "remove"
@@ -124,8 +125,8 @@ foreach(m = 1:reps,
     samps <- mod$sample(data = stan_dat,
 			chains = 1,
 			adapt_delta = .9999,
-			iter_warmup = 8000,
-			iter_sampling = 5000)
+			iter_warmup = 10000,
+			iter_sampling = 50000)
 
     test <- samps$summary()
     test <- as.data.frame(test)

@@ -26,9 +26,12 @@ mod_string <- paste("../stan_models/", model, ".stan", sep = "")
 mod <- cmdstan_model(stan_file = mod_string)
 
 tri_wks <- tri_st:(tri_st + 9)
+if (as.numeric(args[7]) == 1) {tri_wks <- c(9, tri_wks)}
 print(tri_wks)
 select_regions <- unique(both_flu$region)
 #select_regions <- "US"
+select_regions <- c("Wyoming", "Puerto Rico", "US", "Vermont", "Utah",
+		    "Wisconsin")
 season_levels <- unique(ILINet$season)
 season_levels <- season_levels[season_levels != 2023]
 save_dir <- paste0("./ili_fits/", model)

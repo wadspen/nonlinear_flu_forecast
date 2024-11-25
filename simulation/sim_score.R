@@ -5,6 +5,7 @@ library(doParallel)
 library(doMC)
 library(evalcast)
 n.cores <- detectCores()
+#n.cores <- 1
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -17,25 +18,27 @@ print(model)
 
 
 
-reps <- 1100
+reps <- 500
 
 ili_dir <- paste0("ili_fits/", model, "/")
 work_dir <- "hosp_sim/hosp_log_ar1/"
 sim_dir <- paste0(work_dir, "sim_hosp/")
 forecast_dir <- paste0(work_dir, "forecasts/")
-
+seas <- 2022
 #for (rep in 143:reps) {
 foreach(rep = 1:reps,
 	.packages = c("dplyr", "tidyr")
-	) %dopar% {
+	) %:% 
+	foreach(wk = seq(14, 38, 6)) %dopar% {
+        #foreach (seas = c(2010:2019, 2021:2022)) %dopar% {
 	file <- list.files(sim_dir, pattern = paste0("rep", rep, "_"))
 	sim_rep_file <- paste0(sim_dir, file)
 	sim_hosp <- read.csv(sim_rep_file)
 	#count_rate <- unique(sim_hosp$count_rate2)
 	count_rate <- 1
-	for (seas in c(2010:2019, 2021:2022)) {
+	#for (seas in c(2010:2019, 2021:2022)) {
 		sim_season_dir <- paste0(work_dir, "new/", seas, "/")
-		for (wk in seq(14, 38, 6)) {
+		#for (wk in seq(14, 38, 6)) {
 			sim_season_week_dir <- paste0(sim_season_dir, "week", wk, "/")
 		
 				sim_season_week_rep_file <- paste0(sim_season_week_dir, "trep",
@@ -113,7 +116,7 @@ foreach(rep = 1:reps,
 							"/week", wk, "/rep", rep, ".csv")
 				write.csv(forecasts, save_file_dir, row.names = FALSE)
 					
-		}			
-	}
+		#}			
+	#}
 }
 

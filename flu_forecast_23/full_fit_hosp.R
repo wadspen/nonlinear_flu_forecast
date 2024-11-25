@@ -8,6 +8,7 @@ library(doParallel)
 library(doMC)
 library(evalcast)
 n.cores <- detectCores()
+#n.cores <- 1
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -38,12 +39,16 @@ sqr <- ifelse(str_detect(model, "sq"), TRUE, FALSE)
 if (hosp_log == TRUE) {both_flu$value <- log(both_flu$value + 1)}
 if (hosp_log == TRUE) {both_flu2$value <- log(both_flu2$value + 1)}
 
+
 all_forecasts <- foreach(j = select_regions,
 	.packages = c("tidyr", "dplyr", "evalcast")
 	,.errorhandling = "remove"
 	,.combine = rbind) %:% 
 	#k <- 14
-  foreach(k = 9:38, .combine = rbind) %dopar% {
+  foreach(k = 
+	  #c(14, 20, 26), .combine = rbind) %dopar% {
+	  9:38
+  	, .combine = rbind) %dopar% {
 # j <- "Georgia"; k <- 21 
        
     both_flu_hold <- both_flu %>%
@@ -65,26 +70,35 @@ all_forecasts <- foreach(j = select_regions,
 		     sigma_nu = 15
 		 )
     location <- unique(both_flu_hold$location)
-    samps <- mod$sample(data = stan_dat,
-			chains = 1,
-			adapt_delta = .9999,
-			iter_warmup = 8000,
-			iter_sampling = 5000)
+    #if (j != "US" & !(k %in% c(14, 20, 26))) {
+            samps <- mod$sample(data = stan_dat,
+				chains = 1,
+				adapt_delta = .9999,
+				iter_warmup = 10000,
+				iter_sampling = 50000)
 
-    draws <- samps$draws(format = "df")
-    if (j == "US" & k %in% c(14, 20, 26)) {
-	    summary <- samps$summary()
-	    diag_list <- lapply(samps$diagnostic_summary(), FUN = mean)
-	    diag <- diag_list %>% data.frame()
-	    diag$max_rhat <- max(summary$rhat, na.rm = TRUE)
-	    diag$min_ess <- min(summary$ess_bulk, na.rm = TRUE)
-	    diag$min_esst <- min(summary$ess_tail, na.rm = TRUE)
-	    write.csv(diag, paste0("./hosp_fits/", ili_model, "_", model, "_", j, "_", k,
-				   "_diagnostics.csv"), row.names = FALSE)
+    	    draws <- samps$draws(format = "df")
+    #}
+    #if (j == "US" & k %in% c(14, 20, 26)) {
+    #        samps <- mod$sample(data = stan_dat,
+    #    			chains = 4,
+    #    			adapt_delta = .9999,
+    #    			iter_warmup = 10000,
+    #    			iter_sampling = 50000)
+    #        draws <- samps$draws(format = "df")
 
-	    write.csv(draws, paste0("./hosp_fits/", ili_model, "_", model, "_", j, "_", k,
-				    "_posterior.csv"), row.names = FALSE)
-    } 
+    #        summary <- samps$summary()
+    #        diag_list <- lapply(samps$diagnostic_summary(), FUN = mean)
+    #        diag <- diag_list %>% data.frame()
+    #        diag$max_rhat <- max(summary$rhat, na.rm = TRUE)
+    #        diag$min_ess <- min(summary$ess_bulk, na.rm = TRUE)
+    #        diag$min_esst <- min(summary$ess_tail, na.rm = TRUE)
+    #        write.csv(diag, paste0("./hosp_fits/", ili_model, "_", model, "_", j, "_", k,
+    #    			   "_diagnostics.csv"), row.names = FALSE)
+
+    #        write.csv(draws, paste0("./hosp_fits/", ili_model, "_", model, "_", j, "_", k,
+    #    			    "_posterior.csv"), row.names = FALSE)
+    #} 
     #write.csv(draws, "test_draws.csv")
     reference_date <- date(max(both_flu_hold$date)) + 7
     #dir.create(paste0("./hosp_fits/", model, 
@@ -184,7 +198,7 @@ all_forecasts <- foreach(j = select_regions,
 	          output_type_id = parse_number(output_type_id)/100, 
 		  target = "wk inc flu hosp", 
 		  target_end_date = date(reference_date) + horizon*7,
-	   output_type = "quantile", location = location) %>%
+	   output_type = "quantile", location = as.character(location)) %>%
 	   rowwise() %>%
 	   mutate(value = ifelse(hosp_log == TRUE, exp(value) - 1, value)) %>%
 	   select(reference_date, horizon, target, target_end_date, location, 
@@ -201,7 +215,7 @@ all_forecasts <- foreach(j = select_regions,
 }
 
 
-saveRDS(all_forecasts, "test.rds")
+#saveRDS(all_forecasts, "test.rds")
 all_forecasts <- all_forecasts %>%
 	#bind_rows() %>%
 	group_split(reference_date)

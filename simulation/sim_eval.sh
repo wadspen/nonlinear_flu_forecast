@@ -1,6 +1,7 @@
 #!/bin/bash
 
-#SBATCH --time=5-23:59:00
+#SBATCH	--begin=now+2hour
+#SBATCH --time=6:59:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=36
 #SBATCH --mem=0

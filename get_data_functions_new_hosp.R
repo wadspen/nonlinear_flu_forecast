@@ -88,7 +88,7 @@ get_ili_data <- function(lag = 2) {
                                      season == 2021 & is.na(unweighted_ili),
                                    2.94468,
                                    unweighted_ili)) %>% 
-    filter(is.na(unweighted_ili) == FALSE)
+    filter(is.na(unweighted_ili) == FALSE, season < 2024)
   # View(ILINet[ILINet$region == "Minnesota",c("region", "season", "season_week")])
   #max_season <- max(ILINet$season)
   #ILINet <- ILINet %>% group_by(region, season) %>%

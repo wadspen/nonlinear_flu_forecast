@@ -20,7 +20,7 @@ registerDoMC(cores = n.cores)
 args <- commandArgs()
 mod <- args[6]
 ILINet <- get_ili_data(lag = 1) %>%
-	filter(region == "US", season %in% c(2010:2019, 2021))
+	filter(region == "US", season %in% c(2010:2019, 2021:2022))
 
 coverage <- function(probs, values, true_value, alpha = .05) {
   probs <- round(probs, 3)
@@ -36,7 +36,7 @@ probs <- round(c(0, .0025, .005, .01, .025, seq(.05, .95, by = .05), .975, .99, 
 
 all_results <- data.frame()
 
-	results <- foreach(seas = c(2010:2019, 2021),
+	results <- foreach(seas = c(2010:2019, 2021:2022),
 				.packages = c("dplyr", "tidyr", "stringr", "readr", "evalcast",
 					      "scoringRules")
 					      ,.errorhandling = "remove"

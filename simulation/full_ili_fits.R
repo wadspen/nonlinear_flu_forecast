@@ -7,6 +7,7 @@ library(doParallel)
 library(doMC)
 library(evalcast)
 n.cores <- detectCores()
+#n.cores <- 1
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -18,7 +19,8 @@ both_flu <- comb_data() %>%
 ILINet <- get_ili_data() %>%
 	filter(season >= 2010, !(season %in% c(2020, 2023)))
 args <- commandArgs()
-model <- args[6]
+model <- args[6]#; model <- "sir"
+print(model)
 mod_string <- paste("./stan_models/", model, ".stan", sep = "")
 mod <- cmdstan_model(stan_file = mod_string)
 
@@ -29,12 +31,12 @@ ILINet_state <- ILINet %>%
 season_levels <- unique(ILINet$season)
 season_levels <- season_levels[season_levels != 2023]
 
-
+season_levels <- 2022
 foreach(j = season_levels,
 	.packages = c("tidyr", "dplyr", "evalcast")
 	#,.errorhandling = "remove"
 	) %:%
-   foreach(k = 9:38) %dopar% {
+   foreach(k = 9:38) %dopar% { #c(14,20,26,32,38)) %dopar% {
 #for (i in 1:(length(season_levels))) {
   ILINet_arrange <- ILINet_state %>%
 	  filter(season != 2023) %>%
@@ -57,7 +59,8 @@ foreach(j = season_levels,
                            ili_seasons = unique(ILINet_filter$season),
       			   m_week = k)
       
-      stan_dat <- dat[[1]]
+      stan_dat <- dat[[1]]; print(stan_dat$seg_ind_start[stan_dat$ps - 1]); 
+      
       info_list <- dat[[2]]
       forecast_date <- info_list$forecast_date
       init <- list(theta = stan_dat$m0, theta_s = info_list$theta_s)

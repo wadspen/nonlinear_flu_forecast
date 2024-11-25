@@ -1,10 +1,11 @@
 #!/bin/bash
 
-#SBATCH --time=6-23:15:00
+#SBATCH --time=1-23:15:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=64
 #SBATCH --mem=0
 #SBATCH --exclusive
+#SBATCH --constraint=intel
 
 module load gcc
 module load r

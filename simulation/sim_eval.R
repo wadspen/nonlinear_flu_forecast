@@ -9,6 +9,7 @@ library(parallel)
 library(doParallel)
 library(doMC)
 n.cores <- detectCores()
+#n.cores <- 1
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -37,7 +38,7 @@ sim_forecast_dir <- paste0(hosp_dir, "new/forecasts/", mod, "/")
 
 all_results <- data.frame()
 
-reps <- 1100
+reps <- 500
 for (rep in 1:reps) {
 
 #all_results <- foreach(rep = 1:150,
