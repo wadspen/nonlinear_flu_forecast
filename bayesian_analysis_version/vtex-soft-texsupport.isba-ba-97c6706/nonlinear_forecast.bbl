@@ -1,0 +1,372 @@
+\begin{thebibliography}{59}
+\newcommand{\enquote}[1]{``#1''}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{{\tt #1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\ifx\endbibitem\undefined \let\endbibitem\relax\fi
+
+\bibitem[{Allen(2017)}]{allen2017primer}
+Allen, L.~J. (2017).
+\newblock \enquote{A primer on stochastic epidemic models: Formulation, numerical simulation, and analysis.}
+\newblock {\em Infectious Disease Modelling\/}, 2(2): 128--142.
+\endbibitem
+
+\bibitem[{Allen et~al.(2008)Allen, Brauer, Van~den Driessche, and Wu}]{allen2008mathematical}
+Allen, L.~J., Brauer, F., Van~den Driessche, P., and Wu, J. (2008).
+\newblock {\em {Mathematical Epidemiology}\/}, volume 1945.
+\newblock Springer.
+\endbibitem
+
+\bibitem[{Arendt et~al.(2012)Arendt, Apley, Chen, Lamb, and Gorsich}]{arendt2012improving}
+Arendt, P.~D., Apley, D.~W., Chen, W., Lamb, D., and Gorsich, D. (2012).
+\newblock \enquote{Improving Identifiability in Model Calibration Using Multiple Responses.}
+\newblock {\em Journal of Mechanical Design\/}, 134(10): 100909.
+\endbibitem
+
+\bibitem[{Atkinson et~al.(2012)Atkinson, Jeganathan, Dash, and Atzberger}]{atkinson2012inter}
+Atkinson, P.~M., Jeganathan, C., Dash, J., and Atzberger, C. (2012).
+\newblock \enquote{Inter-comparison of four models for smoothing satellite sensor time-series data to estimate vegetation phenology.}
+\newblock {\em Remote Sensing of Environment\/}, 123: 400--417.
+\endbibitem
+
+\bibitem[{Beck et~al.(2006)Beck, Atzberger, H{\o}gda, Johansen, and Skidmore}]{beck2006improved}
+Beck, P.~S., Atzberger, C., H{\o}gda, K.~A., Johansen, B., and Skidmore, A.~K. (2006).
+\newblock \enquote{{Improved monitoring of vegetation dynamics at very high latitudes: A new method using MODIS NDVI}.}
+\newblock {\em Remote Sensing of Environment\/}, 100(3): 321--334.
+\endbibitem
+
+\bibitem[{Biggerstaff et~al.(2016)Biggerstaff, Alper, Dredze, Fox, Fung, Hickmann, Lewis, Rosenfeld, Shaman, Tsou et~al.}]{biggerstaff2016results}
+Biggerstaff, M., Alper, D., Dredze, M., Fox, S., Fung, I. C.-H., Hickmann, K.~S., Lewis, B., Rosenfeld, R., Shaman, J., Tsou, M.-H., et~al. (2016).
+\newblock \enquote{{Results from the Centers for Disease Control and Prevention’s predict the 2013--2014 Influenza Season Challenge}.}
+\newblock {\em BMC Infectious Diseases\/}, 16(1): 1--10.
+\endbibitem
+
+\bibitem[{Bolker and {R Development Core Team}(2023)}]{bolker2023bblme}
+Bolker, B. and {R Development Core Team} (2023).
+\newblock {\em bbmle: Tools for General Maximum Likelihood Estimation\/}.
+\newblock R package version 1.0.25.1.
+\newline\urlprefix\url{https://CRAN.R-project.org/package=bbmle}
+\endbibitem
+
+\bibitem[{Bracher et~al.(2021)Bracher, Ray, Gneiting, and Reich}]{bracher2021evaluating}
+Bracher, J., Ray, E.~L., Gneiting, T., and Reich, N.~G. (2021).
+\newblock \enquote{Evaluating epidemic forecasts in an interval format.}
+\newblock {\em PLOS Computational Biology\/}, 17(2): e1010592.
+\endbibitem
+
+\bibitem[{Brynjarsd{\'o}ttir and O'Hagan(2014)}]{brynjarsdottir2014learning}
+Brynjarsd{\'o}ttir, J. and O'Hagan, A. (2014).
+\newblock \enquote{Learning about physical parameters: The importance of model discrepancy.}
+\newblock {\em Inverse Problems\/}, 30(11): 114007.
+\endbibitem
+
+\bibitem[{CDC(2024{\natexlab{a}})}]{cdcfluforecasting2024}
+CDC (2024{\natexlab{a}}).
+\newblock \enquote{{Centers for Disease Control and Prevention FluSight}: About Flu Forecasting.}
+\newblock \url{https://www.cdc.gov/flu-forecasting/about/index.html?CDC_AAref_Val=https://www.cdc.gov/flu/weekly/flusight/how-flu-forecasting.htm}.
+\newblock Accessed: 2024-10-22.
+\endbibitem
+
+\bibitem[{CDC(2024{\natexlab{b}})}]{cdc2024fluviewportal}
+--- (2024{\natexlab{b}}).
+\newblock \enquote{{Centers for Disease Control and Prevention FluView} Portal.}
+\newblock \url{https://gis.cdc.gov/grasp/fluview/fluportaldashboard.html}.
+\newblock Accessed: 2024-10-22.
+\endbibitem
+
+\bibitem[{CDC(2024{\natexlab{c}})}]{cdcfluview2023}
+--- (2024{\natexlab{c}}).
+\newblock \enquote{{Centers for Disease Control and Prevention FluView, U.S.} Influenza Surveillance: Purpose and Methods.}
+\newblock \url{https://www.cdc.gov/fluview/overview/?CDC_AAref_Val=https://www.cdc.gov/flu/weekly/overview.htm}.
+\newblock Accessed: 2024-10-22.
+\endbibitem
+
+\bibitem[{Cramer et~al.(2022)Cramer, Huang, Wang, Ray, Cornell, Bracher, Brennen, Castro~Rivadeneira, Gerding, House, Jayawardena, Kanji, Khandelwal, Le, Niemi, Stark, Shah, Wattanachit, Zorn, Reich, and Consortium}]{Cramer2022-hub-dataset}
+Cramer, E.~Y., Huang, Y., Wang, Y., Ray, E.~L., Cornell, M., Bracher, J., Brennen, A., Castro~Rivadeneira, A.~J., Gerding, A., House, K., Jayawardena, D., Kanji, A.~H., Khandelwal, A., Le, K., Niemi, J., Stark, A., Shah, A., Wattanachit, N., Zorn, M.~W., Reich, N.~G., and Consortium, U. C.-. F.~H. (2022).
+\newblock \enquote{{The United States COVID-19 forecast hub dataset}.}
+\newblock {\em Scientific Data\/}, 9(1): 462.
+\newline\urlprefix\url{https://doi.org/10.1038/s41597-022-01517-w}
+\endbibitem
+
+\bibitem[{Ewing et~al.(2017)Ewing, Lee, Viboud, and Bansal}]{ewing2017contact}
+Ewing, A., Lee, E.~C., Viboud, C., and Bansal, S. (2017).
+\newblock \enquote{{Contact, travel, and transmission: the impact of winter holidays on influenza dynamics in the United States}.}
+\newblock {\em The Journal of Infectious Diseases\/}, 215(5): 732--739.
+\endbibitem
+
+\bibitem[{Gabry et~al.(2022)Gabry, Češnovar, and Johnson}]{gabry2022stan}
+Gabry, J., Češnovar, R., and Johnson, A. (2022).
+\newblock {\em cmdstanr: R Interface to 'CmdStan'\/}.
+\newblock Https://mc-stan.org/cmdstanr/, https://discourse.mc-stan.org.
+\endbibitem
+
+\bibitem[{Garza et~al.(2013)Garza, Basurto-D{\'a}vila, Ortega-Sanchez, Carlino, Meltzer, Albalak, Balbuena, Orellano, Widdowson, and Averhoff}]{garza2013effect}
+Garza, R.~C., Basurto-D{\'a}vila, R., Ortega-Sanchez, I.~R., Carlino, L.~O., Meltzer, M.~I., Albalak, R., Balbuena, K., Orellano, P., Widdowson, M.-A., and Averhoff, F. (2013).
+\newblock \enquote{{Effect of winter school breaks on influenza-like illness, Argentina, 2005--2008}.}
+\newblock {\em Emerging Infectious Diseases\/}, 19(6): 938.
+\endbibitem
+
+\bibitem[{Gelman(2006)}]{gelman2006prior}
+Gelman, A. (2006).
+\newblock \enquote{Prior distributions for variance parameters in hierarchical models.}
+\newblock {\em Bayesian Analysis\/}, 1(3): 515--533.
+\endbibitem
+
+\bibitem[{Gelman et~al.(2013)Gelman, Carlin, Stern, Dunson, Vehtari, and Rubin}]{gelman2013bayesian}
+Gelman, A., Carlin, J.~B., Stern, H.~S., Dunson, D.~B., Vehtari, A., and Rubin, D.~B. (2013).
+\newblock {\em Bayesian Data Analysis, Third Edition\/}.
+\newblock Chapman and Hall/CRC.
+\endbibitem
+
+\bibitem[{Gneiting et~al.(2007)Gneiting, Balabdaoui, and Raftery}]{gneiting2007probabilistic}
+Gneiting, T., Balabdaoui, F., and Raftery, A.~E. (2007).
+\newblock \enquote{Probabilistic forecasts, calibration and sharpness.}
+\newblock {\em Journal of the Royal Statistical Society Series B: Statistical Methodology\/}, 69(2): 243--268.
+\endbibitem
+
+\bibitem[{Gneiting and Katzfuss(2014)}]{gneiting2014probabilistic}
+Gneiting, T. and Katzfuss, M. (2014).
+\newblock \enquote{Probabilistic forecasting.}
+\newblock {\em Annual Review of Statistics and Its Application\/}, 1: 125--151.
+\endbibitem
+
+\bibitem[{Gneiting and Raftery(2007)}]{gneiting2007strictly}
+Gneiting, T. and Raftery, A.~E. (2007).
+\newblock \enquote{Strictly proper scoring rules, prediction, and estimation.}
+\newblock {\em Journal of the American Statistical Association\/}, 102(477): 359--378.
+\endbibitem
+
+\bibitem[{HealthData.gov(2024)}]{healthdata2024covidts}
+HealthData.gov (2024).
+\newblock \enquote{{COVID-19} Reported Patient Impact and Hospital Capacity by State (RAW).}
+\newblock \url{https://healthdata.gov/dataset/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/6xf2-c3ie/about_data}.
+\newblock Accessed: 2024-10-22.
+\endbibitem
+
+\bibitem[{Hird and McDermid(2009)}]{hird2009noise}
+Hird, J.~N. and McDermid, G.~J. (2009).
+\newblock \enquote{{Noise reduction of NDVI time series: An empirical comparison of selected techniques}.}
+\newblock {\em Remote Sensing of Environment\/}, 113(1): 248--258.
+\endbibitem
+
+\bibitem[{Hoffman et~al.(2014)Hoffman, Gelman et~al.}]{hoffman2014no}
+Hoffman, M.~D., Gelman, A., et~al. (2014).
+\newblock \enquote{{The No-U-Turn sampler: adaptively setting path lengths in Hamiltonian Monte Carlo}.}
+\newblock {\em Journal of Machine Learning Research\/}, 15(1): 1593--1623.
+\endbibitem
+
+\bibitem[{Jiang et~al.(2015)Jiang, Apley, and Chen}]{jiang2015surrogate}
+Jiang, Z., Apley, D.~W., and Chen, W. (2015).
+\newblock \enquote{Surrogate preposterior analyses for predicting and enhancing identifiability in model calibration.}
+\newblock {\em International Journal for Uncertainty Quantification\/}, 5(4).
+\endbibitem
+
+\bibitem[{Jonsson and Eklundh(2002)}]{jonsson2002seasonality}
+Jonsson, P. and Eklundh, L. (2002).
+\newblock \enquote{Seasonality extraction by function fitting to time-series of satellite sensor data.}
+\newblock {\em IEEE ransactions on Geoscience and Remote Sensing\/}, 40(8): 1824--1832.
+\endbibitem
+
+\bibitem[{Jordan et~al.(2019)Jordan, Kr\"uger, and Lerch}]{jordan2019scoring}
+Jordan, A., Kr\"uger, F., and Lerch, S. (2019).
+\newblock \enquote{Evaluating Probabilistic Forecasts with {scoringRules}.}
+\newblock {\em Journal of Statistical Software\/}, 90(12): 1--37.
+\endbibitem
+
+\bibitem[{Joslyn and LeClerc(2012)}]{joslyn2012uncertainty}
+Joslyn, S.~L. and LeClerc, J.~E. (2012).
+\newblock \enquote{Uncertainty forecasts improve weather-related decisions and attenuate the effects of forecast error.}
+\newblock {\em Journal of Experimental Psychology: Applied\/}, 18(1): 126.
+\endbibitem
+
+\bibitem[{{Karline Soetaert} et~al.(2010){Karline Soetaert}, {Thomas Petzoldt}, and {R. Woodrow Setzer}}]{soetaert2010desolve}
+{Karline Soetaert}, {Thomas Petzoldt}, and {R. Woodrow Setzer} (2010).
+\newblock \enquote{Solving Differential Equations in {R}: Package de{S}olve.}
+\newblock {\em Journal of Statistical Software\/}, 33(9): 1--25.
+\endbibitem
+
+\bibitem[{Kennedy and O'Hagan(2001)}]{kennedy2001bayesian}
+Kennedy, M.~C. and O'Hagan, A. (2001).
+\newblock \enquote{Bayesian calibration of computer models.}
+\newblock {\em Journal of the Royal Statistical Society: Series B Statistical Methodology\/}, 63(3): 425--464.
+\endbibitem
+
+\bibitem[{Kermack and McKendrick(1927)}]{kermack1927contribution}
+Kermack, W.~O. and McKendrick, A.~G. (1927).
+\newblock \enquote{A contribution to the mathematical theory of epidemics.}
+\newblock {\em Proceedings of the Royal Society of London. Series A, Containing papers of a mathematical and physical character\/}, 115(772): 700--721.
+\endbibitem
+
+\bibitem[{Laio and Tamea(2007)}]{laio2007verification}
+Laio, F. and Tamea, S. (2007).
+\newblock \enquote{Verification tools for probabilistic forecasts of continuous hydrological variables.}
+\newblock {\em Hydrology and Earth System Sciences\/}, 11(4): 1267--1277.
+\endbibitem
+
+\bibitem[{Lewis-Beck et~al.(2020)Lewis-Beck, Walker, Niemi, Caragea, and Hornbuckle}]{lewis2020extracting}
+Lewis-Beck, C., Walker, V.~A., Niemi, J., Caragea, P., and Hornbuckle, B.~K. (2020).
+\newblock \enquote{{Extracting agronomic information from SMOS vegetation optical depth in the US Corn Belt using a nonlinear hierarchical model}.}
+\newblock {\em Remote Sensing\/}, 12(5): 827.
+\endbibitem
+
+\bibitem[{Linzer(2013)}]{linzer2013dynamic}
+Linzer, D.~A. (2013).
+\newblock \enquote{{Dynamic Bayesian forecasting of presidential elections in the states}.}
+\newblock {\em Journal of the American Statistical Association\/}, 108(501): 124--134.
+\endbibitem
+
+\bibitem[{Liu et~al.(2009)Liu, Bayarri, Berger et~al.}]{liu2009modularization}
+Liu, F., Bayarri, M., Berger, J., et~al. (2009).
+\newblock \enquote{{Modularization in Bayesian analysis, with emphasis on analysis of computer models}.}
+\newblock {\em Bayesian Analysis\/}, 4(1): 119--150.
+\endbibitem
+
+\bibitem[{Ljung(1987)}]{ljung1987system}
+Ljung, L. (1987).
+\newblock {\em {System Identification: Theory for the User}\/}.
+\newblock Englewood Cliffs, NJ: Prentice-Hall.
+\endbibitem
+
+\bibitem[{Lutz et~al.(2019)Lutz, Huynh, Schroeder, Anyatonwu, Dahlgren, Danyluk, Fernandez, Greene, Kipshidze, Liu et~al.}]{lutz2019applying}
+Lutz, C.~S., Huynh, M.~P., Schroeder, M., Anyatonwu, S., Dahlgren, F.~S., Danyluk, G., Fernandez, D., Greene, S.~K., Kipshidze, N., Liu, L., et~al. (2019).
+\newblock \enquote{Applying infectious disease forecasting to public health: a path forward using influenza forecasting examples.}
+\newblock {\em BMC Public Health\/}, 19(1): 1--12.
+\endbibitem
+
+\bibitem[{Ma et~al.(2022)Ma, Karagiannis, Konomi, Asher, Toro, and Cox}]{ma2022multifidelity}
+Ma, P., Karagiannis, G., Konomi, B.~A., Asher, T.~G., Toro, G.~R., and Cox, A.~T. (2022).
+\newblock \enquote{Multifidelity computer model emulation with high-dimensional output: An application to storm surge.}
+\newblock {\em Journal of the Royal Statistical Society Series C: Applied Statistics\/}, 71(4): 861--883.
+\endbibitem
+
+\bibitem[{Mathis et~al.(2024)Mathis, Webber, Le{\'o}n, Murray, Sun, White, Brooks, Green, Hu, Rosenfeld et~al.}]{mathis2024evaluation}
+Mathis, S.~M., Webber, A.~E., Le{\'o}n, T.~M., Murray, E.~L., Sun, M., White, L.~A., Brooks, L.~C., Green, A., Hu, A.~J., Rosenfeld, R., et~al. (2024).
+\newblock \enquote{Evaluation of {FluSight} influenza forecasting in the 2021--22 and 2022--23 seasons with a new target laboratory-confirmed influenza hospitalizations.}
+\newblock {\em Nature Communications\/}, 15(1): 6289.
+\endbibitem
+
+\bibitem[{McAndrew and Reich(2021)}]{mcandrew2021adaptively}
+McAndrew, T. and Reich, N.~G. (2021).
+\newblock \enquote{Adaptively stacking ensembles for influenza forecasting.}
+\newblock {\em Statistics in Medicine\/}, 40(30): 6931--6952.
+\endbibitem
+
+\bibitem[{McGowan et~al.(2019)McGowan, Biggerstaff, Johansson, Apfeldorf, Ben-Nun, Brooks, Convertino, Erraguntla, Farrow, Freeze et~al.}]{mcgowan2019collaborative}
+McGowan, C.~J., Biggerstaff, M., Johansson, M., Apfeldorf, K.~M., Ben-Nun, M., Brooks, L., Convertino, M., Erraguntla, M., Farrow, D.~C., Freeze, J., et~al. (2019).
+\newblock \enquote{Collaborative efforts to forecast seasonal influenza in the {United States}, 2015--2016.}
+\newblock {\em Scientific Reports\/}, 9(1): 683.
+\endbibitem
+
+\bibitem[{Molinari et~al.(2007)Molinari, Ortega-Sanchez, Messonnier, Thompson, Wortley, Weintraub, and Bridges}]{molinari2007annual}
+Molinari, N.-A.~M., Ortega-Sanchez, I.~R., Messonnier, M.~L., Thompson, W.~W., Wortley, P.~M., Weintraub, E., and Bridges, C.~B. (2007).
+\newblock \enquote{{The annual impact of seasonal influenza in the US: measuring disease burden and costs}.}
+\newblock {\em Vaccine\/}, 25(27): 5086--5096.
+\endbibitem
+
+\bibitem[{Osthus et~al.(2019)Osthus, Gattiker, Priedhorsky, and Del~Valle}]{osthus2019dynamic}
+Osthus, D., Gattiker, J., Priedhorsky, R., and Del~Valle, S.~Y. (2019).
+\newblock \enquote{{Dynamic Bayesian influenza forecasting in the United States with hierarchical discrepancy (with discussion)}.}
+\newblock {\em Bayesian Analysis\/}, 14(1): 261--312.
+\endbibitem
+
+\bibitem[{Osthus and Moran(2021)}]{osthus2021multiscale}
+Osthus, D. and Moran, K.~R. (2021).
+\newblock \enquote{Multiscale influenza forecasting.}
+\newblock {\em Nature Communications\/}, 12(1): 2991.
+\endbibitem
+
+\bibitem[{Raftery et~al.(2010)Raftery, K{\'a}rn{\`y}, and Ettler}]{raftery2010online}
+Raftery, A.~E., K{\'a}rn{\`y}, M., and Ettler, P. (2010).
+\newblock \enquote{Online prediction under model uncertainty via dynamic model averaging: Application to a cold rolling mill.}
+\newblock {\em Technometrics\/}, 52(1): 52--66.
+\endbibitem
+
+\bibitem[{Ramos et~al.(2013)Ramos, Van~Andel, and Pappenberger}]{ramos2013probabilistic}
+Ramos, M.~H., Van~Andel, S.~J., and Pappenberger, F. (2013).
+\newblock \enquote{Do probabilistic forecasts lead to better decisions?}
+\newblock {\em Hydrology and Earth System Sciences\/}, 17(6): 2219--2232.
+\endbibitem
+
+\bibitem[{Ray et~al.(2020)Ray, Wattanachit, Niemi, Kanji, House, Cramer, Bracher, Zheng, Yamana, Xiong et~al.}]{ray2020ensemble}
+Ray, E.~L., Wattanachit, N., Niemi, J., Kanji, A.~H., House, K., Cramer, E.~Y., Bracher, J., Zheng, A., Yamana, T.~K., Xiong, X., et~al. (2020).
+\newblock \enquote{Ensemble forecasts of coronavirus disease 2019 {(COVID-19)} in the {US}.}
+\newblock {\em medRxiv\/}, 2020--08.
+\endbibitem
+
+\bibitem[{Rudis(2021)}]{rudis2021cdcfluview}
+Rudis, B. (2021).
+\newblock {\em cdcfluview: Retrieve Flu Season Data from the United States Centers for Disease Control and Prevention ('CDC') 'FluView' Portal\/}.
+\newblock R package version 0.9.4.
+\newline\urlprefix\url{https://CRAN.R-project.org/package=cdcfluview}
+\endbibitem
+
+\bibitem[{Simon(2020)}]{simon2020sir}
+Simon, C.~M. (2020).
+\newblock \enquote{{The SIR dynamic model of infectious disease transmission and its analogy with chemical kinetics}.}
+\newblock {\em PeerJ Physical Chemistry\/}, 2: e14.
+\endbibitem
+
+\bibitem[{{Stan Development Team}(2024)}]{stan2024manual}
+{Stan Development Team} (2024).
+\newblock \enquote{Stan Modeling Language Users Guide and Reference Manual, 2.34.}
+\newblock \url{https://mc-stan.org}.
+\newblock Accessed: 2024-10-22.
+\endbibitem
+
+\bibitem[{Tsyplakov(2013)}]{tsyplakov2013evaluation}
+Tsyplakov, A. (2013).
+\newblock \enquote{Evaluation of probabilistic forecasts: proper scoring rules and moments.}
+\newblock {\em Available at SSRN 2236605\/}.
+\endbibitem
+
+\bibitem[{Turtle et~al.(2021)Turtle, Riley, Ben-Nun, and Riley}]{turtle2021accurate}
+Turtle, J., Riley, P., Ben-Nun, M., and Riley, S. (2021).
+\newblock \enquote{Accurate influenza forecasts using type-specific incidence data for small geographic units.}
+\newblock {\em PLOS Computational Biology\/}, 17(7): e1009230.
+\endbibitem
+
+\bibitem[{Ulloa(2019)}]{ulloa2019}
+Ulloa, N. (2019).
+\newblock \enquote{Bayesian hierarchical modeling for disease outbreaks.}
+\newblock Ph.D. thesis, Iowa State University Department of Statistics.
+\endbibitem
+
+\bibitem[{Van~den Driessche(2008)}]{van2008deterministic}
+Van~den Driessche, P. (2008).
+\newblock \enquote{Deterministic compartmental models: extensions of basic models.}
+\newblock In {\em Mathematical Epidemiology\/}, 147--157. Springer.
+\endbibitem
+
+\bibitem[{Vehtari et~al.(2021)Vehtari, Gelman, Simpson, Carpenter, and B{\"u}rkner}]{vehtari2021rank}
+Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., and B{\"u}rkner, P.-C. (2021).
+\newblock \enquote{{Rank-normalization, folding, and localization: An improved {\^R} for assessing convergence of MCMC (with discussion)}.}
+\newblock {\em Bayesian Analysis\/}, 16(2): 667--718.
+\endbibitem
+
+\bibitem[{Wallis(2014)}]{wallis2014two}
+Wallis, K.~F. (2014).
+\newblock \enquote{{The two-piece normal, binormal, or double Gaussian distribution: its origin and rediscoveries}.}
+\newblock {\em Statistical Science\/}, 106--112.
+\endbibitem
+
+\bibitem[{WHO(2024)}]{whoflufact2023}
+WHO (2024).
+\newblock \enquote{{World Health Organization} website Influenza (Seasonal) fact sheet.}
+\newblock \url{https://www.who.int/news-room/fact-sheets/detail/influenza-(seasonal)}.
+\newblock Accessed: 2024-10-22.
+\endbibitem
+
+\bibitem[{Winkler(1971)}]{winkler1971probabilistic}
+Winkler, R.~L. (1971).
+\newblock \enquote{Probabilistic prediction: Some experimental results.}
+\newblock {\em Journal of the American Statistical Association\/}, 66(336): 675--685.
+\endbibitem
+
+\bibitem[{Yamana et~al.(2016)Yamana, Kandula, and Shaman}]{yamana2016superensemble}
+Yamana, T.~K., Kandula, S., and Shaman, J. (2016).
+\newblock \enquote{{Superensemble forecasts of Dengue outbreaks}.}
+\newblock {\em Journal of The Royal Society Interface\/}, 13(123): 20160410.
+\endbibitem
+
+\end{thebibliography}
