@@ -1,0 +1,17 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# Mac
+.DS_Store
+
+# LaTeX
+*.aux
+*.bbl
+*.log
+*.blg
+*.brf
+*.pdf
+*.synctex.gz
