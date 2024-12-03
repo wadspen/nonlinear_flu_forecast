@@ -12,6 +12,8 @@
 %%%%%%%%%%%packages added by Spencer%%%%%%%%%%%%%
 \usepackage{booktabs} %for the table in the analysis section
 \usepackage{enumerate} %for the short algorithm
+\usepackage{subfigure} %for making plots with multiple images
+\usepackage{tabularx} %for the spacing in tabular
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \pubyear{2024}
@@ -703,13 +705,13 @@ The prior for the hospitalization models are in (\ref{eq:shared_hosp_priors}).
 
 \begin{figure}
 \centering
-\begin{subfigure}{.5\textwidth}
+\begin{subfigure}
   \centering
   \includegraphics[width=1\linewidth,height=6cm]{../Images/normal_forecasts_us.png}
   % \caption{A subfigure}
   % \label{fig:sub1}
 \end{subfigure}%
-\begin{subfigure}{.5\textwidth}
+\begin{subfigure}
   \centering
   \includegraphics[width=1\linewidth, height=6cm]{../Images/normal_sq_forecasts_us.png}
   % \caption{A subfigure}
@@ -767,8 +769,7 @@ The season overall score, calculated as the mean LWIS over all locations and wee
 \caption{Overall scores for each of the 24 forecast models. The overall score is the log weighted interval score (LWIS) averaged over all locations, weeks, and horizons. The scores in the first two rows are for linear models, and the scores in the third and fourth rows are for quadratic models. The lowest WISs are bolded.}
 \begin{tabular*}{\textwidth}
 {@{\extracolsep{\fill}} 
-    l*{9}{c} 
-    S[table-format=4.0]}
+    l*{9}{c}}
   & & \multicolumn{3}{c}{ASG} 
   & \multicolumn{3}{c}{SIR} \\ 
   \cmidrule{3-5} \cmidrule{6-8}
