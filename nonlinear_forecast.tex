@@ -433,7 +433,7 @@ Additional prior constraints were made to improve parameter identifiability. In 
 
 The models were fit via Markov chain Monte Carlo (MCMC) sampling using the \texttt{cmdstanr} package which was developed and is maintained by the \cite{stan2024manual} \cite[]{gabry2022stan}. Stan implements Hamiltonian Monte Carlo (HMC) sampling with the No-U-turn sampler \cite[]{hoffman2014no}. The \texttt{cmdstanr} package provides several diagnostic statistics for assessing the sampler.
 As mentioned, most model parameter prior distributions were intended to be uninformative.
-Plots of posterior distributions for select parameters from ILI and hospitalization models are shown in the supplementary material.
+Plots of posterior distributions for select parameters from ILI and hospitalization models are shown in the supplementary material \cite[]{wadsworth2024bas}.
 
 We assessed the model fit for four ILI models. These included the SIR and ASG models and models with and without discrepancy modeling. When discrepancy is included, the models are denoted as SIRD and ASGD. These models were fit using US national data from 2010 to 2023 flu seasons, where data from the 2020 season was excluded because of the unique behavior during that season. Assessment for hospitalization modeling was done for six different models. These include NORM, LNORM, and LST models, and models where a quadratic ILI term is included or excluded. To assess posterior sampling convergence, models were fit to data where ILI and hospitalization data up to week 14 of the 2023 season was included. Sampling was done with four chains where from each chain 60,000 posterior draws were sampled, and the first 10,000 draws were discarded as a burn-in. The $\hat{R}$ statistic \cite[]{vehtari2021rank} and the effective sample size ($ESS$) \cite[]{gelman2013bayesian} were calculated for each parameter. Tables \ref{tab:ili_diagnostics} and \ref{tab:hsop_diagnostics} summarize the maximum $\hat{R}$ and the minimum $ESS$ over all parameters for ILI and hospitalization models respectively. Forecast models for all other weeks of the season were fit using one chain of 60,000 draws where the first 10,000 draws were discarded as a burn-in. 
 % \jarad{How long does this take to run? 8,000 inferential iterations seems very small.}
@@ -542,12 +542,12 @@ Figure \ref{fig:crps_by_week_horizon} shows CRPS boxplots faceted by week and ho
 \centering
 % \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[scale=.35]{Images/overall_crps.png}
+  \includegraphics[scale=.3]{Images/overall_crps.png}
     % \caption{Boxplots of CRPS for the four ILI models over all seasons, weeks, and horizons in the simulation study}
 % \end{subfigure}%
 % \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[scale=.35]{Images/overall_logs.png}
+  \includegraphics[scale=.3]{Images/overall_logs.png}
     % \caption{Boxplots of LogS for the four ILI models over all seasons, weeks, and horizons in the simulation study}}
 % \end{subfigure}
 \caption{Boxplots of the continuous ranked probability score (CRPS) (left) and logarithmic score (LogS) (right) for the four ILI models over all seasons, weeks, and horizons in the simulation study}
@@ -567,7 +567,7 @@ Figure \ref{fig:crps_by_week_horizon} shows CRPS boxplots faceted by week and ho
 \begin{figure}
     \centering
     \includegraphics[scale=.5]{Images/crps_by_week_horizon.png}
-    \caption{Boxplots of continuous ranked probability score (CRPS) for the four ILI models over all seasons in the simulation study faceted by horizon (x-axis) and week (y-axis). Horizons include 1-4 week ahead forecastss and weeks include weeks 14, 20, 26, 32, and 38 of the flu season}
+    \caption{Boxplots of continuous ranked probability score (CRPS) for the four ILI models over all seasons in the simulation study faceted by horizon (x-axis) and week (y-axis). Horizons include 1-4 week ahead forecasts and weeks include weeks 14, 20, 26, 32, and 38 of the flu season}
     \label{fig:crps_by_week_horizon}
 \end{figure}
 
@@ -630,7 +630,7 @@ In this section we apply the forecast models to make forecasts of the 2023 flu s
 Forecasts of 1, 2, 3, and 4-week ahead hospitalization counts were requested, and forecasts were made at the state and national level. The first week of forecasting took place during the week of October 7, 2023, and the final week was the week of April 27, 2024 making 29 total weeks of forecasts.
  The same format was used during the 2021 and 2022 seasons and for the COVID-19 Forecast Hub \cite[]{mathis2024evaluation, bracher2021evaluating}. 
 % Nearly teams participated and forecasts from over 40 models were submitted throughout the duration of the season. 
- Primary scores for evaluating each forecast were the weighted interval score (WIS), the log-weighted interval score (LWIS), and the relative weighted interval score (RWIS). The focus in this section will be on the LWIS (see supplementary material for RWIS based results).
+ Primary scores for evaluating each forecast were the weighted interval score (WIS), the log-weighted interval score (LWIS), and the relative weighted interval score (RWIS). The focus in this section will be on the LWIS (see supplementary material for RWIS based results \cite[]{wadsworth2024bas}).
 
 The WIS is a proper scoring rule used for scoring quantile or interval forecasts \cite[]{gneiting2007strictly, gneiting2014probabilistic, bracher2021evaluating} and is defined in (\ref{eq:wis2}) where $Q$ is a forecast represented by all included quantiles, $B$ is the number of intervals,  $y^*$ is the observed value targeted by the forecast, $w_0 = 1/2$ and $w_b = \alpha_b / 2$ are weights for each interval, and $\alpha_b$ is the nominal level of the $b^{th}$ interval. $IS_{\alpha}$ is the interval score (IS), a proper scoring rule for a single interval as defined in (\ref{eq:is}). The goal of the forecaster is to minimize the WIS. The LWIS is the same as the WIS except that it is evaluated over the log of quantiles and the log of the observed value. 
 
@@ -707,13 +707,13 @@ The prior for the hospitalization models are in (\ref{eq:shared_hosp_priors}).
 \centering
 \begin{subfigure}
   \centering
-  \includegraphics[width=1\linewidth,height=6cm]{Images/normal_forecasts_us.png}
+  \includegraphics[width=.49\linewidth,height=6cm]{Images/normal_forecasts_us.png}
   % \caption{A subfigure}
   % \label{fig:sub1}
 \end{subfigure}%
 \begin{subfigure}
   \centering
-  \includegraphics[width=1\linewidth, height=6cm]{Images/normal_sq_forecasts_us.png}
+  \includegraphics[width=.49\linewidth, height=6cm]{Images/normal_sq_forecasts_us.png}
   % \caption{A subfigure}
   % \label{fig:sub2}
 \end{subfigure}
@@ -834,11 +834,11 @@ This work is partially supported by the National Science Foundation under Grant 
 %% Euclid with the published article.       %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{supplement}
-\stitle{Posterior distribution plots for select parameters}
+\stitle{1. Posterior distribution plots for select parameters}
 \sdescription{Plots of posterior distributions for parameters in both ILI and hospitalization models}
 \end{supplement}
 \begin{supplement}
-\stitle{FluSight forecast competition scoring results}
+\stitle{2. FluSight forecast competition scoring results}
 \sdescription{Flu forecast results with relative weighted interval scoring rule similar to that used in  FluSight}
 \end{supplement}
 
