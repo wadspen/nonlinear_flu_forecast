@@ -164,7 +164,7 @@ In section \ref{sec:functions} the modeling framework contributed by this manusc
 In this section we introduce and define ILI and hospitalization data and evaluate the data visually. ILI and hospitalization data have been the object of forecasting for FluSight with ILI being the target for the first seven seasons and hospitalizations being the target since the 2022 season. Both of these data were collected at the state, territorial, and national level and were reported at least weekly. Overall the data is reported for 53 locations including the 50 US states, the District of Columbia (DC), Puerto Rico (PR), and at the US national level. We will refer to forecast targets throughout this manuscript. A target is the specific horizon, 1, 2, 3, or 4-weeks ahead, for a specific location and week during the season.  
 
 \subsection{Influenza-like illness data}
-The US Outpatient Influenza-like Illness Surveillance Network (ILINet) collects information on respiratory illness from outpatient visits to health care providers. Over 3,400 outpatient health care providers in all 50 US states, PR, DC, and the US Virgin Islands report each week the total number of outpatient visits along with the number of ILI cases. An ILI case is defined as a ``fever (temperature of $100^{\circ}$F[$37.8^{\circ}$C] or greater) and a cough and/or a sore throat." Prior to the 2021 season, the definition included ``without a known cause other than influenza" \cite[]{cdcfluview2023}. Because other illnesses such as COVID-19, RSV, and the common cold may induce similar respiratory symptoms, ILI may include patients infected with some disease other than influenza. To know whether or not a sick patient is infected with influenza would require a laboratory test. 
+The US Outpatient Influenza-like Illness Surveillance Network (ILINet) collects information on respiratory illness from outpatient visits to health care providers. Over 3,400 outpatient health care providers in all 50 US states, PR, DC, and the US Virgin Islands report each week the total number of outpatient visits along with the number of ILI cases. An ILI case is defined as a ``fever (temperature of $100^{\circ}$F[$37.8^{\circ}$C] or greater) and a cough and/or a sore throat.'' Prior to the 2021 season, the definition included ``without a known cause other than influenza'' \cite[]{cdcfluview2023}. Because other illnesses such as COVID-19, RSV, and the common cold may induce similar respiratory symptoms, ILI may include patients infected with some disease other than influenza. To know whether or not a sick patient is infected with influenza would require a laboratory test. 
 
 In 2013, when FluSight began, the ILI data was the object of the forecasts. The data was released publicly at HHS region levels, and forecast teams were asked to provide forecasts of several ILI targets on the regional levels including season onset, 1-4 week ahead ILI levels, and the week of peak ILI activity \cite[]{biggerstaff2016results,mcgowan2019collaborative}. Currently, the ILI data is collected by the CDC and published on an online portal for viewing at the national, HHS region, census, and state levels \cite[]{cdc2024fluviewportal}. To obtain ILI data, we used the \texttt{R} package \texttt{cdcfluview} which provides functions for downloading the data \cite[]{rudis2021cdcfluview}. Weekly ILI data from the national, HHS region, and census levels are available from the 1997 flu season until the current season. At the state level, data is available from the 2010 flu season to the current season. 
 
@@ -174,7 +174,8 @@ To better align with the flu behavior, week 1 is set as the first week of August
 \begin{figure}
     \centering
     \includegraphics[scale=.7]{us_ili_seasons.png}
-    \caption{Percentage of outpatient visits with an influenza-like illness (ILI) in the US for seasons 2010 to 2023. Week 1 is the first week of August of the year the flu season begins and the last week of the season is the last week of July of the following year.}
+    \caption{Percentage of outpatient visits with an influenza-like illness (ILI) in the US for seasons 2010 to 2023. 
+    Week 1 is the first week of August of the year the flu season begins and the last week of the season is the last week of July of the following year.}
     \label{fig:us_ili}
 \end{figure}
 
@@ -561,7 +562,7 @@ Figure \ref{fig:crps_by_week_horizon} shows CRPS boxplots faceted by week and ho
 \begin{figure}
     \centering
     \includegraphics[scale=.5]{crps_by_season.png}
-    \caption{Boxplots of continuous ranked probability score (CRPS) for the four ILI models over all weeks and horizons in the simulation study faceted by season and including seasons 2010-2022, excluding 2020}
+    \caption{Boxplots of continuous ranked probability score (CRPS) for the four ILI models over all weeks and horizons in the simulation study faceted by season and including seasons 2010-2022, excluding 2020.}
     \label{fig:crps_by_season}
 \end{figure}
 
@@ -726,7 +727,7 @@ Figure \ref{fig:normal_flu_forecasts} shows 1-4-week ahead forecasts for US flu 
 These plots show a tendency to often underpredict hospitalizations. The quadratic models appear to do a better job predicting  hospitalizations at the season peak but a poorer job predicting after the peak, whereas the linear models seem to predict well or slightly overpredict after the peak. 
 % From these figures, it's difficult to say whether ASG or SIR models predict better, but at least for the quadractic models the week 22 predictions are maybe slightly better than for the linear models.
 
-Figure \ref{fig:us_lwis} shows model performance by LWIS for each week of the season for all 24 models of US hospitalizations. LWIS scores are grouped by ILI model, hospitalization model distribution, and by the linear or quadratic modeling. Here, a darker value represents a larger LWIS and worse forecast compared to lighter values. The weeks around the holiday week 22 are highlighted by a red band. In most cases, there appears to be a turning point in performance at or near week 22. The models which include discrepancy appear to forecast better around week 22, though they may not outperform the models without discrepancy through the whole season. 
+Figure \ref{fig:us_lwis} shows model performance by LWIS for each week of the season for all 24 models of US hospitalizations. LWIS scores are grouped by ILI model, hospitalization model distribution, and by the linear or quadratic modeling. Here, a darker value represents a larger LWIS and worse forecast compared to lighter values.  In most cases, there appears to be a turning point in performance at or near week 22. The models which include discrepancy appear to forecast better around week 22, though they may not outperform the models without discrepancy through the whole season. 
 Such is the case for the NORM and LST quadratic models and the linear LNORM models. It's also notable that for the SIR model, including discrepancy appears to make for poorer forecasts after week 22 whereas for ASG, including discrepancy appears to improve forecasts.
 
 
@@ -734,8 +735,8 @@ Such is the case for the NORM and LST quadratic models and the linear LNORM mode
 \begin{figure}
     
     % \centering
-\includegraphics[scale = .5]{lwis_us_full_season.png}
-\caption{Each plot shows the log weighted interval score (LWIS, lighter is better) for every week of the 2023 flu season with scores for models with (bottom) and without (top) including discrepancy. Facets distinguish hospitalization distribution family and ILI as a linear or quadratic predictor (column facets, quadratic indicated with 2) with asymmetric Gaussian or SIR ILI models (row facets).}
+\includegraphics[scale = .5]{lwis_us_full_season}
+\caption{Each plot shows the log weighted interval score (LWIS, lighter is better) for every week of the 2023 flu season with scores for models with (bottom) and without (top) including discrepancy. Facets distinguish hospitalization distribution family and ILI as a linear or quadratic predictor (column facets, quadratic indicated with 2) with asymmetric Gaussian or SIR ILI models (row facets). The weeks around the holiday week 22 are highlighted by a red band.}
     \label{fig:us_lwis}
 \end{figure}
 
