@@ -72,6 +72,99 @@
 \begin{supplement}
 
 
+\section{ILI \& Hospitalization data for some regions}
+
+Figure \ref{fig:ili_vs_week} shows ILI data from five states and the District of Columbia, locations which received particular attention in \cite{osthus2021multiscale}. The plots include the ILI data for all seasons from 2010 to 2023 in grey, and the black line is the per week ILI average over seasons. The patterns in the individual states are similar to the national level plots in that the ILI rises in the fall and winter until it peaks and descends as the spring and summer progress. For these locations ILI regularly peaks, either locally or globally, at or near week 22. 
+
+ \begin{figure}[hbt!]
+    \centering
+    \includegraphics[scale=.7]{Images/ili_vs_week.png}
+    \caption{Percentage of outpatient visits with an influenza-like illness (ILI) in five different states and the District of Columbia for seasons 2010 to 2023. Week 1 is the first week of August of the year the flu season begins and the last week of the season is the last week of July of the following year.
+     Plots include lines for ILI\% from the 2010 flu season to 2023 (grey) and for the weekly ILI averaged over all seasons (black).}
+    \label{fig:ili_vs_week}
+\end{figure}
+
+
+Figure \ref{fig:hosp_vs_week} shows the 2022 and 2023 weekly hospitalizations for the same states from \ref{fig:ili_vs_week}. Similar to the national data, the peak in 2022 came early compared to the peak of 2023. Comparing figures \ref{fig:ili_vs_week} and \ref{fig:hosp_vs_week} shows that ILI and hospitalizations share the similar pattern of increasing to a peak in the winter and decreasing thereafter. 
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[scale=.65]{Images/hosp_vs_week.png}
+    \caption{Weekly hospitalization counts for five states and DC for the 2022 (grey) and 2023 (black) flu seasons}
+    \label{fig:hosp_vs_week}
+\end{figure}
+
+
+
+
+
+% Figure \ref{fig:ili_vs_hosp} shows scatter plots with ILI\% on the $x$-axes and hospitalizations on the $y$-axes, revealing a positive somewhat linear relationship between the two variables. This relationship motivates the forecast models outlined in the next section. 
+% 
+% \begin{figure}[hbt!]
+%     \centering
+%     \includegraphics[scale=.6]{Images/ili_vs_hosp.png}
+%     \caption{Weekly flu confirmed hospitalization counts ($y$-axis) for five states and the District of Columbia for the 2022 and 2023 flu seasons plotted against ILI\% ($x$-axis)}
+%     \label{fig:ili_vs_hosp}
+% \end{figure}
+
+
+
+
+\section{Additional results plots from simulation study}
+
+
+Figures \ref{fig:overall_scores} - \ref{fig:logs_by_season} show boxplots of the CRPS and LogS for the four models. Figure \ref{fig:overall_scores} shows that the variation of overall CRPS is smallest for the ASG models and larger for the SIR models. The median scores for the SIR models also appears slightly higher than for the ASG models. 
+When faceted by season in figure \ref{fig:crps_by_season}, the boxplots of the CRPS often show the same pattern for ASG and SIR models but not always. For example, the bulk of CRPS values for the SIRD model in 2019 appears to have smaller variation than the other models.
+The LogS plots show similar results to the CRPS plots, though there are some differences. For example, SIRD in figure \ref{fig:logs_by_season} tends to show smaller LogS variation relative to the other three models than is seen by the CRPS of SIRD in figure \ref{fig:crps_by_season}.
+
+\begin{figure}[hbt!]
+\centering
+% \begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[scale=.3]{Images/overall_crps.png}
+    % \caption{Boxplots of CRPS for the four ILI models over all seasons, weeks, and horizons in the simulation study}
+% \end{subfigure}%
+% \begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[scale=.3]{Images/overall_logs.png}
+    % \caption{Boxplots of LogS for the four ILI models over all seasons, weeks, and horizons in the simulation study}}
+% \end{subfigure}
+\caption{Boxplots of the continuous ranked probability score (CRPS) (left) and logarithmic score (LogS) (right) for the four ILI models over all seasons, weeks, and horizons in the simulation study}
+\label{fig:overall_scores}
+\end{figure}
+
+
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[scale=.5]{Images/crps_by_season.png}
+    \caption{Boxplots of continuous ranked probability score (CRPS) for the four ILI models over all weeks and horizons in the simulation study faceted by season and including seasons 2010-2022, excluding 2020}
+    \label{fig:crps_by_season}
+\end{figure}
+
+
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[scale=.5]{Images/logs_by_season.png}
+    \caption{Boxplots of logarithmic score (LogS) for the four ILI models over all weeks and horizons in the simulation study faceted by season and including seasons 2010-2022, excluding 2020.}
+    \label{fig:logs_by_season}
+\end{figure}
+
+
+
+\section{Additional results plots for 2023-24 flu analysis}
+
+In figure \ref{fig:lwis_by_traj_loc}, it appears that both the SIR and ASG models which include discrepancy perform slightly better than the models which do not.
+
+\begin{figure}[hbt!]
+    
+    \centering
+    \includegraphics[scale = .7]{Images/lwis_by_traj_loc.png}
+    \caption{Each plot shows the log weighted interval scores (LWIS) for all 50 US states, PR, DC, and national level forecasts at each week during the 2023 flu season. Scores are averaged over all horizons 1-4 weeks ahead. Scores are faceted by ILI model function (columns) and by whether or not discrepancy modeling was included (rows). The lighter the shade, the lower the LWIS with low LWIS being better.}
+    \label{fig:lwis_by_traj_loc}
+\end{figure}
+
 
 
 \section{Posterior distribution plots for select parameters}
@@ -224,7 +317,7 @@ The RWIS for one model was calculated by first taking the ratio of the average L
  Figures \ref{fig:rwis_ili_tile} and \ref{fig:rwis_hosp_tile} show the mean RWIS of hospitalization forecasts over all 24 models from the main manuscript for all locations and weeks of the 2023 flu season. Some similar patterns to those noted in section the manuscript emerge, including a slightly better performance by forecasts including discrepancy modeling over those which do not include discrepancy modeling and better overall performance by the SIR models than by the ASG forecast models. Interestingly, figure \ref{fig:rwis_hosp_tile} shows the LNORM model showing especially poor RWIS performance about three quarters into the season. This was not seen in the LWIS in the main manuscript. %figure \ref{fig:lwis_by_dist_loc}. 
 
 
-\begin{figure}
+\begin{figure}[hbt!]
     \centering
     \includegraphics[scale=.7]{Images/rwis_ili_mod.png}
     \caption{RWIS averaged over all 24 models and horizons for forecasts across all locations and weeks. The plot is separated by the four ILI models. Dark blue is lower RWIS, and dark tan is higher RWIS where white is RWIS = 1}
@@ -232,7 +325,7 @@ The RWIS for one model was calculated by first taking the ratio of the average L
 \end{figure}
 
 
-\begin{figure}
+\begin{figure}[hbt!]
     \centering
     \includegraphics[scale=.6]{Images/rwis_hosp_mod.png}
     \caption{RWIS averaged over all 24 models and horizons for forecasts across all locations and weeks. The plot is separated by the three distribution choices for the hospitalization model. Dark blue is lower RWIS, and dark tan is higher RWIS where white is RWIS = 1}
@@ -242,7 +335,7 @@ The RWIS for one model was calculated by first taking the ratio of the average L
 
 Figure \ref{fig:state_median_points} shows the mean over weeks RWIS for the SIR and ASG forecast models with an RWIS less than 1 for the most locations. The plot on the left is from a forecast by an SIRD ILI model and a quadratic NORM hospitalization model. This forecast model had an RWIS less than 1 for 37 out of 53 locations. The plot on the right is from a forecast by an ASGD ILI model and linear NORM hospitalization model. This model had an RWIS less than 1 for 34 out of 53 locations.
 
-\begin{figure}
+\begin{figure}[hbt!]
 \centering
 \begin{subfigure}
   \centering

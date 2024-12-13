@@ -1,7 +1,7 @@
 
-setwd("~/flu_research/nonlinear_flu_forecast/forecasts_23")
-source('~/flu_research/nonlinear_flu_forecast/forecasts_23/get_data_functions_new.R')
-source('~/flu_research/nonlinear_flu_forecast/mle_functions.R')
+setwd("~/flu_research/nonlinear_flu_forecast/")
+source('~/flu_research/nonlinear_flu_forecast/functions_data/get_data_functions_new.R')
+source('~/flu_research/nonlinear_flu_forecast/functions_data/mle_functions.R')
 
 
 
@@ -193,6 +193,31 @@ get_fit_flu <- function(x, y, square = FALSE) {
   return(exp(preds) - 1)
 }
 
+
+
+get_lag_fits <- function(x, y, square = FALSE, log = FALSE) {
+  x2 <- x^2
+  x3 <- x^3
+  if (log == TRUE) {y <- log(y + 1)}
+  if (square == FALSE) {
+    mod <- lm(y ~ lag(y) + x)
+    ar1 <- coef(mod)[2]
+  }
+  # else if (square == 3) {
+  #   mod <- lm(y ~ x + x2 + x3)
+  #   preds <- predict(mod)
+  # }
+  else {
+    mod <- lm(y ~ lag(y) + x + x2)
+    mod <- lm(y ~ lag(y) + x)
+    ar1 <- coef(mod)[2]
+  }
+  # ar1 <- .64
+  lag_val <- y - ar1*lag(y)
+  print(ar1)
+  return(lag_val)
+}
+
 both_flu1 <- comb_data(lag = 1)
 both_flu2 <- comb_data(lag = 2)
 
@@ -227,9 +252,56 @@ both_flu2 %>%
   ggplot(aes(x  = unweighted_ili, y = value)) +
   geom_point()
   
+both_test <- both_flu1 %>% 
+  filter(region == "US", season == 2023) %>% 
+  mutate(lag_val = lag(value), uili2 = unweighted_ili^2) %>% 
+  mutate(ar1_val = value- .64*lag_val)
+mod <- lm(value ~ lag_val + unweighted_ili, data = both_test)
+
+plot(ar1_val ~ unweighted_ili^2, data = both_test)
+plot(value ~ unweighted_ili, data = both_test)
+
+
+library(latex2exp)
+both_flu1 %>% 
+  filter(region %in% c("US"),
+         # c("Idaho", "Utah", "Oregon", "Minnesota", "California",
+         #             "North Carolina", "Georgia"),
+         # c("District of Columbia", "Alabama", "Texas",
+         #             "Ohio", "Iowa", "Montana"),
+         season %in% c(2022:2023)) %>% 
+  group_by(region) %>% 
+  mutate(lag_val_log = 
+           get_lag_fits(unweighted_ili, value, square = FALSE,
+                                 log = TRUE)) %>% 
+  mutate(lag_val = 
+           get_lag_fits(unweighted_ili, value, square = FALSE,
+                        log = FALSE)) %>% 
+  pivot_longer(cols = contains("lag_val"),
+               values_to = "lag_vals",
+               names_to = "lag_type") %>% 
+  mutate(lag_type = ifelse(lag_type == "lag_val",
+                           "Hospitalizations", 
+                           "log Hospitalizations")) %>% 
+  ggplot() +
+  geom_point(aes(y = lag_vals, x = unweighted_ili, 
+                 colour = factor(season)), size = 2) +
+  # facet_wrap(~season) +
+  scale_color_manual(values = c("darkgrey", "black")) +
+  xlab("ILI %") +
+  ylab(TeX("$H_{s,w} - \\phi H_{s, w-1}")) +
+  labs(colour = "Season") +
+  facet_wrap(~lag_type, scales = "free_y") +
+  theme_bw() +
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=19),
+        legend.title=element_text(size=16), 
+        legend.text=element_text(size=14),
+        strip.text = element_text(size = 14))
+
 
 both_flu1 %>% 
-  filter(region %in% c("Iowa"),
+  filter(region %in% c("US"),
            # c("Idaho", "Utah", "Oregon", "Minnesota", "California",
            #             "North Carolina", "Georgia"),
            # c("District of Columbia", "Alabama", "Texas",
@@ -238,6 +310,7 @@ both_flu1 %>%
   group_by(region, season) %>% 
   mutate(lm_preds = get_fit_flu(unweighted_ili, value, square = TRUE)) %>% 
   ggplot() +
+  # geom_point(aes(y = value - .57*lag(value), x = unweighted_ili)) +
   geom_point(aes(x = season_week, y = value)) +
   geom_line(aes(x = season_week, y = lm_preds), colour = "red") +
   # facet_grid(region~season, scale = "free") + 
