@@ -31,11 +31,12 @@ ILINet %>% filter(region == state, season >= 2010) %>%
             show.legend = FALSE, size = 1) +
   facet_wrap(~season) +
   ylab("ILI %") +
-  xlab("Week") +
+  xlab("") +
   # geom_vline(aes(xintercept = 22)) +
   theme_bw() + 
-  theme(axis.text=element_text(size=12),
-        axis.title=element_text(size=15))
+  theme(axis.text=element_text(size=15),
+        axis.title=element_text(size=18),
+        strip.text=element_text(size = 15))
 
 both_flu %>% filter(region == "US", season >= 2022) %>% 
   ggplot() +
@@ -45,8 +46,9 @@ both_flu %>% filter(region == "US", season >= 2022) %>%
   ylab("Hospitalizations") +
   xlab("Week") +
   theme_bw() + 
-  theme(axis.text=element_text(size=12),
-        axis.title=element_text(size=15))
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=19),
+        strip.text=element_text(size = 17))
 
 ILINet %>%
   filter(region %in% c("Alabama", "District of Columbia", "Texas",
@@ -64,7 +66,8 @@ ILINet %>%
   xlab("Week") +
   theme_bw() +
   theme(axis.text=element_text(size=12),
-        axis.title=element_text(size=15))
+        axis.title=element_text(size=17),
+        strip.text=element_text(size=13))
 
 both_flu %>%
   filter(region %in% c("District of Columbia", "Alabama", "Texas",
@@ -81,7 +84,8 @@ both_flu %>%
   xlab("Week") +
   theme_bw() +
   theme(axis.text=element_text(size=12),
-        axis.title=element_text(size=15))
+        axis.title=element_text(size=17),
+        strip.text=element_text(size=13))
 
 
 both_flu %>%

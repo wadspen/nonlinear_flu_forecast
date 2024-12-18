@@ -1,75 +1,93 @@
-% \documentclass[ba,preprint]{imsart}% use this for supplement article
-\documentclass[ba]{imsart}
+\documentclass{article}
 
-%% Packages
-\RequirePackage{amsthm,amsmath,amsfonts,amssymb}
-\RequirePackage[numbers]{natbib}
-%\RequirePackage[authoryear]{natbib}%% uncomment this for author-year citations
-\RequirePackage[colorlinks,citecolor=blue,urlcolor=blue,backref=page,backref=page]{hyperref}
-\RequirePackage{graphicx}
+\usepackage{PRIMEarxiv}
 
+\usepackage[utf8]{inputenc} % allow utf-8 input
+% \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage[linktocpage=true]{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+% \usepackage{lipsum}
+\usepackage{fancyhdr}       % header
+\usepackage{graphicx}       % graphics
+\graphicspath{{media/}}     % organize your images and other figures under media/ folder
 
-%%%%%%%%%%%packages added by Spencer%%%%%%%%%%%%%
+% Packages added by Spencer
+\usepackage{amsmath,amsthm,amssymb,scrextend}
+\usepackage{appendix}
+\AtBeginEnvironment{appendices}{\renewcommand\thesection{\Alph{section}}}
+\usepackage{enumerate}
+\usepackage{csquotes}
+% \usepackage{subcaption}
+\usepackage{amssymb}
+% \usepackage{bbm}
+\usepackage[bb=pazo]{mathalpha}
+\usepackage{bm}
+\usepackage{newtxmath} %for making indicator function
 \usepackage{booktabs} %for the table in the analysis section
-\usepackage{enumerate} %for the short algorithm
+% \usepackage{enumerate} %for the short algorithm
 \usepackage{subfigure} %for making plots with multiple images
 \usepackage{tabularx} %for the spacing in tabular
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\pubyear{2024}
-\arxiv{2010.00000}
-\volume{TBA}
-\issue{TBA}
-\firstpage{1}
-\lastpage{1}
+\pagestyle{empty}
+    
+\newcommand\Bbbbone{%
+  \ifdefined\mathbbb%
+    \mathbbb{1}%
+  \else%
+    \boldsymbol{\mathbb{1}}%
+  \fi}
+  
+% \usepackage{xr}
+% \externaldocument{supplementary}
+  
+  
+  
 
-\startlocaldefs
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                                          %%
-%% Uncomment next line to change            %%
-%% the type of equation numbering           %%
-%%                                          %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\numberwithin{equation}{section}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                                          %%
-%% For Axiom, Claim, Corollary, Hypothesis, %%
-%% Lemma, Theorem, Proposition              %%
-%% use \theoremstyle{plain}                 %%
-%%                                          %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\theoremstyle{plain}
-\newtheorem{axiom}{Axiom}
-\newtheorem{claim}[axiom]{Claim}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{lemma}[theorem]{Lemma}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                                          %%
-%% For Assumption, Definition, Example,     %%
-%% Notation, Property, Remark, Fact         %%
-%% use \theoremstyle{definition}            %%
-%%                                          %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\theoremstyle{definition}
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem*{example}{Example}
-\newtheorem*{fact}{Fact}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                                          %%
-%% For Case use \theoremstyle{remark}       %%
-%%                                          %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\theoremstyle{remark}
-\newtheorem{case}{Case}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Please put your definitions here:        %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\endlocaldefs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \usepackage[pdftex]{graphicx}
+% Standard, old-style thesis
+% \usepackage{isutraditional}   
+% \chaptertitle
+% Old-style, thesis numbering down to subsubsection
+% \alternate
+% \usepackage{rotating}
+% Bibliography without numbers or labels
+\usepackage{natbib}
+% Use the following line if you want square brackets and numbering system
+%\usepackage[square, numbers]{natbib}
+
+% this package is for getting certain math scripts like the 1 needed for an indicator function
+% \usepackage{bbm}
+
+% using this package to make a better looking list
+\usepackage{enumerate}
+% try this one for a list as well. may be better
+% \usepackage[font=itshape]{quoting}
+
+% package for tables
+
+% \renewcommand{\bibfont}{\setstretch{1}\selectfont}
+% \setlength{\bibsep}{13.2pt}
+
+
+\usepackage{chapterbib}
+%\renewcommand\bibsection{\section*{\ref name}}
+%\renewcommand\bibsection{\section*}
+\renewcommand{\bibsection}{\section{References}}
+
+
+\hypersetup{colorlinks=true,linkcolor=blue,anchorcolor=blue,citecolor=blue,filecolor=blue,urlcolor=blue,bookmarksnumbered=true,pdfview=FitB}
 
 \begin{document}
 
 
-\begin{supplement}
+
 \renewcommand{\thesection}{\Alph{section}}
 
 \section{Additional plots for ILI \& Hospitalization data for select regions,
@@ -369,14 +387,13 @@ Figure \ref{fig:state_median_points} shows the mean over weeks RWIS for the SIR 
 \caption{RWIS over the whole 2023 flu season for all 53 locations for hospitalization forecasts from an SIRD quadratic hospitalization model with normal errors (left) and forecasts from an ASGD linear hospitalization model with normal errors (right). An RWIS less than 1 (left of vertical grey line) indicates the model forecasts outperformed the baseline forecasts for that particular region.}
 \label{fig:state_median_points}
 \end{figure}
-\end{supplement}
 
 
 
 
 
 
-\bibliographystyle{ba}
+\bibliographystyle{apa}
 \bibliography{master_bib}
 
 \end{document}

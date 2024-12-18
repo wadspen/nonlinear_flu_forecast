@@ -1,104 +1,156 @@
-% \documentclass[ba,preprint]{imsart}% use this for supplement article
-\documentclass[ba]{imsart}
+\documentclass{article}
 
-%% Packages
-\RequirePackage{amsthm,amsmath,amsfonts,amssymb}
-\RequirePackage[numbers]{natbib}
-%\RequirePackage[authoryear]{natbib}%% uncomment this for author-year citations
-\RequirePackage[colorlinks,citecolor=blue,urlcolor=blue,backref=page,backref=page]{hyperref}
-\RequirePackage{graphicx}
+\usepackage{PRIMEarxiv}
 
+\usepackage[utf8]{inputenc} % allow utf-8 input
+% \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage[linktocpage=true]{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+% \usepackage{lipsum}
+\usepackage{fancyhdr}       % header
+\usepackage{graphicx}       % graphics
+\graphicspath{{media/}}     % organize your images and other figures under media/ folder
 
-%%%%%%%%%%%packages added by Spencer%%%%%%%%%%%%%
+% Packages added by Spencer
+\usepackage{amsmath,amsthm,amssymb,scrextend}
+\usepackage{appendix}
+\AtBeginEnvironment{appendices}{\renewcommand\thesection{\Alph{section}}}
+\usepackage{enumerate}
+\usepackage{csquotes}
+% \usepackage{subcaption}
+\usepackage{amssymb}
+% \usepackage{bbm}
+\usepackage[bb=pazo]{mathalpha}
+\usepackage{bm}
+\usepackage{newtxmath} %for making indicator function
 \usepackage{booktabs} %for the table in the analysis section
-\usepackage{enumerate} %for the short algorithm
+% \usepackage{enumerate} %for the short algorithm
 \usepackage{subfigure} %for making plots with multiple images
 \usepackage{tabularx} %for the spacing in tabular
-\usepackage{newtxmath} %for making indicator function
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\pubyear{2024}
-\arxiv{2010.00000}
-\volume{TBA}
-\issue{TBA}
-\firstpage{1}
-\lastpage{1}
+\pagestyle{empty}
+    
+\newcommand\Bbbbone{%
+  \ifdefined\mathbbb%
+    \mathbbb{1}%
+  \else%
+    \boldsymbol{\mathbb{1}}%
+  \fi}
+  
+% \usepackage{xr}
+% \externaldocument{supplementary}
+  
+  
+  
 
-\startlocaldefs
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                                          %%
-%% Uncomment next line to change            %%
-%% the type of equation numbering           %%
-%%                                          %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\numberwithin{equation}{section}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                                          %%
-%% For Axiom, Claim, Corollary, Hypothesis, %%
-%% Lemma, Theorem, Proposition              %%
-%% use \theoremstyle{plain}                 %%
-%%                                          %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\theoremstyle{plain}
-\newtheorem{axiom}{Axiom}
-\newtheorem{claim}[axiom]{Claim}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{lemma}[theorem]{Lemma}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                                          %%
-%% For Assumption, Definition, Example,     %%
-%% Notation, Property, Remark, Fact         %%
-%% use \theoremstyle{definition}            %%
-%%                                          %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\theoremstyle{definition}
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem*{example}{Example}
-\newtheorem*{fact}{Fact}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                                          %%
-%% For Case use \theoremstyle{remark}       %%
-%%                                          %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\theoremstyle{remark}
-\newtheorem{case}{Case}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Please put your definitions here:        %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\endlocaldefs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \usepackage[pdftex]{graphicx}
+% Standard, old-style thesis
+% \usepackage{isutraditional}   
+% \chaptertitle
+% Old-style, thesis numbering down to subsubsection
+% \alternate
+% \usepackage{rotating}
+% Bibliography without numbers or labels
+\usepackage{natbib}
+% Use the following line if you want square brackets and numbering system
+%\usepackage[square, numbers]{natbib}
+
+% this package is for getting certain math scripts like the 1 needed for an indicator function
+% \usepackage{bbm}
+
+% using this package to make a better looking list
+\usepackage{enumerate}
+% try this one for a list as well. may be better
+% \usepackage[font=itshape]{quoting}
+
+% package for tables
+
+% \renewcommand{\bibfont}{\setstretch{1}\selectfont}
+% \setlength{\bibsep}{13.2pt}
+
+
+\usepackage{chapterbib}
+%\renewcommand\bibsection{\section*{\ref name}}
+%\renewcommand\bibsection{\section*}
+\renewcommand{\bibsection}{\section{References}}
+
+
+
+
+%\bibliographystyle{apa}  % changed from apa, abbrv, unsrtnat
+%\includeonly{titletoc,chapter1}
+%Optional Package to add PDF bookmarks and hypertext links
+% \usepackage[pdftex,hypertexnames=false,linktocpage=true]{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,anchorcolor=blue,citecolor=blue,filecolor=blue,urlcolor=blue,bookmarksnumbered=true,pdfview=FitB}
+
+%\usepackage{titletoc}
+% \usepackage{hyperref}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Packages/commands added by Jarad
+\usepackage{xcolor}
+\newcommand{\jarad}[1]{{\color{red} Jarad: #1}}
+\newcommand{\spencer}[1]{{\color{blue} Spencer: #1}}
+
+%Header
+\pagestyle{fancy}
+\thispagestyle{empty}
+\rhead{ \textit{ }} 
+
+% Update your Headers here
+\fancyhead[LO]{Bayesian nonlinear flu hospitalizations forecasting}
+% \fancyhead[RE]{Firstauthor and Secondauthor} % Firstauthor et al. if more than 2 - must use \documentclass[twoside]{article}
+
+
+
+  
+%% Title
+\title{Forecasting Influenza Hospitalizations Using a Bayesian Hierarchical Nonlinear Model with Discrepancy
+%%%% Cite as
+%%%% Update your official citation here when published 
+% \thanks{\textit{\underline{Citation}}: 
+% \textbf{Authors. Title. Pages.... DOI:000000/11111.}} 
+}
+
+\author{
+  Spencer Wadsworth \\
+  Iowa State University \\
+  Ames, Iowa\\
+  \texttt{sgw96@iastate.edu} \\
+  %% examples of more authors
+   \And
+  Jarad Niemi \\
+  Iowa State University \\
+  Ames, Iowa\\
+  \texttt{niemi@iastate.edu} \\
+  %% \AND
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+}
+
 
 \begin{document}
-
-\begin{frontmatter}
-\title{Forecasting Influenza Hospitalizations Using a Bayesian Hierarchical Nonlinear Model with Discrepancy}
-%\title{A sample article title with some additional note\thanksref{t1}}
-\runtitle{Bayesian nonlinear flu hospitalizations forecasting}
-%\thankstext{T1}{A sample additional note to the title.}
-
-\begin{aug}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Only one address is permitted per author. %%
-%% Only division, organization and e-mail is %%
-%% included in the address.                  %%
-%% Additional information can be included in %%
-%% the Acknowledgments section if necessary. %%
-%% ORCID can be inserted by command:         %%
-%% \orcid{0000-0000-0000-0000}               %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\author[A]{\snm{Spencer Wadsworth}\ead[label=e1]{sgw96@iastate.edu}}
-% \author[A]{\fnms{Second}~\snm{Author}\ead[label=e2]{second@somewhere.com}\orcid{0000-0000-0000-0000}}
-\and
-\author[A]{~\snm{Jarad Niemi}\ead[label=e2]{niemi@iastate.edu}}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Addresses                                %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\address[A]{Department of Statistics,
-Iowa State University, Ames, IA 50011}
-
-
-\runauthor{Wadsworth and Niemi}
-\end{aug}
-
+\maketitle
 \begin{abstract}
 The annual influenza outbreak leads to significant public health and economic burdens making it desirable to have prompt and accurate probabilistic forecasts of the disease spread. The United States Centers for Disease Control and Prevention (CDC) hosts annually a national flu forecasting competition which has led to the development of a variety of flu forecast modeling methods. For the first several years of the competition, the target to be forecast was weekly percentage of patients with an influenza-like illness (ILI), but in 2021 the target was changed to weekly hospitalization counts. Reliable state and national hospitalization data has only been available since 2021, but for ILI the data has been available since 2010 and has been successfully forecast for several seasons.
 In this manuscript, we introduce a two component modeling framework for forecasting weekly hospitalizations utilizing both hospitalization data and ILI data. The first component is for modeling ILI data using a dynamic nonlinear Bayesian hierarchical model. The second component is for modeling hospitalizations as a function of ILI. For hospitalization forecasts, ILI is first forecasted and then hospitalizations are forecast with ILI forecasts used as a linear or quadratic predictor. In a simulation study, two ILI forecast models, including one similar to the winning model for two seasons of the CDC forecast competition from Osthus et al.
@@ -109,20 +161,18 @@ and a nonlinear Bayesian hierarchical model from Ulloa
 are compared. Also assessed is the usefulness of including a systematic model discrepancy term in the ILI model. Forecasts of state and national hospitalizations for the 2023-24 flu season are made, and different modeling decisions are compared. We found that including a discrepancy component in the ILI model tends to improve forecasts during certain weeks of the year. We also found that other modeling decisions such as the exact nonlinear function to be used in the ILI model or the error distribution for hospitalization models may or may not be better than other decisions, depending on the season, location, or week of the forecast.
 \end{abstract}
 
+
+% \begin{abstract}
+% The annual influenza outbreak leads to significant public health and economic burdens making it desirable to have prompt and accurate probabilistic forecasts of the disease spread. The United States Centers for Disease Control and Prevention (CDC) hosts annually a national flu forecasting competition which has led to the development of a variety of flu forecast modeling methods. Beginning in 2013, the target to be forecast was weekly percentage of patients with an influenza-like illness (ILI), but in 2021 the target was changed to weekly hospitalizations. Reliable hospitalization data has only been available since 2021, but ILI data has been available since 2010 and has been successfully forecast for several seasons. In this manuscript, we introduce a two component modeling framework for forecasting hospitalizations utilizing both hospitalization and ILI data. The first component is for modeling ILI data using a nonlinear Bayesian model. The second component is for modeling hospitalizations as a function of ILI. For hospitalization forecasts, ILI is first forecast then hospitalizations are forecast with ILI forecasts used as a predictor. In a simulation study, the hospitalization forecast model is assessed and two previously successful ILI forecast models are compared. Also assessed is the usefulness of including a systematic model discrepancy term in the ILI model. Forecasts of state and national hospitalizations for the 2023-24 flu season are made, and different modeling decisions are compared. We found that including a discrepancy component in the ILI model tends to improve forecasts during certain weeks of the year. We also found that other modeling decisions such as the exact nonlinear function to be used in the ILI model or the error distribution for hospitalization models may or may not be better than other decisions, depending on the season, location, or week of the forecast.
+% \end{abstract}
+
 % \begin{keyword}[class=MSC]
 % \kwd[Primary ]{00X00}
 % \kwd{00X00}
 % \kwd[; secondary ]{00X00}
 % \end{keyword}
 
-\begin{keyword}
-\kwd{Disease outbreak forecasting}
-\kwd{Bayesian hierarchical modeling}
-\kwd{Probabilistic forecasting}
-\kwd{Model discrepancy}
-\end{keyword}
 
-\end{frontmatter}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% `\ ' is used here because TeX ignores    %%
@@ -540,7 +590,7 @@ The CRPS is calculated using a quantile decomposition from \cite[]{laio2007verif
 %     \label{eq:logs2}
 % \end{equation}
 % Both the CRPS and LogS are calculated using the \texttt{scoringRules} package in \texttt{R} \cite[]{jordan2019scoring}.
-% To calculate the LogS when given MCMC samples from a posterior predictive distribution, a continuous density function was first estimated via kernel density estimation. 
+% To calculate the LogS when given MCMC samples from a posterior predictive distribution, a continuous density function was first estimated via kernel density estimation.
 
 
 
@@ -675,18 +725,18 @@ The prior for the hospitalization models are in (\ref{eq:shared_hosp_priors}).
 
 \begin{figure}[hbt!]
 \centering
-\begin{subfigure}
+% \begin{subfigure}
   \centering
   \includegraphics[width=.49\linewidth,height=6cm]{Images/normal_forecasts_us.png}
   % \caption{A subfigure}
   % \label{fig:sub1}
-\end{subfigure}%
-\begin{subfigure}
+% \end{subfigure}%
+% \begin{subfigure}
   \centering
   \includegraphics[width=.49\linewidth, height=6cm]{Images/normal_sq_forecasts_us.png}
   % \caption{A subfigure}
   % \label{fig:sub2}
-\end{subfigure}
+% \end{subfigure}
 \caption{Forecasts 1-4 weeks ahead for US hospitalizations during the 2023 season for weeks 14, 20, 26, and 32. Forecasts are separated by ILI model, and the hospitalization models are all normally distribution. The figure includes hospitalization forecasts where ILI is a linear predictor (left) and where ILI is a quadratic predictor (right). 50\% predictive intervals are pink and 95\% predictive intervals are red.}
 \label{fig:normal_flu_forecasts}
 \end{figure}
@@ -776,32 +826,10 @@ Forecasting the seasonal influenza outbreak remains a challenging task for forec
 
 
 
-\begin{acks}[Acknowledgments]
+\section{Acknowledgments}
 This work is partially supported by the National Science Foundation under Grant No. 2152117. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.
-\end{acks}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Funding information, if any,             %%
-%% should be provided in the                %%
-%% funding section.                         %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \begin{funding}
-% The first author was supported by NSF Grant DMS-??-??????.
-% 
-% 
-% \end{funding}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Supplementary Material, including data   %%
-%% sets and code, should be provided in     %%
-%% {supplement} environment with title      %%
-%% and short description. It cannot be      %%
-%% available exclusively as external link.  %%
-%% All Supplementary Material must be       %%
-%% available to the reader on Project       %%
-%% Euclid with the published article.       %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{supplement}
+\section{Supplementary Material}
 Supplement to "Forecasting Influenza Hospitalizations Using a
 Bayesian Hierarchical Nonlinear Model with
 Discrepancy"\\
@@ -810,15 +838,13 @@ A. Additional plots for ILI \& Hospitalization data for select regions, results 
 B. Posterior distribution plots for select parameters\\
 % \sdescription{2. Plots of posterior distributions for parameters in both ILI and hospitalization models}
 C. FluSight forecast competition scoring results
-\end{supplement}
-% \begin{supplement}
-% \stitle{3. FluSight forecast competition scoring results}
-% \sdescription{Flu forecast results with relative weighted interval scoring rule similar to that used in  FluSight}
-% \end{supplement}
 
+%Bibliography
+% \bibliographystyle{unsrt}  
+% \bibliography{references}  
 
-\bibliographystyle{ba}
+\bibliographystyle{apa}
 \bibliography{master_bib}
 
-\end{document}
 
+\end{document}

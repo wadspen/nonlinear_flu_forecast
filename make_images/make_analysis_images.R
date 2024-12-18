@@ -1,5 +1,5 @@
 setwd("~/flu_research/nonlinear_flu_forecast/")
-source("../../flu_research/nonlinear_flu_forecast/forecasts_23/get_data_functions.R")
+source("./flu_forecast_23/get_data_functions_new.R")
 # setwd("./model-output/")
 # source("../target-data/get_target_data.R")
 library(stringr)
@@ -20,7 +20,7 @@ setwd("~/flu_research/Prelim Content/models")
 
 target_data <- read.csv("../../../forecast-hub/FluSight-forecast-hub/target-data/target-hospital-admissions.csv") %>%
   mutate(true_value = value) %>%
-  select(-value, -X)
+  select(-value)
 # setwd("~/forecast-hub/FluSight-forecast-hub/model-output/")
 folders <- list.files("./")
 models <- folders[-which(folders == "FluSight-ensemble")]
@@ -194,6 +194,45 @@ team_scores %>%
         legend.text = element_text(size = 12), 
         legend.title = element_text(size = 14),
         legend.position = "none")
+
+
+team_scores %>% 
+  # filter(horizon == 0) %>%
+  # filter(dist == "LST") %>%
+  mutate(distq = ifelse(sq == "SQ", paste0(dist,2),
+                        dist),
+         disc = ifelse(disc == "D", "Disc","No Disc")) %>% 
+  filter(location_name == "US") %>%
+  filter(!(model %in% c("FluSight-ensemble", "FluSight-baseline"))) %>% 
+  mutate(forecast_date = date(reference_date) + 7*as.numeric(horizon)) %>%
+  ungroup() %>% 
+  left_join(both_flu %>% 
+              filter(season == 2023) %>% 
+              select(season_week, date) %>% 
+              mutate(date = date(date)) %>% 
+              unique(),
+            by = join_by(forecast_date == date), multiple = "all") %>% 
+  group_by(season_week, disc, traj, distq) %>% 
+  summarise(mrwis = mean(lwis)) %>% 
+  rowwise() %>% 
+  mutate(minwis = mean(mrwis)) %>% 
+  ggplot() +
+  geom_vline(xintercept = 22, size = 8, colour = "lightgrey") +
+  geom_line(aes(x = season_week, y = minwis, colour = disc),
+            size = 1) +
+  scale_color_manual(values = c("darkgrey", "black")) +
+  facet_grid(traj~distq) +
+  ylab("LWIS") +
+  xlab("Week") +
+  theme_bw() +
+  theme(axis.text.x=element_text(size=14),
+        axis.text.y = element_text(size = 14, angle = 90, hjust = .45),
+        axis.title=element_text(size=18),
+        strip.text = element_text(
+          size = 13),
+        legend.text = element_text(size = 14), 
+        legend.title = element_blank())
+  
 
 
 team_scores %>% 
