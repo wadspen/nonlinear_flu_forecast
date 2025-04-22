@@ -1,0 +1,191 @@
+\documentclass{article}
+
+\usepackage{enumerate}
+\usepackage{hyperref}
+
+\begin{document}
+  
+  
+\section*{Review BA2412-010}
+\subsection*{Overall assessment:}
+This paper by Wadsworth and Niemi adapts two models originally designed to forecast outpatient
+ILI data in order to apply them to influenza hospitalization data. This is motivated by a switch in the
+target definition of the US CDC FluSight challenge. The paper is well-written and pleasant to read.
+The overall idea of leveraging models from previous FluSight cycles for the new target is appealing.
+However, several points require clarification. Given the focus of the journal, the Bayesian inference
+aspect should be developed more thoroughly as it currently seems a little ad hoc. Moreover, it
+currently does not become clear to which degree the proposed methods offer improved forecasts
+compared to existing (and potentially much simpler) models. I provide some specific comments in
+the following.
+
+
+\subsection*{Specific comments:}
+
+\begin{enumerate}[1.]
+\item The entire Bayesian inference scheme seems somewhat heuristic.
+
+\begin{enumerate}[a.]
+\item The ILI model is run separately and then feeds into the hospitalization model. So there is no
+flow of information from the hospitalization data to the ILI model, which there would be in a fully
+Bayesian procedure. Is this done on purpose and if so what is the motivation? The proposed
+procedure reminds me of the "Bayesian cut" in the version described by Plummer
+\href{(https://link.springer.com/article/10.1007/s11222-014-9503-z)}{(https://link.springer.com/article/10.1007/s11222-014-9503-z)}.
+This may be a useful reference.
+\item The authors employ a "modular Bayesian approach" mixing maximum likelihood and
+Bayesian estimation. The authors should provide more ample references to the literature concerning
+this type of procedure (is "modular Bayesian" a standard term?).
+\item Also, it should be argued explicitly why this approach was chosen over a standard fully
+Bayesian approach in the setting at hand. Was a fully Bayesian approach also explored? Which
+difficulties were encountered?
+\item Notably it would be helpful to comment on how this approach affects the uncertainty
+propagation / overall quantification of forecast uncertainty.
+
+\end{enumerate}
+
+
+\item Several comments on the data and general modelling choices:
+
+\begin{enumerate}[a.]
+\item Influenza-like illness (ILI) is not a single pathogen, but a mix of several pathogens causing
+similar symptoms. How reasonable is it to assume SIR dynamics for such an indicator? Do we
+really assume that the tipping point due to susceptible depletion can be captured reasonably here? In
+my understanding this would be the only reason to include an S compartment.
+
+\item My impression is that the SIR does not really have any mechanistic meaning here and is just a
+way of parameterizing curves that look qualitatively like ILI seasons. The ASG approach can be
+seen as an alternative parameterization for such curves. Could the authors comment on what
+practical differences exist between the two parameterizations?
+
+\item Is the hospitalization indicator specific to influenza? My understanding is that it is, but this
+should be more clear in Section 2.2. If it is influenza-specific: to which degree should we expect ILI
+to be a helpful predictor given that it also contains COVID, RSV etc.? The influenza dynamics are
+likely somewhat hidden in the ILI indicator.
+
+\item Does the hospitalization indicator refer to incident (new) hospitalization or prevalence, i.e.,
+bed occupancy?
+
+\item Is there any "mechanistic" rationale behind the ARX formulation for the hospitalizations? If we
+predict prevalence / bed occupancy I can sort of see why the differences between weeks would be
+explained by ILI. If we predict new hospitalizations I am not sure what motivates this ARX
+formulation.
+
+\item Currently the ILI value from the same week is used in equation (7). Would there be a point in
+exploring different lags?
+
+\item On page 14 it says: "all negative values of [...] were set to 0 to reflect realistic values of
+hospitalizations". Could this be handled more naturally by appropriate distributional assumptions?
+
+\end{enumerate}
+
+
+\item And some remarks on the evaluation.
+
+\begin{enumerate}[a.]
+
+\item It would be interesting to have comparisons of performance beyond the variations of the two
+proposed models. There should definitely be some naive baseline model (e.g., a persistence
+forecast) and some out-of-the-box model applied directly to the hospitalizations (e.g. seasonal
+ARIMA). Given the forecasting task was taken from the CDC challenge it would also be interesting
+to see how the proposed models fare against the other participants of the challenge.
+
+\item The measure the authors call LWIS tends to give a lot of weight to forecast tasks with low
+(expected) incidence as the relative differences between predictions and observations can be quite
+large then. The "regular" WIS gives most weight to weeks with high incidence. So in a sense both
+are complementary and it may be helpful to also discuss regular WIS a little more.
+
+\item Why was the CRPS used in the simulation and WIS in the data example? These two are sort of
+the same (WIS approximates CRPS), so things would be more coherent if one was used throughout.
+
+\item Some assessment of calibration, e.g. interval coverage, should be added.
+
+\end{enumerate}
+
+\item The authors should at least discuss the possibility of sharing certain parameters across geographic
+units as done e.g. in
+\href{https://www.nature.com/articles/s41467-021-23234-5}{https://www.nature.com/articles/s41467-021-23234-5}
+by Osthus and Moran.
+
+\end{enumerate}
+
+
+\section*{Review BA2412-010R1AE1}
+
+The present paper proposes a novel two component framework for projecting Health 
+and Human Services (HHS) hospitalization, based on hospitalization and 
+influenza-like illness (ILI) data. In a first, step ILI data are modelled which 
+are then used as a predictive covariate in the modelling and projection of the 
+hospitalisation data. Probabilistic forecasts are assessed in a simulation study 
+using proper scoring rules.
+
+
+\begin{enumerate}[1.]
+
+\item Since this paper is submitted to Bayesian analysis, the authors should 
+underline more the modelling aspects and why this is an important contribution 
+for the Bayesian community. What is the impact and importance of priors. Does 
+the model borrow information between different model parts, propagate 
+uncertainty ... In the introduction none of this is mentioned so the question 
+arises whether Bayesian Analysis is the right journal.
+
+\item As I understand one challenge of forecasting hospitalisation data is that the 
+start of the collection of these data is very recent, so that a model only 
+based on these data has not much historic data to be based on. Thus, the idea 
+of using ILI data is natural. The authors could emphasize more and discuss 
+potential alternative models that could even be included in the simulation 
+study. I am missing a comparison to models that are not the newly proposed 
+ones within the paper.
+
+\item Why is it sensible to include ILI as a linear function when modelling 
+hospitalisation. Please motivate more. 
+
+\item The authors provide also state level predictions. However, I do not see 
+where a spatial component is included in the model. Is this only via P or are 
+all states just modelled independently. For influenza I would think that it 
+might be reasonable to assume that neighbouring states show similar behaviour 
+in both ILI and hosptialisation so that borrowing strength between states 
+within one model seems sensible. Please discuss.
+
+\end{enumerate}
+
+
+\subsection*{Specific comments:}
+
+\begin{enumerate}[-]
+
+\item Section 2, page 3: please be more clear on what you mean by the 
+"first seven season". Provide a time frame.
+
+\item Figure 1: I was wondering whether the R-package geofacet could be useful to 
+show also a spatial trend across US states, in addition to temporal trend, for 
+certain years,  similar to the second plot provided here:
+
+https://hafen.github.io/geofacet/
+
+I could image that the curves, onset and general behaviour, varies across the 
+states. The authors refer to this a bit in the discussion. In addition I would 
+prefer to also have months names in the axis labels, to avoid confusion that 
+week 1 is not the first week in January.
+
+Can the hospitalization figures also be shown on state level at least in an appendix.
+
+\item Section 3.5: Please be clear what the strength of a Bayesian inference scheme is. 
+
+\item Equation 6): What does the tilde mean?
+
+\item Page 11: Please motivate the choice of an autoregressive process of order 1 
+more clearly. Why not use a higher order? Would this be beneficial?
+
+\item Page 14: Please discuss the assumption that all components of $\alpha_s$ and 
+$\sigma_\epsilon^2$ are assumed to be same across all seasons. Is this realistic?
+
+\item Figure 7: Please make clear in the caption what the columns represent in an 
+intuitive manner. 
+
+\item Equation 11, 12, 13, 14: Please motivate. The authors write in Section 3.4 
+that the modelling of discrepancy might require careful selection of priors. 
+Please underline more how this is taken care of in this manuscript.
+
+\item Please check for typos.
+  
+\end{enumerate}
+\end{document}
