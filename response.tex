@@ -3,6 +3,11 @@
 \usepackage{enumerate}
 \usepackage{hyperref}
 
+
+\usepackage{xcolor}
+\newcommand{\jarad}[1]{{\color{red} Jarad: #1}}
+\newcommand{\spencer}[1]{{\color{green} Spencer: #1}}
+
 \begin{document}
   
   
@@ -37,6 +42,11 @@ this type of procedure (is "modular Bayesian" a standard term?).
 \item Also, it should be argued explicitly why this approach was chosen over a standard fully
 Bayesian approach in the setting at hand. Was a fully Bayesian approach also explored? Which
 difficulties were encountered?
+
+\spencer{Without assuming a value for the $\lambda$ parameter in the ASG model, there were
+serious problems with parameter identifiability. 
+Osthus et al. in their SIR model doe something similar by setting $S_0 = 0.9$}
+
 \item Notably it would be helpful to comment on how this approach affects the uncertainty
 propagation / overall quantification of forecast uncertainty.
 
@@ -51,18 +61,40 @@ similar symptoms. How reasonable is it to assume SIR dynamics for such an indica
 really assume that the tipping point due to susceptible depletion can be captured reasonably here? In
 my understanding this would be the only reason to include an S compartment.
 
+\spencer{I agree with these comments on the SIR model. Perhaps we emphasized the SIR model more than we 
+should have. Osthus et al. use the SIR model in combination with a data driven model
+in an attempt to capture some aspect of the science in their forecast model.
+More important in the argument of this paper than that the specific SIR model is
+a superior in some way for modeling ILI is that the ASG model may
+be a reasonable alternative to existing compartmental models at least in terms
+of forecast performance.}
+
 \item My impression is that the SIR does not really have any mechanistic meaning here and is just a
 way of parameterizing curves that look qualitatively like ILI seasons. The ASG approach can be
 seen as an alternative parameterization for such curves. Could the authors comment on what
 practical differences exist between the two parameterizations?
 
+\spencer{Practially, the reason to use the SIR model is generally because it is meant
+to capture some of the scientific understanding of a disease outbreak. Again, we argue 
+that the ASG is a reasonable alternative to SIR models in the case of the seasonal flu
+outbreak. The ASG shape with a rise to a peak and a subsequent fall is similar in shape
+to the regular ILI trajectory. It has also been used successfully in forecasting of 
+other pheneomena with similar rises and falls (i.e. crop moisture)}.
+
+
+
 \item Is the hospitalization indicator specific to influenza? My understanding is that it is, but this
 should be more clear in Section 2.2. If it is influenza-specific: to which degree should we expect ILI
 to be a helpful predictor given that it also contains COVID, RSV etc.? The influenza dynamics are
 likely somewhat hidden in the ILI indicator.
+\spencer{Yes, hospitalizations here are specific to lab confirmed influenza patients. 
+I believe figure 6 in the text gives reason to believe ILI is a good predictor. Maybe 
+we should add some additional EDA with an $R^2$ value to further defend this?}
+
 
 \item Does the hospitalization indicator refer to incident (new) hospitalization or prevalence, i.e.,
 bed occupancy?
+\spencer{The weekly hospitalization indicator refers to new incident hospitalizations}
 
 \item Is there any "mechanistic" rationale behind the ARX formulation for the hospitalizations? If we
 predict prevalence / bed occupancy I can sort of see why the differences between weeks would be
@@ -71,6 +103,10 @@ formulation.
 
 \item Currently the ILI value from the same week is used in equation (7). Would there be a point in
 exploring different lags?
+\spencer{Exploring different lags is an important idea here, especially considering there
+may be a reporting lag. However, the reporting lag is not as big an issue as it has
+been in the past. We assessed ILI lags for both one and two weeks previous to the current
+week and found that ILI had less predictive power. }
 
 \item On page 14 it says: "all negative values of [...] were set to 0 to reflect realistic values of
 hospitalizations". Could this be handled more naturally by appropriate distributional assumptions?
@@ -95,8 +131,12 @@ are complementary and it may be helpful to also discuss regular WIS a little mor
 
 \item Why was the CRPS used in the simulation and WIS in the data example? These two are sort of
 the same (WIS approximates CRPS), so things would be more coherent if one was used throughout.
+\spencer{Probably use CRPS throughout and not WIS at all.}
 
 \item Some assessment of calibration, e.g. interval coverage, should be added.
+\spencer{We can add this. I don't think it will look good, but maybe we recommend
+further research involving calibration of posterior credible regions (Syring \& Martin 2019)
+or generalized predictive distributions (Wu \& Martin 2021).}
 
 \end{enumerate}
 
@@ -127,6 +167,9 @@ the model borrow information between different model parts, propagate
 uncertainty ... In the introduction none of this is mentioned so the question 
 arises whether Bayesian Analysis is the right journal.
 
+\spencer{The ILI models are hierarchical and intended to be made so that information
+accross all previous seasons may be borrowed for modeling the current season.}
+
 \item As I understand one challenge of forecasting hospitalisation data is that the 
 start of the collection of these data is very recent, so that a model only 
 based on these data has not much historic data to be based on. Thus, the idea 
@@ -134,9 +177,14 @@ of using ILI data is natural. The authors could emphasize more and discuss
 potential alternative models that could even be included in the simulation 
 study. I am missing a comparison to models that are not the newly proposed 
 ones within the paper.
+\spencer{Should include comparison to a naive baseline (probably a random walk) 
+and an out of the box ARMA or ARIMA, and maybe exponential smoothing.}
 
 \item Why is it sensible to include ILI as a linear function when modelling 
 hospitalisation. Please motivate more. 
+
+\spencer{I think this is supported in figure 6 in the paper, though as mentioned 
+in response to previous reviewer, maybe additional EDA would be helpful.}
 
 \item The authors provide also state level predictions. However, I do not see 
 where a spatial component is included in the model. Is this only via P or are 
@@ -171,9 +219,12 @@ Can the hospitalization figures also be shown on state level at least in an appe
 \item Section 3.5: Please be clear what the strength of a Bayesian inference scheme is. 
 
 \item Equation 6): What does the tilde mean?
+\spencer{The tilde indicates forecast ILI. Maybe it just shouldn't be there?}
 
 \item Page 11: Please motivate the choice of an autoregressive process of order 1 
 more clearly. Why not use a higher order? Would this be beneficial?
+\spencer{We explored higher orders and found that they didn't provide any more
+predictive power than order 1 did.}
 
 \item Page 14: Please discuss the assumption that all components of $\alpha_s$ and 
 $\sigma_\epsilon^2$ are assumed to be same across all seasons. Is this realistic?
