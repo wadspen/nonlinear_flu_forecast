@@ -1,7 +1,7 @@
 
-setwd("~/flu_research/nonlinear_flu_forecast/")
-source('~/flu_research/nonlinear_flu_forecast/functions_data/get_data_functions_new.R')
-source('~/flu_research/nonlinear_flu_forecast/functions_data/mle_functions.R')
+setwd("./nonlinear_flu_forecast/")
+source('./functions_data/get_data_functions_new.R')
+source('./nonlinear_flu_forecast/functions_data/mle_functions.R')
 
 
 
@@ -165,7 +165,7 @@ both_flu <- both_flu %>%
   mutate(uwili2 = count_rate2*unweighted_ili^2, 
          cruili = unweighted_ili*count_rate2)
 
-sample_flu <- both_flu %>% filter(region == "Iowa", season == 2022:2023)
+sample_flu <- both_flu %>% filter(region == "Iowa", season %in% 2022:2023)
 y <- sample_flu$value; x = sample_flu$unweighted_ili*sample_flu$count_rate1
 x2 <- x^2
 mod <- lm(y ~ x)
