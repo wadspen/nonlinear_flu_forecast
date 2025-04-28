@@ -108,7 +108,7 @@ get_ili_data <- function(lag = 2) {
   # colnames(pops)[1] <- "region"
   pops <- pops %>% 
     select(location_name, population, count_rate1, 
-           #count_rate2, 
+           count_rate2,
            count_rate3,
            count_rate4, count_rate5)
   colnames(pops)[1] <- "region"

@@ -1,4 +1,4 @@
-setwd("~/flu_research/nonlinear_flu_forecast/")
+setwd("../")
 source("./flu_forecast_23/get_data_functions_new.R")
 # setwd("./model-output/")
 # source("../target-data/get_target_data.R")

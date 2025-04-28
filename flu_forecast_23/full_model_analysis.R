@@ -41,7 +41,7 @@ if (hosp_log == TRUE) {both_flu2$value <- log(both_flu2$value + 1)}
             # j <- "Georgia"; k <- 21 
 j <- "US"
 all_qforcs_res <- data.frame()
-for (k in 13:38) {
+for (k in 25:38) {
             both_flu_hold <- both_flu %>%
               filter(region == j, season == 2022 | (season == 2023 & season_week <= k)) 
             
@@ -126,6 +126,7 @@ all_qforcs_res %>%
   group_by(date) %>%
   summarise(mwis = mean(wis)) %>%
   ggplot() +
-  geom_line(aes(x = date, y = mwis))
+  geom_line(aes(x = date, y = mwis)) +
+  geom_hline(yintercept = .9)
 
-
+write.csv(all_qforcs_res, "res.csv", row.names = FALSE)

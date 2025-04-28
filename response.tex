@@ -2,11 +2,12 @@
 
 \usepackage{enumerate}
 \usepackage{hyperref}
-
+\usepackage{amsmath}
+% \usepackage{amsfonts}
 
 \usepackage{xcolor}
 \newcommand{\jarad}[1]{{\color{red} Jarad: #1}}
-\newcommand{\spencer}[1]{{\color{green} Spencer: #1}}
+\newcommand{\spencer}[1]{{\color{blue} Spencer: #1}}
 
 \begin{document}
   
@@ -36,6 +37,29 @@ Bayesian procedure. Is this done on purpose and if so what is the motivation? Th
 procedure reminds me of the "Bayesian cut" in the version described by Plummer
 \href{(https://link.springer.com/article/10.1007/s11222-014-9503-z)}{(https://link.springer.com/article/10.1007/s11222-014-9503-z)}.
 This may be a useful reference.
+
+\spencer{In the forecasting competition, the data comes generally by the afternoon and
+forecasts are due by the evening. We initially did a full Bayesian procedure
+(minus the MLE selection of the $\lambda$ parameter in the ASG ILI model), but fit 
+was very slow and made it difficutl to get forecasts submitted in time. We switched
+to using two separate models because of the time saved in model fitting. We also
+found that in terms of the proper scoring rules and predictive interval coverage,
+there wasn't a drop in performance although the parameter estimation did 
+change.
+
+\begin{equation}
+\begin{aligned}
+    p(\tilde{H}_{s,w^*} | \textbf{ILI}, \textbf{H}) &= \int 
+       p(\tilde{H}_{s,w^*} | \textbf{ILI}, \textbf{H}, \boldsymbol{\alpha}) 
+       p(\boldsymbol{\alpha} | \textbf{ILI}, \textbf{H}) d\boldsymbol{\alpha} \\
+    p(\tilde{H}_{s,w^*} | \textbf{ILI}, \textbf{H}, \boldsymbol{\alpha}) &= 
+       \int p(\tilde{H}_{s,w^*} | \textbf{H}, \textbf{ILI}, 
+       \widetilde{ILI}_{s,w^*}, \boldsymbol{\alpha}) 
+       p(\widetilde{ILI}_{s,w^*} | \textbf{ILI}) d\widetilde{ILI}_{s,w^*}
+\end{aligned}
+\end{equation}
+}
+
 \item The authors employ a "modular Bayesian approach" mixing maximum likelihood and
 Bayesian estimation. The authors should provide more ample references to the literature concerning
 this type of procedure (is "modular Bayesian" a standard term?).
