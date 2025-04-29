@@ -107,6 +107,7 @@ get_ili_data <- function(lag = 2) {
   pops <- read.csv("https://raw.githubusercontent.com/cdcepi/FluSight-forecast-hub/main/auxiliary-data/locations.csv")
   # colnames(pops)[1] <- "region"
   pops <- pops %>% 
+    mutate(count_rate2 = count_rate1*2) %>% 
     select(location_name, population, count_rate1, 
            count_rate2,
            count_rate3,
@@ -131,7 +132,7 @@ comb_data <- function(lag = 2, s_region = NA, s_season = 2022) {
   ILINet <- get_ili_data(lag = lag) %>% 
     select(region, unweighted_ili, week_start, location_name, season, place,
            season_week, population, count_rate1, 
-           #count_rate2, 
+           count_rate2,
            count_rate3,
            count_rate4, count_rate5) %>%
     select(-place)
