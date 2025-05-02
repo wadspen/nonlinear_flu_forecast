@@ -81,6 +81,9 @@ vector[n_params] theta;
 matrix[n_seasons,n_params] theta_s;
 real<lower=0> sigma_gamma_w;
 real<lower=0> sigma_gamma;
+real<lower=0> sigma_upsilon;
+real<lower=0> sigma_delt;
+real<lower=0, upper=1> alpha_up;
 array[n_seasons] real<lower=0> kappas;
 
 
@@ -109,6 +112,9 @@ model {
 theta ~ multi_normal(m0,C0);
 sigma_gamma ~ normal(0, sigma_sigma_gamma);
 sigma_gamma_w ~ normal(sigma_disc, sigma_gamma_W);
+sigma_upsilon ~ normal(0, sigma_sigma_gamma_w);
+sigma_delt ~ gamma(.5, 12);
+alpha_up ~ normal(.8, sigma_delt);
 zeta ~ normal(0, c);
 
 
@@ -120,10 +126,10 @@ for (i in 1:n_seasons) {
 }
 
 gamma[n_weeks] ~ normal(0, .1*sqrt(sigma_gamma_w));
-for (i in 1:(n_weeks-2)) gamma[i] ~ normal(.3*gamma[i+1], .1*sqrt(sigma_gamma));
+for (i in 1:(n_weeks-2)) gamma[i] ~ normal(.3*gamma[i+1], sigma_gamma);
 
-upsilon[n_weeks - 1] ~ normal(-exp(beta[n_seasons])/(1 + exp(beta[n_seasons])), sigma_sigma_gamma);
-for (i in 1:(n_weeks-2)) upsilon[i] ~ normal(.8*upsilon[i+1], .03*sigma_sigma_gamma_w);
+upsilon[n_weeks - 1] ~ normal(-exp(beta[n_seasons])/(1 + exp(beta[n_seasons])), sigma_upsilon);
+for (i in 1:(n_weeks-2)) upsilon[i] ~ normal(alpha_up*upsilon[i+1], sigma_upsilon);
 
 
 for (i in 1:(M - cur_yr_n_weeks)) ili[i] ~ beta_proportion(
@@ -148,7 +154,7 @@ for (i in (M - cur_yr_n_weeks + 1):M) ili[i] ~ beta_proportion(
 
 generated quantities {
     array[cur_yr_n_weeks + 5, n_seasons] real<lower=0,upper=1> pred_ili;
-    //array[cur_yr_n_weeks + 5, n_seasons] real pred_ili_asg;
+    // array[cur_yr_n_weeks + 5, n_seasons] real pred_ili_asg;
     array[cur_yr_n_weeks + 5] real discrepancy; //as opposed to n_weeks
     array[cur_yr_n_weeks + 5] real discrepancy2;    
     
@@ -164,7 +170,7 @@ generated quantities {
         
         
   
-        //pred_ili_asg[j,i] = beta_proportion_rng(
+        // pred_ili_asg[j,i] = beta_proportion_rng(
         //                      inv_logit(asg(theta_s[i,],
         //                      beta[i],
         //                      j)),
