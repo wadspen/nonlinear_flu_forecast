@@ -125,7 +125,7 @@ for (i in 1:n_seasons) {
                           kappas[i] ~ normal(0, sigma_kappa);
 }
 
-gamma[n_weeks - 1] ~ normal(0, .1*sqrt(sigma_gamma_w));
+gamma[n_weeks - 1] ~ normal(0, sigma_gamma_w);
 for (i in 1:(n_weeks-2)) gamma[i] ~ normal(gamma[i+1], sigma_gamma);
 
 upsilon[n_weeks - 1] ~ normal(-exp(beta[n_seasons])/(1 + exp(beta[n_seasons])), sigma_upsilon);
@@ -154,7 +154,7 @@ for (i in (M - cur_yr_n_weeks + 1):M) ili[i] ~ beta_proportion(
 
 generated quantities {
     array[cur_yr_n_weeks + 5, n_seasons] real<lower=0,upper=1> pred_ili;
-    // array[cur_yr_n_weeks + 5, n_seasons] real pred_ili_asg;
+    array[cur_yr_n_weeks + 5, n_seasons] real pred_ili_asg;
     array[cur_yr_n_weeks + 5] real discrepancy; //as opposed to n_weeks
     array[cur_yr_n_weeks + 5] real discrepancy2;    
     
@@ -170,11 +170,11 @@ generated quantities {
         
         
   
-        // pred_ili_asg[j,i] = beta_proportion_rng(
-        //                      inv_logit(asg(theta_s[i,],
-        //                      beta[i],
-        //                      j)),
-        //                      kappas[i]);
+        pred_ili_asg[j,i] = beta_proportion_rng(
+                             inv_logit(asg(theta_s[i,],
+                             beta[i],
+                             j)),
+                             kappas[i]);
                               
         
         

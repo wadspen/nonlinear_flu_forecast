@@ -180,7 +180,7 @@ make_stan_data <- function(dat1, dat2, ili_seasons,
                            I0_mu = .005, I0_sigma = .03,
                            sigma_mu_alpha_w = 2, sigma_mu_beta_w = 2,
                            sigma_mu_alpha = 2, sigma_mu_beta = .02,
-			   sigma_gamma_W = 1, 
+			   sigma_gamma_W = .1, 
                            traj = 'asg', dist = "norm", hosp_log = FALSE) {
   
   start <- c(-4.2533962, 0.3416948, 22.5023919, 2.3580754, 
@@ -411,7 +411,7 @@ get_stan_data <- function(ILINet, both_flu, s_region = 'US', s_seasons =
                           sigma_alpha1 = 1000, sigma_alpha3 = .5, 
 			  sigma_xi = 3, sigma_eta = .4,
                           sigma_sigma_epsilon = 20,
-			  sigma_gamma_W = 1,
+			  sigma_gamma_W = .1,
                           rho_mu = .68, rho_sigma = .08,
                           beta_mu = .8, beta_sigma = .3,
                           I0_mu = .005, I0_sigma = .03,
