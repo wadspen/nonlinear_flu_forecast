@@ -82,6 +82,7 @@ matrix[n_seasons,n_params] theta_s;
 real<lower=0> sigma_gamma_w;
 real<lower=0> sigma_gamma;
 array[n_seasons] real<lower=0> sigma_upsilon;
+real<lower=0> sigma_sigma_upsilon;
 array[n_seasons] real<lower=0> kappas;
 
 
@@ -113,27 +114,43 @@ theta ~ multi_normal(m0,C0);
 sigma_gamma ~ normal(0, sigma_sigma_gamma);
 sigma_gamma_w ~ normal(sigma_disc, sigma_gamma_W);
 zeta ~ normal(0, c);
-sigma_upsilon ~ normal(0, sigma_sigma_gamma_w);
+sigma_upsilon ~ normal(0, sigma_sigma_upsilon);
+sigma_sigma_upsilon ~ gamma(2, 2);
 
                     
-for (i in 1:n_seasons) {
-                 
-			  theta_s[i,] ~ multi_normal(theta, diag_matrix(square(zeta)));
-                          kappas[i] ~ normal(0, sigma_kappa);
-}
+// for (i in 1:n_seasons) {
+//                  
+// 			  theta_s[i,] ~ multi_normal(theta, diag_matrix(square(zeta)));
+//                           kappas[i] ~ normal(0, sigma_kappa);
+// }
 
 gamma[n_weeks - 1] ~ normal(0, sqrt(sigma_gamma_w));
-for (i in 1:(n_weeks-2)) gamma[i] ~ normal(gamma[i+1], sqrt(sigma_gamma));
+// for (i in 1:(n_weeks-2)) gamma[i] ~ normal(gamma[i+1], sqrt(sigma_gamma));
 
-for (i in 1:n_seasons) {
-  upsilon[n_weeks - 1, i] ~ normal(upsilon1[1, i], sigma_upsilon[i]);
-}
+gamma[1:(n_weeks-2)] ~ normal(gamma[2:(n_weeks-1)], sqrt(sigma_gamma));
 
-for (i in 1:(n_weeks-2)) {
+// for (i in 1:n_seasons) {
+//   upsilon[n_weeks - 1, i] ~ normal(upsilon1[1, i], sigma_upsilon[i]);
+// }
+
+upsilon[n_weeks - 1, 1:n_seasons] ~ normal(upsilon1[1, 1:n_seasons], 
+                                           sigma_upsilon[1:n_seasons]);
+
+// for (i in 1:(n_weeks-2)) {
+//   for (j in 1:n_seasons) {
+//     upsilon[i, j] ~ normal(upsilon[i + 1, j], sigma_upsilon[j]);
+//   }
+// }
+
+// for (i in 1:(n_weeks-2)) {
   for (j in 1:n_seasons) {
-    upsilon[i, j] ~ normal(upsilon[i + 1, j], sigma_upsilon[j]);
+    upsilon[1:(n_weeks-2), j] ~ normal(upsilon[2:(n_weeks-1), j], 
+                                      sigma_upsilon[j]);
+                                      
+    theta_s[j,] ~ multi_normal(theta, diag_matrix(square(zeta)));
+                          kappas[j] ~ normal(0, sigma_kappa);
   }
-}
+// }
 
 // for (i in 1:(M - cur_yr_n_weeks)) ili[i] ~ beta_proportion(
 //                                     inv_logit(asg(theta_s[all_seasons[i],],
