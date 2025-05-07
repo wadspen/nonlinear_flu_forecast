@@ -115,7 +115,7 @@ sigma_gamma ~ normal(0, sigma_sigma_gamma);
 sigma_gamma_w ~ normal(sigma_disc, sigma_gamma_W);
 zeta ~ normal(0, c);
 sigma_upsilon ~ normal(0, sigma_sigma_upsilon);
-sigma_sigma_upsilon ~ gamma(2, 2);
+sigma_sigma_upsilon ~ normal(0, .05);
 
                     
 // for (i in 1:n_seasons) {
@@ -133,8 +133,8 @@ gamma[1:(n_weeks-2)] ~ normal(gamma[2:(n_weeks-1)], sqrt(sigma_gamma));
 //   upsilon[n_weeks - 1, i] ~ normal(upsilon1[1, i], sigma_upsilon[i]);
 // }
 
-upsilon[n_weeks - 1, 1:n_seasons] ~ normal(upsilon1[1, 1:n_seasons], 
-                                           sigma_upsilon[1:n_seasons]);
+upsilon[n_weeks - 1, 1:n_seasons] ~ normal(to_vector(upsilon1[1, 1:n_seasons])*0.2, 
+                                           sqrt(sigma_upsilon[1:n_seasons]));
 
 // for (i in 1:(n_weeks-2)) {
 //   for (j in 1:n_seasons) {
@@ -144,8 +144,8 @@ upsilon[n_weeks - 1, 1:n_seasons] ~ normal(upsilon1[1, 1:n_seasons],
 
 // for (i in 1:(n_weeks-2)) {
   for (j in 1:n_seasons) {
-    upsilon[1:(n_weeks-2), j] ~ normal(upsilon[2:(n_weeks-1), j], 
-                                      sigma_upsilon[j]);
+    upsilon[1:(n_weeks-2), j] ~ normal(to_vector(upsilon[2:(n_weeks-1), j])*.2, 
+                                      sqrt(sigma_upsilon[j]));
                                       
     theta_s[j,] ~ multi_normal(theta, diag_matrix(square(zeta)));
                           kappas[j] ~ normal(0, sigma_kappa);
