@@ -78,9 +78,11 @@ for (j in select_regions) { #[47:length(select_regions)]) {
       arrange(date, prob) %>% 
       left_join(both_flu_reg, by = "date") %>% 
       group_by(date) %>% 
-      summarise(wis = weighted_interval_score(prob, value, unique(true_value)),
+      summarise(lwis = weighted_interval_score(prob, value, unique(true_value)),
                 cover = between(unique(true_value), value[prob == .025], value[prob == .975])) %>% 
-      mutate(week = k, model = "base", region = j)
+      mutate(week = k, model = "base", region = j) %>% 
+      mutate(reference_date = date) %>% 
+      mutate(horizon = 0:3)
     
     
     
@@ -111,9 +113,11 @@ for (j in select_regions) { #[47:length(select_regions)]) {
       arrange(date, prob) %>% 
       left_join(both_flu_reg, by = "date") %>% 
       group_by(date) %>% 
-      summarise(wis = weighted_interval_score(prob, value, unique(true_value)),
+      summarise(lwis = weighted_interval_score(prob, value, unique(true_value)),
                 cover = between(unique(true_value), value[prob == .025], value[prob == .975])) %>% 
-      mutate(week = k, model = "arima", region = j)
+      mutate(week = k, model = "arima", region = j) %>% 
+      mutate(reference_date = date) %>% 
+      mutate(horizon = 0:3)
     
     
     

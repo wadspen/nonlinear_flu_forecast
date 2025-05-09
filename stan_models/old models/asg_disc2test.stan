@@ -85,24 +85,24 @@ array[n_seasons] real<lower=0> sigma_upsilon;
 real<lower=0> sigma_sigma_upsilon;
 array[n_seasons] real<lower=0> kappas;
 array[n_seasons] real<lower=0, upper=1> alpha_up;
-
+real<lower=0, upper=1> alpha_h;
 
 vector<lower=0>[n_params] zeta;
-array[n_weeks] real gamma;
+array[n_weeks - 1] real gamma;
 
 array[n_weeks - 1, n_seasons] real upsilon;
 
 }
 
 transformed parameters {
-// array[1] real gamma1;
-// array[n_weeks] real gam;
+array[1] real gamma1;
+array[n_weeks] real gam;
 
 array[1, n_seasons] real upsilon1;
 array[n_weeks, n_seasons] real ups;
 
-// gamma1[1] = -sum(gamma);
-// gam = append_array(gamma1, gamma);
+gamma1[1] = -sum(gamma);
+gam = append_array(gamma1, gamma);
 
 for (i in 1:n_seasons) upsilon1[1, i] = -exp(beta[i])/(1 + exp(beta[i]));
 ups = append_array(upsilon, upsilon1);
@@ -116,8 +116,9 @@ sigma_gamma ~ normal(0, sigma_sigma_gamma);
 sigma_gamma_w ~ normal(sigma_disc, sigma_gamma_W);
 zeta ~ normal(0, c);
 sigma_upsilon ~ normal(0, sigma_sigma_upsilon);
-sigma_sigma_upsilon ~ normal(0, .05);
-alpha_up ~ normal(0, .1);
+sigma_sigma_upsilon ~ normal(0, 4);
+alpha_up ~ normal(0, alpha_h);
+alpha_h ~ normal(0, sigma_gamma_W);
 
                     
 // for (i in 1:n_seasons) {
@@ -126,10 +127,10 @@ alpha_up ~ normal(0, .1);
 //                           kappas[i] ~ normal(0, sigma_kappa);
 // }
 
-gamma[n_weeks] ~ normal(0, sqrt(sigma_gamma_w));
-// for (i in 1:(n_weeks-2)) gamma[i] ~ normal(gamma[i+1], sqrt(sigma_gamma));
+gamma[n_weeks - 1] ~ normal(0, sqrt(sigma_gamma_w));
+for (i in 1:(n_weeks-2)) gamma[i] ~ normal(gamma[i+1], sqrt(sigma_gamma));
 
-gamma[1:(n_weeks-1)] ~ normal(gamma[2:(n_weeks)], sqrt(sigma_gamma));
+// gamma[1:(n_weeks-1)] ~ normal(gamma[2:(n_weeks)], sqrt(sigma_gamma));
 
 // for (i in 1:n_seasons) {
 //   upsilon[n_weeks - 1, i] ~ normal(upsilon1[1, i], sigma_upsilon[i]);
@@ -172,7 +173,7 @@ for (i in 1:M) ili[i] ~ beta_proportion(
                                     inv_logit(asg(theta_s[all_seasons[i],],
                                     beta[all_seasons[i]],
                                     weeks[i]) +
-                                    gamma[weeks[i]] + ups[weeks[i],
+                                    gam[weeks[i]] + ups[weeks[i],
                                                         all_seasons[i]]),
                                     kappas[all_seasons[i]]); 
         
@@ -192,7 +193,7 @@ generated quantities {
                               inv_logit(asg(theta_s[i,],
                               beta[i],
                               j) +
-                              gamma[j] + ups[j, all_seasons[i]]),
+                              gam[j] + ups[j, all_seasons[i]]),
                               kappas[i]);
                               
         

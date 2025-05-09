@@ -82,6 +82,8 @@ matrix[n_seasons,n_params] theta_s;
 real<lower=0> sigma_gamma_w;
 real<lower=0> sigma_gamma;
 real<lower=0> sigma_upsilon;
+//real<lower=0> sigma_delt;
+//real<lower=0, upper=1> alpha_up;
 array[n_seasons] real<lower=0> kappas;
 
 
@@ -100,7 +102,7 @@ array[n_weeks] real ups;
 gamma1[1] = -sum(gamma);
 gam = append_array(gamma1, gamma);
 
-upsilon1[1] = 0; //-exp(beta[n_seasons])/(1 + exp(beta[n_seasons]));
+upsilon1[1] = -exp(beta[n_seasons])/(1 + exp(beta[n_seasons]));
 ups = append_array(upsilon, upsilon1);
 
 }
@@ -110,8 +112,11 @@ model {
 theta ~ multi_normal(m0,C0);
 sigma_gamma ~ normal(0, sigma_sigma_gamma);
 sigma_gamma_w ~ normal(sigma_disc, sigma_gamma_W);
-zeta ~ normal(0, c);
 sigma_upsilon ~ normal(0, sigma_sigma_gamma_w);
+//sigma_delt ~ gamma(.5, 12);
+//alpha_up ~ normal(.8, sigma_delt);
+zeta ~ normal(0, c);
+
 
                     
 for (i in 1:n_seasons) {
@@ -120,11 +125,10 @@ for (i in 1:n_seasons) {
                           kappas[i] ~ normal(0, sigma_kappa);
 }
 
-gamma[n_weeks - 1] ~ normal(0, sqrt(sigma_gamma_w));
-for (i in 1:(n_weeks-2)) gamma[i] ~ normal(gamma[i+1], sqrt(sigma_gamma));
+gamma[n_weeks - 1] ~ normal(0, .1*sqrt(sigma_gamma_w));
+for (i in 1:(n_weeks-2)) gamma[i] ~ normal(gamma[i+1], sigma_gamma);
 
-upsilon[n_weeks - 1] ~ normal(0, //-exp(beta[n_seasons])/(1 + exp(beta[n_seasons])), 
-                              sigma_upsilon);
+upsilon[n_weeks - 1] ~ normal(-exp(beta[n_seasons])/(1 + exp(beta[n_seasons])), sigma_upsilon);
 for (i in 1:(n_weeks-2)) upsilon[i] ~ normal(upsilon[i+1], sigma_upsilon);
 
 

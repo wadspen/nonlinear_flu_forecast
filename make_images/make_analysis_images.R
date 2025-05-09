@@ -8,21 +8,21 @@ library(evalcast)
 library(dplyr)
 library(tidyr)
 library(scoringutils)
-both_flu <- comb_data(lag = 2)
+both_flu <- comb_data(lag = 1)
 date_weeks <- both_flu %>%
   select(date, season_week) %>% unique
 ILINet <- get_ili_data()
 
 
-setwd("~/flu_research/Prelim Content/models")
+setwd("~/Documents/Research/nonlinear_flu_forecast/models")
 
 #season_week 10 is "2023-10-14"
 
-target_data <- read.csv("../../../forecast-hub/FluSight-forecast-hub/target-data/target-hospital-admissions.csv") %>%
+target_data <- read.csv("../../FluSight-forecast-hub/target-data/target-hospital-admissions.csv") %>%
   mutate(true_value = value) %>%
   select(-value)
 # setwd("~/forecast-hub/FluSight-forecast-hub/model-output/")
-folders <- list.files("./")
+folders <- list.files("../models")
 models <- folders[-which(folders == "FluSight-ensemble")]
 
 sub_dates <- substr(list.files("./FluSight-baseline"), 1, 10)
@@ -144,7 +144,8 @@ distq_labels <-
   c(expression(LNORM), expression(LNORM^2), expression(LST), 
     expression(LST^2), expression(NORM), expression(NORM^2))
 
-
+b_scores <- team_scores %>% 
+  filter(model == "FluSight-baseline")
 
 team_scores %>% 
   # filter(dist == "LST") %>%
@@ -195,14 +196,34 @@ team_scores %>%
         legend.title = element_text(size = 14),
         legend.position = "none")
 
+bres <- read.csv("../models/res.csv")
 
+all_bres <- bres %>% 
+  filter(horizon %in% hor) %>% 
+  mutate(reference_date = date(date), location_name = region, traj = "TIME",
+         distq = "LNORM") %>%
+  group_by(location_name, reference_date, model) %>% 
+  summarise(mrwis = mean(lwis)) %>% 
+  filter(reference_date < "2024-04-01") %>% 
+  left_join(both_flu %>% 
+              filter(season == 2023) %>% 
+              select(season_week, date) %>% 
+              mutate(date = date(date)) %>% 
+              unique(),
+            by = join_by(reference_date == date), multiple = "all")# 
+
+
+
+
+loc <- "Alaska"
+hor <- 0
 team_scores %>% 
-  # filter(horizon == 0) %>%
+  # filter(horizon %in% hor) %>%
   # filter(dist == "LST") %>%
   mutate(distq = ifelse(sq == "SQ", paste0(dist,2),
                         dist),
          disc = ifelse(disc == "D", "Disc","No Disc")) %>% 
-  filter(location_name == "US") %>%
+  filter(location_name == loc, reference_date < "2024-04-01") %>%
   filter(!(model %in% c("FluSight-ensemble", "FluSight-baseline"))) %>% 
   mutate(forecast_date = date(reference_date) + 7*as.numeric(horizon)) %>%
   ungroup() %>% 
@@ -216,14 +237,32 @@ team_scores %>%
   summarise(mrwis = mean(lwis)) %>% 
   rowwise() %>% 
   mutate(minwis = mean(mrwis)) %>% 
-  ggplot() +
+  ggplot(aes(x = season_week, y = minwis, colour = disc)) +
   geom_vline(xintercept = 22, size = 8, colour = "lightgrey") +
-  geom_line(aes(x = season_week, y = minwis, colour = disc),
-            size = 1) +
+  geom_line(size = 1) +
   scale_color_manual(values = c("darkgrey", "black")) +
   facet_grid(traj~distq) +
   ylab("LWIS") +
   xlab("Week") +
+  # geom_line(data = all_bres %>% 
+  #             filter(location_name == loc, model == "base"), 
+  #           aes(x = season_week, y = mrwis, group = model), 
+  #           inherit.aes = FALSE, colour = "red") +
+  
+  geom_line(data = b_scores %>% 
+              mutate(forecast_date = date(reference_date) + 
+                       7*as.numeric(horizon)) %>%
+              left_join(both_flu %>% 
+                        filter(season == 2023) %>% 
+                        select(season_week, date) %>% 
+                        mutate(date = date(date)) %>% 
+                        unique(),
+                        by = join_by(forecast_date == date), 
+                        multiple = "all") %>% 
+              filter(location_name == loc, reference_date < "2024-04-01") %>% 
+              group_by(season_week) %>% 
+              summarise(mrwis = mean(lwis)), aes(x = season_week, y = mrwis), 
+            inherit.aes = FALSE, colour = "red") +
   theme_bw() +
   theme(axis.text.x=element_text(size=14),
         axis.text.y = element_text(size = 14, angle = 90, hjust = .45),
@@ -285,7 +324,6 @@ team_scores %>%
 
 
 
-
 team_scores %>% 
   # filter(dist == "LST") %>%
   mutate(distq = ifelse(sq == "SQ", paste0(dist,2),
@@ -302,6 +340,7 @@ team_scores %>%
               unique(),
             by = join_by(forecast_date == date), multiple = "all") %>% 
   group_by(season_week, location_name, dist) %>% 
+  select(reference_date, location_name, horizon, lwis) %>% 
   summarise(mrwis = mean(lwis)) %>% 
   rowwise() %>% 
   mutate(minwis = mean(mrwis)) %>% 
