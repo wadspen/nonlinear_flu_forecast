@@ -10,7 +10,7 @@
 module load gcc
 module load r
 module load udunits
-module load r-rgdal
 module load proj
+module load r-rgdal
 
 Rscript ./full_ili_fits.R "$1"

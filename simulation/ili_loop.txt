@@ -1,0 +1,11 @@
+
+ps=(2010 2012 2014 2016 2018 2019 2021)
+
+#echo "${models[@]}"
+
+for p in "${ps[@]}"
+do
+  sbatch -x nova20-amp-1 full_fit_ili.sh $"asg_disc2" $p
+done
+
+

@@ -1,4 +1,4 @@
-setwd("../")
+setwd("../flu_forecast_23")
 #source("./simulation/simulate_hospitalizations.R")
 source("./get_data_functions_new.R")
 source("./mle_functions.R")
@@ -6,8 +6,8 @@ library(parallel)
 library(doParallel)
 library(doMC)
 library(evalcast)
-n.cores <- detectCores()
-#n.cores <- 1
+#n.cores <- detectCores()
+n.cores <- 60
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -21,9 +21,9 @@ ILINet <- get_ili_data() %>%
 args <- commandArgs()
 model <- args[6]#; model <- "sir"
 print(model)
-mod_string <- paste("./stan_models/", model, ".stan", sep = "")
+mod_string <- paste("../stan_models/", model, ".stan", sep = "")
 mod <- cmdstan_model(stan_file = mod_string)
-
+setwd("./flu_forecast_23")
 select_regions = "US"
 ILINet_state <- ILINet %>%
    filter(region == select_regions)
