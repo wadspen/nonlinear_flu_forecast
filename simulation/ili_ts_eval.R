@@ -10,6 +10,7 @@ library(doParallel)
 library(doMC)
 source("../flu_forecast_23/get_data_functions_new.R")
 n.cores <- detectCores()
+n.cores <- 1
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -39,11 +40,11 @@ all_results <- data.frame()
 	results <- foreach(seas = c(2010:2019, 2021:2022),
 				.packages = c("dplyr", "tidyr", "stringr", "readr", "evalcast",
 					      "scoringRules")
-					      ,.errorhandling = "remove"
+					      #,.errorhandling = "remove"
 					      ,.combine = rbind
 					      ) %:%
 				foreach(wk = 9:38, .combine = rbind) %dopar% {
-		    
+#seas <- 2012; wk <- 17
 			true_ili <- ILINet %>%
 				filter(season == seas, season_week %in% c(wk + 1:4)) %>%
 				ungroup() %>%
@@ -57,23 +58,23 @@ all_results <- data.frame()
 						"/week", wk, ".csv")
 			
 			forecast <- read.csv(forecast_file) #%>% #select(-X)
-	
+			forecast <- forecast/100
 			cont_scores <- data.frame()
 			for (i in 2:5) {
 		          true_value <- as.numeric(true_ili[i - 1])
-		          kdens <- density(forecast[,i], kernel = "gaussian", from = -12, to = 12)
+		          kdens <- density(forecast[,i - 1], kernel = "gaussian", from = -12, to = 12)
 			  logs2 <- -log(approx(kdens$x, kdens$y, true_value)$y)
-			  crps <- crps_sample(true_value, as.vector(forecast[,i]))
-			  logs <- logs_sample(true_value, as.vector(forecast[,i]))
-			  pit <- ecdf(as.vector(forecast[,i]))(true_value)
+			  crps <- crps_sample(true_value, as.vector(forecast[,i - 1]))
+			  logs <- logs_sample(true_value, as.vector(forecast[,i - 1]))
+			  pit <- ecdf(as.vector(forecast[,i - 1]))(true_value)
 			  scores <- data.frame(season = seas, week_ahead = i - 1, 
 					       crps = crps, logs = logs, logs2 = logs2, pit = pit)
 			  cont_scores <- rbind(cont_scores, scores)
 			}
 			
 			
-		        colnames(forecast) <- paste0("week", 0:5)	
-                        quantiles <- apply(forecast[,2:5], MARGIN = 2, quantile, probs = probs) %>% data.frame()
+		        colnames(forecast) <- paste0("week", 1:4)	
+                        quantiles <- apply(forecast[,1:4], MARGIN = 2, quantile, probs = probs) %>% data.frame()
                         quantiles$probs <- probs
                         wis_cov <- quantiles %>% 
 			  pivot_longer(1:4, names_to = "week_ahead", values_to = "pred_value") %>% 
@@ -115,10 +116,10 @@ all_results <- data.frame()
                      
 		}
         #print(dim(results))
-	print(class(results))	
+#	print(class(results))	
 	write.csv(results, "test.csv")
 	all_results <- rbind(all_results, results)
-	print(rep)
+#	print(rep)
 
 			
 
