@@ -7,8 +7,8 @@ library(parallel)
 library(doParallel)
 library(doMC)
 library(evalcast)
-n.cores <- detectCores()
-#n.cores <- 1
+#n.cores <- detectCores()
+n.cores <- 64
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -16,9 +16,9 @@ foreach::getDoParWorkers()
 registerDoMC(cores = n.cores)
 
 both_flu <- comb_data(lag = 1) %>%
-    filter(season >= 2010) %>% select(-X)
+    filter(season >= 2010) #%>% select(-X)
 both_flu2 <- comb_data(lag = 2) %>%
-    filter(season >= 2010) %>% select(-X)
+    filter(season >= 2010) #%>% select(-X)
 
 ILINet <- get_ili_data() %>%
     filter(season >= 2010)
@@ -221,6 +221,10 @@ all_forecasts <- all_forecasts %>%
 	group_split(reference_date)
 
 #saveRDS(all_forecasts, "test.rds")
+forecast_dir <- paste0("./fin_hosp_forecasts/", ili_model, "_", model)
+if(dir.exists(forecast_dir) == FALSE) {
+	     dir.create(forecast_dir)
+      }
 
 for (i in 1:length(all_forecasts)) {
 	     ref <- unique(all_forecasts[[i]]$reference_date)
