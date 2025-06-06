@@ -158,7 +158,7 @@ model {
   
   sigma_gamma_w ~ normal(sigma_disc_sir, sigma_gamma_W);
   sigma_gamma ~ normal(0, sigma_sigma_gamma);
-  sigma_upsilon ~ normal(0, sigma_sigma_gamma_w);
+  sigma_upsilon ~ normal(0, sigma_gamma_W);
 
   mu[n_weeks - 1] ~ normal(0, sqrt(sigma_gamma_w));
   upsilon[n_weeks - 1] ~ normal(0, sigma_upsilon);

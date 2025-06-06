@@ -81,12 +81,18 @@ vector[n_params] theta;
 matrix[n_seasons,n_params] theta_s;
 real<lower=0> sigma_gamma_w;
 real<lower=0> sigma_gamma;
-array[n_seasons] real<lower=0> kappas;
 real<lower=0> sigma_upsilon;
+array[n_seasons] real<lower=0> kappas;
+
 
 vector<lower=0>[n_params] zeta;
 array[n_weeks - 1] real gamma;
 array[n_weeks - 1] real upsilon;
+
+vector[n_seasons_hosp] alpha0;
+vector[n_seasons_hosp] alpha1;
+vector<lower=-1,upper=1>[n_seasons_hosp] alpha3;
+vector<lower=0>[n_seasons_hosp] sigma_epsilon;
 
 }
 
@@ -110,10 +116,16 @@ theta ~ multi_normal(m0,C0);
 sigma_gamma ~ normal(0, sigma_sigma_gamma);
 sigma_gamma_w ~ normal(sigma_disc, sigma_gamma_W);
 zeta ~ normal(0, c);
-sigma_upsilon ~ normal(0, sigma_gamma_W);
+sigma_upsilon ~ normal(0, sigma_sigma_gamma_w);
 
-
-                    
+//hospitalization parameters
+alpha0 ~ normal(0, sigma_alpha0);
+alpha1 ~ normal(0, sigma_alpha1);
+sigma_epsilon ~ normal(0, sigma_sigma_epsilon);
+alpha3 ~ normal(0,sigma_alpha3);
+    
+    
+//ili model                
 for (i in 1:n_seasons) {
                  
 			  theta_s[i,] ~ multi_normal(theta, diag_matrix(square(zeta)));
@@ -123,8 +135,8 @@ for (i in 1:n_seasons) {
 gamma[n_weeks - 1] ~ normal(0, sqrt(sigma_gamma_w));
 for (i in 1:(n_weeks-2)) gamma[i] ~ normal(gamma[i+1], sqrt(sigma_gamma));
 
-upsilon[n_weeks - 1] ~ normal(0, //-exp(beta[n_seasons])/(1 + exp(beta[n_seasons])), 
-			      sigma_upsilon);
+upsilon[n_weeks - 1] ~ normal(0,//-exp(beta[n_seasons])/(1 + exp(beta[n_seasons])), 
+                              sigma_upsilon);
 for (i in 1:(n_weeks-2)) upsilon[i] ~ normal(upsilon[i+1], sigma_upsilon);
 
 
@@ -143,48 +155,69 @@ for (i in (M - cur_yr_n_weeks + 1):M) ili[i] ~ beta_proportion(
                                     weeks[i]) +
                                     gam[weeks[i]] + ups[weeks[i]]),
                                     kappas[all_seasons[i]]); 
+                                    
+                                    
+                                    
+                                    
+//hospitalization model
+hosp[1] ~ normal(alpha0[hosp_seasons[1]] +
+                 alpha1[hosp_seasons[1]]*(count_rate*ili[M - HM + 1]),
+			count_rate*sigma_epsilon[hosp_seasons[1]]);
+
+for (i in 2:HM) hosp[i] ~ normal(alpha0[hosp_seasons[i]] + 
+                                 alpha1[hosp_seasons[i]]*(count_rate*ili[M - HM + i]) +
+				 alpha3[hosp_seasons[i]]*hosp[i-1], 
+                                             count_rate*sigma_epsilon[hosp_seasons[i]]);
+                                             
+                                             
         
 }
 
 
 
 generated quantities {
-    array[cur_yr_n_weeks + 5, n_seasons] real<lower=0,upper=1> pred_ili;
-    //array[cur_yr_n_weeks + 5, n_seasons] real pred_ili_asg;
-    //array[cur_yr_n_weeks + 5] real discrepancy; //as opposed to n_weeks
-    //array[cur_yr_n_weeks + 5] real discrepancy2;    
+    array[cur_yr_n_weeks + 5] real<lower=0,upper=1> pred_ili;
+    array[cur_yr_n_weeks + 5] real pred_ili_asg; 
     
-    for (i in 1:n_seasons) {
+    array[cur_yr_n_weeks + 5] real pred_hosp;
+    
+ 
       for (j in 1:(cur_yr_n_weeks + 5)) {
-        pred_ili[j,i] = beta_proportion_rng(
-                              inv_logit(asg(theta_s[i,],
-                              beta[i],
+        pred_ili[j] = beta_proportion_rng(
+                              inv_logit(asg(theta_s[n_seasons,],
+                              beta[n_seasons],
                               j) +
                               gam[j] + ups[j]),
-                              kappas[i]);
+                              kappas[n_seasons]);
                               
         
         
   
-        //pred_ili_asg[j,i] = beta_proportion_rng(
-        //                      inv_logit(asg(theta_s[i,],
-        //                      beta[i],
-        //                      j)),
-        //                      kappas[i]);
+        pred_ili_asg[j] = beta_proportion_rng(
+                             inv_logit(asg(theta_s[n_seasons,],
+                             beta[n_seasons],
+                             j)),
+                             kappas[n_seasons]);
                               
         
         
         
       }
-    }
     
-    //discrepancy[1] = gamma[1];
-    //discrepancy2[1] = ups[1];
+    
 
-    //for (i in 2:(cur_yr_n_weeks + 5)) {
-    //  discrepancy[i] = gamma[i];
-    //  discrepancy2[i] = ups[i];
-    //}
+      pred_hosp[1] = normal_rng(alpha0[hosp_seasons[n_seasons_hosp]] + 
+                                 alpha1[hosp_seasons[n_seasons_hosp]]*(count_rate*pred_ili[n_seasons_hosp]), 
+                                             count_rate*sigma_epsilon[hosp_seasons[n_seasons_hosp]]);
+                                             
+      for (j in 2:(cur_yr_n_weeks + 5)) {
+        pred_hosp[j] = normal_rng(alpha0[hosp_seasons[n_seasons_hosp]] + 
+                                 alpha1[hosp_seasons[n_seasons_hosp]]*(count_rate*pred_ili[n_seasons_hosp]) +
+				 alpha3[hosp_seasons[n_seasons_hosp]]*hosp[j-1], 
+                                             count_rate*sigma_epsilon[hosp_seasons[n_seasons_hosp]]);
+      }
+
+
     
 }
 
