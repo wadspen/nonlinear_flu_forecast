@@ -213,7 +213,7 @@ generated quantities {
       for (j in 2:(cur_yr_n_weeks + 5)) {
         pred_hosp[j] = normal_rng(alpha0 + 
                                  alpha1*(count_rate*pred_ili[j]) +
-				 alpha3*hosp[j-1], 
+				 alpha3*pred_hosp[j-1], 
                                              count_rate*sigma_epsilon);
       }
 
