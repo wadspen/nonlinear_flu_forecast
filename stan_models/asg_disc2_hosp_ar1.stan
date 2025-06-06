@@ -207,12 +207,12 @@ generated quantities {
     
 
       pred_hosp[1] = normal_rng(alpha0[hosp_seasons[n_seasons_hosp]] + 
-                                 alpha1[hosp_seasons[n_seasons_hosp]]*(count_rate*pred_ili[n_seasons_hosp]), 
+                                 alpha1[hosp_seasons[n_seasons_hosp]]*(count_rate*pred_ili[1]), 
                                              count_rate*sigma_epsilon[hosp_seasons[n_seasons_hosp]]);
                                              
       for (j in 2:(cur_yr_n_weeks + 5)) {
         pred_hosp[j] = normal_rng(alpha0[hosp_seasons[n_seasons_hosp]] + 
-                                 alpha1[hosp_seasons[n_seasons_hosp]]*(count_rate*pred_ili[n_seasons_hosp]) +
+                                 alpha1[hosp_seasons[n_seasons_hosp]]*(count_rate*pred_ili[j]) +
 				 alpha3[hosp_seasons[n_seasons_hosp]]*hosp[j-1], 
                                              count_rate*sigma_epsilon[hosp_seasons[n_seasons_hosp]]);
       }
