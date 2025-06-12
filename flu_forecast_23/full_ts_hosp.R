@@ -20,11 +20,11 @@ ILINet <- get_ili_data() %>%
 select_regions <- unique(ILINet$region)
 #select_regions <- c("Alabama", "Alaska")#, "Idaho")
 #select_regions <- c("US")
-hosp_log <- ifelse(str_detect(model, "log"), TRUE, FALSE)
-hosp_lst <- ifelse(str_detect(model, "lst"), TRUE, FALSE)
-sqr <- ifelse(str_detect(model, "sq"), TRUE, FALSE)
-if (hosp_log == TRUE) {both_flu$value <- log(both_flu$value + 1)}
-if (hosp_log == TRUE) {both_flu2$value <- log(both_flu2$value + 1)}
+#hosp_log <- ifelse(str_detect(model, "log"), TRUE, FALSE)
+#hosp_lst <- ifelse(str_detect(model, "lst"), TRUE, FALSE)
+#sqr <- ifelse(str_detect(model, "sq"), TRUE, FALSE)
+#if (hosp_log == TRUE) {both_flu$value <- log(both_flu$value + 1)}
+#if (hosp_log == TRUE) {both_flu2$value <- log(both_flu2$value + 1)}
 
 
 # all_forecasts <- foreach(j = select_regions,
