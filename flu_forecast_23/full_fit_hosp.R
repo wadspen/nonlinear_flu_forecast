@@ -115,6 +115,9 @@ all_forecasts <- foreach(j = select_regions,
    ili_forc <- read.csv(paste0("./ili_fits/", ili_model, "/reference_date_", date(reference_date), 
 			"_week", k, "/", j, ".csv"))
    
+   ili_forc <- ili_forc %>%
+     filter(if_all(everything(), ~ !is.na(.)))
+   
    forecasts <- data.frame()
    count_rate <- unique(both_flu_hold$count_rate2)
    count_rate_sig <- count_rate
@@ -183,7 +186,10 @@ all_forecasts <- foreach(j = select_regions,
 
 	}
 	forecasts <- rbind(forecasts, hosp_forecast)
-   }	   
+   }
+   forecasts <- forecasts %>%
+     filter(if_all(everything(), ~ !is.na(.)))
+   
    colnames(forecasts) <- paste0("ahead", -1:3)
    #print(head(forecasts))
    probs <- c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
