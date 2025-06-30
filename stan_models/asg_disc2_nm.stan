@@ -152,7 +152,7 @@ for (i in (M - cur_yr_n_weeks + 1):M) ili[i] ~ beta_proportion(
 
 generated quantities {
     array[cur_yr_n_weeks + 5, n_seasons] real<lower=0,upper=1> pred_ili;
-    array[cur_yr_n_weeks + 5, n_seasons] real pred_ili_asg;
+    //array[cur_yr_n_weeks + 5, n_seasons] real pred_ili_asg;
     //array[cur_yr_n_weeks + 5] real discrepancy; //as opposed to n_weeks
     //array[cur_yr_n_weeks + 5] real discrepancy2;    
     
@@ -168,11 +168,11 @@ generated quantities {
         
         
   
-        pred_ili_asg[j,i] = beta_proportion_rng(
-                             inv_logit(asg(theta_s[i,],
-                             // beta[i],
-                             j)),
-                             kappas[i]);
+        //pred_ili_asg[j,i] = beta_proportion_rng(
+        //                     inv_logit(asg(theta_s[i,],
+        //                     // beta[i],
+        //                     j)),
+        //                     kappas[i]);
                               
         
         
