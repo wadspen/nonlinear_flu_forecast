@@ -70,35 +70,35 @@ all_forecasts <- foreach(j = select_regions,
 		     sigma_nu = 15
 		 )
     location <- unique(both_flu_hold$location)
-    if (j != "US" & !(k %in% c(14, 20, 26))) {
-            samps <- mod$sample(data = stan_dat,
+    # if (j != "US" & !(k %in% c(14, 20, 26))) {
+        samps <- mod$sample(data = stan_dat,
 				chains = 1,
 				adapt_delta = .9999,
 				iter_warmup = 10000,
 				iter_sampling = 50000)
 
     	    draws <- samps$draws(format = "df")
-    }
-    if (j == "US" & k %in% c(14, 20, 26)) {
-            samps <- mod$sample(data = stan_dat,
-        			chains = 4,
-        			adapt_delta = .9999,
-        			iter_warmup = 10000,
-        			iter_sampling = 50000)
-            draws <- samps$draws(format = "df")
-
-            summary <- samps$summary()
-            diag_list <- lapply(samps$diagnostic_summary(), FUN = mean)
-            diag <- diag_list %>% data.frame()
-            diag$max_rhat <- max(summary$rhat, na.rm = TRUE)
-            diag$min_ess <- min(summary$ess_bulk, na.rm = TRUE)
-            diag$min_esst <- min(summary$ess_tail, na.rm = TRUE)
-            write.csv(diag, paste0("./hosp_fits/", ili_model, "_", model, "_", j, "_", k,
-        			   "_diagnostics.csv"), row.names = FALSE)
-
-            write.csv(draws, paste0("./hosp_fits/", ili_model, "_", model, "_", j, "_", k,
-        			    "_posterior.csv"), row.names = FALSE)
-    } 
+    # }
+    # if (j == "US" & k %in% c(14, 20, 26)) {
+    #         samps <- mod$sample(data = stan_dat,
+    #     			chains = 4,
+    #     			adapt_delta = .9999,
+    #     			iter_warmup = 10000,
+    #     			iter_sampling = 50000)
+    #         draws <- samps$draws(format = "df")
+    # 
+    #         summary <- samps$summary()
+    #         diag_list <- lapply(samps$diagnostic_summary(), FUN = mean)
+    #         diag <- diag_list %>% data.frame()
+    #         diag$max_rhat <- max(summary$rhat, na.rm = TRUE)
+    #         diag$min_ess <- min(summary$ess_bulk, na.rm = TRUE)
+    #         diag$min_esst <- min(summary$ess_tail, na.rm = TRUE)
+    #         write.csv(diag, paste0("./hosp_fits/", ili_model, "_", model, "_", j, "_", k,
+    #     			   "_diagnostics.csv"), row.names = FALSE)
+    # 
+    #         write.csv(draws, paste0("./hosp_fits/", ili_model, "_", model, "_", j, "_", k,
+    #     			    "_posterior.csv"), row.names = FALSE)
+    # } 
     #write.csv(draws, "test_draws.csv")
     reference_date <- date(max(both_flu_hold$date)) + 7
     #dir.create(paste0("./hosp_fits/", model, 
