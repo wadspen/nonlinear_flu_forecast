@@ -46,8 +46,8 @@ all_forecasts <- foreach(j = select_regions,
 	,.combine = rbind) %:% 
 	#k <- 14
   foreach(k = 
-	  #c(14, 20, 26)
-	  9:38
+	  c(14, 20, 26)
+	  #9:38
   	, .combine = rbind) %dopar% {
 # j <- "Georgia"; k <- 21 
        
