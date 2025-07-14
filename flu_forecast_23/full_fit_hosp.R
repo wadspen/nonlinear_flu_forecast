@@ -41,7 +41,7 @@ if (hosp_log == TRUE) {both_flu2$value <- log(both_flu2$value + 1)}
 
 #select_regions <- "US"
 all_forecasts <- foreach(j = select_regions,
-	.packages = c("tidyr", "dplyr", "evalcast")
+	.packages = c("tidyr", "dplyr", "evalcast", "truncnorm", "truncdist")
 	,.errorhandling = "remove"
 	,.combine = rbind) %:% 
 	#k <- 14
@@ -77,7 +77,7 @@ all_forecasts <- foreach(j = select_regions,
 				iter_warmup = 10000,
 				iter_sampling = 50000)
 
-    	    draws <- samps$draws(format = "df")
+    	    draws <- samps$draws(format = "df"); #print("gets here")
     # }
     # if (j == "US" & k %in% c(14, 20, 26)) {
     #         samps <- mod$sample(data = stan_dat,
@@ -121,7 +121,7 @@ all_forecasts <- foreach(j = select_regions,
    forecasts <- data.frame()
    count_rate <- unique(both_flu_hold$count_rate2)
    count_rate_sig <- count_rate
-   
+   #print("does it get here") 
    if (hosp_log == TRUE) {
 	   alpha0 <- draws$alpha0
 	   alpha1 <- draws$alpha1
@@ -146,7 +146,7 @@ all_forecasts <- foreach(j = select_regions,
    #if (hosp_log == FALSE) {write.csv(test, "test2_draws.csv")}
    #write.csv(draws, "dude.csv")
    samp_size <- nrow(ili_forc)
-   
+   #print("how about here")
    for (i in 1:samp_size) {
 	alpha0_samp <- sample(alpha0, 1)
    	alpha1_samp <- sample(alpha1, 1)
@@ -178,14 +178,32 @@ all_forecasts <- foreach(j = select_regions,
 		if (sqr == TRUE) mean <- mean + alpha2_samp*(ili_samp[wh + 1]*count_rate)^2
 		if (hosp_lst == TRUE) {
 			nu_samp <- sample(nu, 1)
-			hosp_forecast[wh] <- rt(1, nu_samp)*(count_rate*sigma_epsilon_samp) + mean
-		} else {
+			#hsamp <- rt(1, nu_samp)*(count_rate*sigma_epsilon_samp) + mean 
+			#while (hsamp < 0) {
+			#	hsamp <- rt(1, nu_samp)*(count_rate*sigma_epsilon_samp) + mean
+			#print(hsamp)
+			#}	
+			a_std <- (0 - mean)/(count_rate*sigma_epsilon_samp)
+			hosp_forecast[wh] <- rtrunc(1, spec = "t", a = a_std, b = Inf, df = nu_samp)*(count_rate*sigma_epsilon_samp) + mean
+			#hosp_forecast[wh] <- hsamp
+			#hosp_forecast[wh] <- rt(1, nu_samp)*(count_rate*sigma_epsilon_samp) + mean
+		} else if (hosp_log == TRUE) {
 			hosp_forecast[wh] <- rnorm(1, mean, count_rate*sigma_epsilon_samp)
+
+		  }	
+		else {
+			#hsamp <- rnorm(1, mean, count_rate*sigma_epsilon_samp)
+			#while (hsamp < 0) {
+			#	hsamp <- rnorm(1, mean, count_rate*sigma_epsilon_samp)
+			#print(hsamp)
+			#}	
+			#hosp_forecast[wh] <- hsamp
+			hosp_forecast[wh] <- rtruncnorm(1, a = 0, b = Inf, mean = mean, sd = count_rate*sigma_epsilon_samp)
 		}
 		#if (hosp_log == TRUE) {hosp_forecast <- exp(hosp_forecast) - 1}
 
 	}
-	forecasts <- rbind(forecasts, hosp_forecast)
+	forecasts <- rbind(forecasts, hosp_forecast); #print(paste("iteration", i))
    }
    forecasts <- forecasts %>%
      filter(if_all(everything(), ~ !is.na(.)))
