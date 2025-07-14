@@ -11,5 +11,6 @@ module load r
 module load udunits
 module load r-rgdal
 module load proj
+module load r-rgdal
 
 Rscript ./full_fit_hosp.R "$1" "$2"
