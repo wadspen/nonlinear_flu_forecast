@@ -10,7 +10,7 @@ library(cdcfluview)
 library(tidyr)
 
 check_error <- function() {print("error is here")}
-print("spencer is the coolest")
+# print("spencer is the coolest")
 get_hosp_data <- function(lag = 1) {
   # raw_flu <- read.csv(
   #   'https://raw.githubusercontent.com/cdcepi/Flusight-forecast-data/master/data-truth/truth-Incident%20Hospitalizations.csv')
@@ -221,7 +221,7 @@ make_stan_data <- function(dat1, dat2, ili_seasons,
       select(eta, mu, sigma1, sigma2, kappa) %>% 
       as.matrix()
     theta_s <- rbind(theta_s, pars[-1])
-    theta_s[length(seasons),] <- apply(as.matrix(theta_s[1:(length(seasons) - 1),]), MARGIN = 2, FUN = mean)
+    theta_s[nrow(theta_s),] <- apply(as.matrix(theta_s[1:(nrow(theta_s) - 1),]), MARGIN = 2, FUN = mean)
   }
   
   else if (traj == 'uln') {
@@ -255,7 +255,7 @@ make_stan_data <- function(dat1, dat2, ili_seasons,
 	 group_by(region, season) %>%
 	 mutate(asg = asg(season_week, beta, eta, mu, sigma1, sigma2)) %>%
 	 mutate(disc = boot::logit(unweighted_ili/100) - asg)
-  print("I'm getting very frustrated...")
+  #print("I'm getting very frustrated...")
  
   dat1 <- dat1 %>%
 	 ungroup() %>%
@@ -264,7 +264,7 @@ make_stan_data <- function(dat1, dat2, ili_seasons,
 				  unweighted_ili = unweighted_ili/100)) %>%
 	 mutate(sir_disc = boot::logit(sir) - boot::logit(unweighted_ili/100))
 	  
-  print("what about here?")
+  #print("what about here?")
   disc_dat <- dat1 %>%
 	  group_by(region, season) %>%
 	  filter(season_week == max(season_week)) %>%
@@ -284,7 +284,7 @@ make_stan_data <- function(dat1, dat2, ili_seasons,
   dat_inds <- week_inds %>% 
     mutate(for_ind = index - max_week + 1) %>%
     mutate(for_ind = ifelse(for_ind < 1, 1, for_ind))
-  print(dat_inds$for_ind)
+  #print(dat_inds$for_ind)
   
   
   ts <- c()
@@ -300,7 +300,7 @@ make_stan_data <- function(dat1, dat2, ili_seasons,
 
   if (hosp_log == TRUE) {hosp <- log(dat2$value + 1)}
   else {hosp <- dat2$value} 
-  print("does it get here?") 
+  #print("does it get here?") 
   data_list <- list(
     #for all models
     M = nrow(dat1),
@@ -417,6 +417,7 @@ get_stan_data <- function(ILINet, both_flu, s_region = 'US', s_seasons =
                           I0_mu = .005, I0_sigma = .03,
                           m_week = 'all', traj = 'asg', dist = "norm",
 			  hosp_log = FALSE) {
+  #print(m_week)
   m_season <- max(ili_seasons)
   ILINet <- ILINet %>%
 	  filter(season != 2020)
@@ -472,9 +473,9 @@ get_quantile_forecasts <- function(pred_samp, forc_date,
                                    location_name = "US",
                                    m_week, last_count,
 				   reference_date, dist = "norm", hosp_log = FALSE) {
-  print("get quantile forecasts function")
-  print(paste("m_week =", m_week))
-  print(dim(pred_samp))
+  # print("get quantile forecasts function")
+  # print(paste("m_week =", m_week))
+  # print(dim(pred_samp))
   pred_samp <- pred_samp[,(m_week):(m_week + 4)]
   if (hosp_log == TRUE) {pred_samp <- exp(pred_samp) - 1}
   forecasts <- apply(pred_samp, MARGIN=2,FUN = quantile, probs = quantiles)
