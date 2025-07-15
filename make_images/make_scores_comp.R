@@ -98,6 +98,75 @@ baseline_wis <- baseline_forecasts %>%
   ) %>%
   mutate(model = base)
 
+
+
+team_coverage <- data.frame()
+
+for (sub_date in sub_dates) {
+  for (i in 1:length(models)) {
+    forecast_file <- paste(models[i], "/", sub_date, "-",
+                           models[i], ".csv", sep = "")
+    
+    if (file.exists(forecast_file) == FALSE) next
+    forecast <- read.csv(forecast_file) %>%
+      mutate(location = as.character(location),
+             output_type_id = as.character(output_type_id)) %>%
+      mutate(location = ifelse(nchar(location) < 2, paste0("0",location),
+                               location)) %>%
+      mutate(value = ifelse(value < 0, 0, value)) %>%
+      filter(output_type == "quantile") %>%
+      mutate(location = as.character(location)) %>%
+      # filter(output_type_id %in% c(.025, .25, .75, .975)) %>%
+      pivot_wider(names_from = output_type_id, values_from = value) %>%
+      rename(c(lower98 = "0.01",
+               lower95 = "0.025", 
+               lower90 = "0.05",
+               lower80 = "0.1",
+               lower70 = "0.15",
+               lower60 = "0.2",
+               lower50 = "0.25",
+               lower40 = "0.3",
+               lower30 = "0.35",
+               lower20 = "0.4",
+               lower10 = "0.45",
+               upper10 = "0.55",
+               upper20 = "0.6",
+               upper30 = "0.65",
+               upper40 = "0.7",
+               upper50 = "0.75",
+               upper60 = "0.8",
+               upper70 = "0.85",
+               upper80 = "0.9",
+               upper90 = "0.95",
+               upper95 = "0.975",
+               upper98 = "0.99"))
+    
+    for_cover <- forecast %>%
+      left_join(target_data,
+                by = c("location", "target_end_date" = "date")) %>%
+      mutate(true_value = as.numeric(true_value))
+    
+    cover <- for_cover %>%
+      mutate(cover10 = between(true_value, lower10, upper10),
+             cover20 = between(true_value, lower20, upper20),
+             cover30 = between(true_value, lower30, upper30),
+             cover40 = between(true_value, lower40, upper40),
+             cover50 = between(true_value, lower50, upper50),
+             cover60 = between(true_value, lower60, upper60),
+             cover70 = between(true_value, lower70, upper70),
+             cover80 = between(true_value, lower80, upper80),
+             cover90 = between(true_value, lower90, upper90),
+             cover95 = between(true_value, lower95, upper95),
+             cover98 = between(true_value, lower98, upper98)) %>%
+      mutate(model = models[i])
+    
+    team_coverage <- rbind(team_coverage, cover)
+    
+    
+  }
+}
+
+
 team_scores <- data.frame()
 for (sub_date in sub_dates) {
   for (i in 1:length(models)) {
@@ -153,6 +222,20 @@ for (sub_date in sub_dates) {
   print(sub_date)
 }
 
+
+team_coverage %>% 
+  dplyr::select(reference_date, horizon, location, model, contains("cover")) %>% 
+  pivot_longer(contains("cover"), names_to = "coverage", 
+               values_to = "covered") %>% 
+  filter(horizon >= 0 & !is.na(covered)) %>% 
+  mutate(coverage = .01*as.numeric(str_extract(coverage, "\\d+"))) %>% 
+  group_by(model, coverage) %>% 
+  summarise(pcover = mean(covered)) %>% 
+  filter(model == "FluSight-baseline") %>% 
+  ggplot() +
+  geom_line(aes(x = coverage, y = pcover, colour = model)) +
+  stat_function(fun = function(x) x + 0, color = "blue", size = 1.2)
+  
 
 
 
@@ -226,8 +309,8 @@ for (sub_date in sub_dates) {
   print(sub_date)
 }
 
-saveRDS(team_scores, "../hub_scores_no_ens.rds")
-saveRDS(ili_scores, "../nl_scores.rds")
+# saveRDS(team_scores, "../hub_scores_no_ens.rds")
+# saveRDS(ili_scores, "../nl_scores.rds")
 rbind(team_scores, ili_scores) %>% 
   filter(str_detect(model, "asg")) %>%
   filter(location_name != "Florida") %>% 
@@ -269,4 +352,54 @@ for (sub_date in sub_dates) {
     
   }
 }
+
+
+
+
+team_scores <- readRDS("./flu_forecast_23/both_flu.rds")
+
+team_scores %>% 
+  filter(location_name == "US") %>%
+  filter(!(model %in% c("FluSight-ensemble", "FluSight-baseline"))) %>% 
+  mutate(forecast_date = date(reference_date) + 7*as.numeric(horizon)) %>%
+  ungroup() %>% 
+  left_join(both_flu %>% 
+              filter(season == 2023) %>% 
+              select(season_week, date) %>% 
+              mutate(date = date(date)) %>% 
+              unique(),
+            by = join_by(forecast_date == date), multiple = "all") %>% 
+  group_by(season_week, disc, traj, distq) %>% 
+  summarise(mrwis = mean(lwis)) %>% 
+  rowwise() %>% 
+  mutate(minwis = mean(mrwis)) %>% 
+  ggplot() +
+  geom_hline(yintercept = 22, size = 8, colour = "red") +
+  geom_tile(aes(y = season_week,
+                x = disc,
+                fill = mrwis)) +
+  scale_fill_gradient2(
+    #low = "#5ab4ac", high = "#d8b365", mid = "white",
+    low = "#5ab4ac", high = "black", mid = "white",
+    # low = "white", high = "black",
+    # midpoint = 1, limits = c(.6, 1.5),
+    na.value = NA) +
+  facet_grid(traj~distq,
+             labeller = labeller(distq = distq_labels)) +
+  coord_flip() +
+  labs(fill = "LWIS") +
+  ylab("Week") +
+  xlab("") +
+  
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text.x=element_text(size=16),
+        axis.text.y = element_text(size = 14, angle = 90, hjust = .45),
+        axis.title=element_text(size=20),
+        strip.text = element_text(
+          size = 13),
+        legend.text = element_text(size = 12), 
+        legend.title = element_text(size = 14),
+        legend.position = "none")
 
