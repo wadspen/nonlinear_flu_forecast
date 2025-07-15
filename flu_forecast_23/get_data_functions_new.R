@@ -199,8 +199,8 @@ make_stan_data <- function(dat1, dat2, ili_seasons,
     print(dim(formle))
     pars <- asg_max_lik(formle$unweighted_ili/100, formle$season_week, 
                         theta = start)
-    m0 <- c(.3, 23, 3.69, 4.7)
-    C0 <- c(.2, 5, 2, 2)
+    m0 <- c(-4, .3, 23, 3.69, 4.7)
+    C0 <- c(1, .2, 5, 2, 2)
     n_params <- length(m0)
     all_season_region_mles <- read.csv("./all_season_region_mles_asg.csv") %>% 
       select(-X) %>% 
@@ -218,7 +218,7 @@ make_stan_data <- function(dat1, dat2, ili_seasons,
     #beta[length(seasons)] <- mean(beta[1:(length(seasons)-1)])
     beta[length(seasons)] <- pars[1]
     theta_s <- all_season_region_mles %>% 
-      select(eta, mu, sigma1, sigma2, kappa) %>% 
+      select(beta, eta, mu, sigma1, sigma2) %>% 
       as.matrix()
     theta_s <- rbind(theta_s, pars[-1])
     theta_s[nrow(theta_s),] <- apply(as.matrix(theta_s[1:(nrow(theta_s) - 1),]), MARGIN = 2, FUN = mean)
