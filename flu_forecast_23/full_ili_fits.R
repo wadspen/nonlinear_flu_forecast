@@ -6,8 +6,8 @@ library(parallel)
 library(doParallel)
 library(doMC)
 library(evalcast)
-n.cores <- detectCores()
-#n.cores <- 1
+#n.cores <- detectCores()
+n.cores <- 64
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -31,7 +31,7 @@ print(tri_wks)
 select_regions <- unique(both_flu$region)
 #select_regions <- "US"
 select_regions <- c("Wyoming", "Puerto Rico", "US", "Vermont", "Utah",
-		    "Wisconsin")
+		    "Wisconsin", "Florida")
 season_levels <- unique(ILINet$season)
 season_levels <- season_levels[season_levels != 2023]
 save_dir <- paste0("./ili_fits/", model)
@@ -41,11 +41,12 @@ if (dir.exists(save_dir) == FALSE) {
 }
 j <- "Alabama"
 k <- 14
+#select_regions <- "Florida"
 foreach(j = select_regions,
 	.packages = c("tidyr", "dplyr", "evalcast")
 	,.errorhandling = "remove"
 	) %:%
-   foreach(k = tri_wks) %dopar% { #c(14, 20, 26)) %dopar% { #35 is the last week
+   foreach(k = 9:38) %dopar% { #c(14, 20, 26)) %dopar% { #35 is the last week
 #for (i in 1:(length(season_levels))) {
 #  j <- "US"
 #  k <- 26
@@ -67,6 +68,7 @@ foreach(j = select_regions,
       info_list <- dat[[2]]
       forecast_date <- info_list$forecast_date
       init <- list(theta = stan_dat$m0, theta_s = info_list$theta_s)
+      if (j == "US") init$theta_s <- init$theta_s[-24,]
       reference_date <- info_list$forecast_date + 7
       forecast_dir <- paste0(save_dir, "/reference_date_",
 			     reference_date, "_week", k)
