@@ -80,7 +80,9 @@ transformed parameters {
   upsilon1[1] = 0;
   ups = append_array(upsilon, upsilon1);
 
-  theta_s = theta + z_theta_s .* rep_matrix(zeta', n_seasons);
+  for (i in 1:n_seasons) {
+    theta_s[i] = theta + zeta .* z_theta_s[i];
+  }
 
   for (i in 1:n_seasons)
     for (j in 1:n_weeks)
