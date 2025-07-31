@@ -8,6 +8,7 @@ library(doMC)
 library(evalcast)
 #n.cores <- detectCores()
 n.cores <- 64
+#n.cores <- 1
 my.cluster <- makeCluster(n.cores, type = "PSOCK")
 doParallel::registerDoParallel(cl = my.cluster)
 foreach::getDoParRegistered()
@@ -20,7 +21,8 @@ ILINet <- get_ili_data(lag = 1) %>%
 	filter(season >= 2010, !(season %in% c(2020)))
 args <- commandArgs()
 model <- args[6]
-tri_st <- as.numeric(args[7])*10
+p <- as.numeric(args[7])
+tri_st <- p*10
 #tri_st <- 12
 mod_string <- paste("../stan_models/", model, ".stan", sep = "")
 mod <- cmdstan_model(stan_file = mod_string)
@@ -30,8 +32,8 @@ if (as.numeric(args[7]) == 1) {tri_wks <- c(9, tri_wks)}
 print(tri_wks)
 select_regions <- unique(both_flu$region)
 #select_regions <- "US"
-select_regions <- c("Wyoming", "Puerto Rico", "US", "Vermont", "Utah",
-		    "Wisconsin", "Florida")
+#select_regions <- c("Wyoming", "Puerto Rico", "US", "Vermont", "Utah",
+#		    "Wisconsin", "Florida")
 season_levels <- unique(ILINet$season)
 season_levels <- season_levels[season_levels != 2023]
 save_dir <- paste0("./ili_fits/", model)
@@ -39,14 +41,14 @@ print(save_dir)
 if (dir.exists(save_dir) == FALSE) {
 	dir.create(paste0("./ili_fits/", model))
 }
-j <- "Alabama"
-k <- 14
+# j <- "Alabama"
+# k <- 14
 #select_regions <- "Florida"
 foreach(j = select_regions,
 	.packages = c("tidyr", "dplyr", "evalcast")
 	,.errorhandling = "remove"
 	) %:%
-   foreach(k = 9:38) %dopar% { #c(14, 20, 26)) %dopar% { #35 is the last week
+   foreach(k = p) %dopar% { #9:38) %dopar% { #c(14, 20, 26)) %dopar% { #35 is the last week
 #for (i in 1:(length(season_levels))) {
 #  j <- "US"
 #  k <- 26
@@ -60,25 +62,29 @@ foreach(j = select_regions,
       print("does it get here?")
       dat <- get_stan_data(ILINet, 
                            both_flu, s_region = j,
-                           ili_seasons = unique(ILINet$season),
-      			   m = k)
+                           #ili_seasons = unique(ILINet$season),
+      			   ili_seasons = c(2010:2019, 2021:2023),
+			   m = k)
       
       print("how about here?")
       stan_dat <- dat[[1]]
       info_list <- dat[[2]]
       forecast_date <- info_list$forecast_date
       init <- list(theta = stan_dat$m0, theta_s = info_list$theta_s)
-      if (j == "US") init$theta_s <- init$theta_s[-24,]
+      #if (j == "US") init$theta_s <- init$theta_s[-24,]
       reference_date <- info_list$forecast_date + 7
       forecast_dir <- paste0(save_dir, "/reference_date_",
 			     reference_date, "_week", k)
       if(dir.exists(forecast_dir) == FALSE) {
 	     dir.create(forecast_dir)
       }
-      num_chains <- ifelse(j == "US" & k %in% c(14, 20, 26), 4, 1)
-      if (j == "US" & k %in% c(14, 20, 26)) {
-		inits <- list(init, init, init, init)
-      } else {inits <- list(init)} 
+      #num_chains <- ifelse(j == "US" & k %in% c(14, 20, 26), 4, 1)
+      #if (j == "US" & k %in% c(14, 20, 26)) {
+      #		inits <- list(init, init, init, init)
+      #} else {inits <- list(init)}
+      num_chains <- 1; inits <- list(init) 
+      if (model == "asg_disc2_nm") {stan_dat$m0[1] <- mean(info_list$theta_s[,1])}
+      if (model != "asg_disc2_nm") {stan_dat$C0[1,1] <- .3}
       samps <- mod$sample(data = stan_dat,
                           chains = num_chains,
 			  parallel_chains = num_chains,
@@ -98,7 +104,7 @@ foreach(j = select_regions,
 
       write.csv(pred_draws, save_name, row.names = FALSE)
       
-      if (j == "US" & k %in% c(14, 20, 26)) {
+      if (j == "US_end" & k %in% c(14, 20, 26)) { #I just changed a condition here so that this is never met. Should save some time, but I can come back to it later. I commented out a related few lines of code above.
 	  summary <- samps$summary()
           diag_list <- lapply(samps$diagnostic_summary(), FUN = mean)
           diag <- diag_list %>% data.frame()
