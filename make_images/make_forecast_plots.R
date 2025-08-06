@@ -1,15 +1,15 @@
 library(gridExtra)
-setwd("~/flu_research/Prelim Content/models")
-source("~/flu_research/nonlinear_flu_forecast/forecasts_23/get_data_functions.R")
+setwd("~/flu_research/nonlinear_flu_forecast/flu_forecast_23/fin_hosp_forecasts/")
+source("~/flu_research/nonlinear_flu_forecast/flu_forecast_23/get_data_functions_new.R")
 files <- list.files("./")
 
 state <- "US"
 
 
-# ILINet <- get_ili_data()
-# both_flu <- comb_data(lag = 2)
+ILINet <- get_ili_data()
+both_flu <- comb_data(lag = 1)
 
-plot_dates <- both_flu %>% ungroup() %>% filter(season_week %in% seq(14, 38, by = 6),
+plot_dates <- both_flu %>% ungroup() %>% filter(season_week %in% seq(13, 37, by = 6),
                                   season == 2023) %>%
   select(date) %>% unique() %>% unlist()
 
@@ -19,11 +19,14 @@ locations <- both_flu %>% ungroup() %>%
 
 #everything below can be changed for each image
 #uncomment everything above when first running the progam
-model <- "asg_hosp_ar1"
-models <- c("asg_hosp_ar1", "asg_disc_hosp_ar1", 
-            "sir_hosp_ar1", "sir_disc_hosp_ar1")
+model <- "asg_disc2_nm_hosp_ar1"
+models <- c("asg_nm_hosp_sq_ar1", "asg_disc2_nm_hosp_sq_ar1", 
+            "sir_hosp_sq_ar1", "sir_disc2_hosp_sq_ar1")
 # models <- "FluSight-baseline"
 labels <- c("ASG", "ASGD", "SIR", "SIRD")
+labels <- factor(labels, levels = c("ASGD", "ASG", "SIRD", "SIR"))
+# models <- "asg_disc2_nm_hosp_sq_ar1"
+# lables <- "ASGD"
 # labels <- "SIRD"
 # models <- c("sir_hosp_log_ar1", "sir_disc_hosp_log_ar1")
 # models <- "FluSight-baseline"
@@ -188,7 +191,8 @@ forecast5 <- forecast5 %>%
 
 both_flu %>% 
   # filter(location_name != "US") %>% 
-  filter(season == 2023, location_name %in% state, date > "2023-09-30") %>% 
+  filter(season == 2023, location_name %in% state, date > "2023-10-07",
+         date < "2024-06-01") %>% 
   # filter(season_week < 14) %>% 
   ggplot() +
   geom_ribbon(data = forecast1, aes(x = date(target_end_date), ymin = lower_95,
@@ -215,11 +219,11 @@ both_flu %>%
   geom_point(aes(x = date(date), y = value)) +
   # geom_vline(xintercept = date(plot_dates[1])) +
   # facet_wrap(~location_name, scales = "free") +
-  facet_wrap(~model) +
+  facet_wrap(~model, scales = "free") +
   ylab("Hospitalizatios") +
   xlab("Date") +
   # ylim(c(0,25000)) +
-  coord_cartesian(ylim = c(0, 25000)) +
+  # coord_cartesian(ylim = c(0, 40000)) +
   theme_bw() + 
   theme(axis.text=element_text(size=12),
         axis.title=element_text(size=18),

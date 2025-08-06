@@ -1033,8 +1033,8 @@ discrepancy to be most useful.
 
 
 \begin{figure}[hbt!]
-    \centering
-    \includegraphics[scale=.57]{Images/wis_by_week_horizon.png}
+    % \centering
+    \includegraphics[scale=.5]{Images/all_sim_res.png}
     \caption{Boxplots of weighted interval score (WIS) for the 
     four Bayesian nonlinear ILI models, a baseline model (BASE) and
     an autoregressive integrated moving average model (ARIMA) 
@@ -1044,17 +1044,31 @@ discrepancy to be most useful.
     \label{fig:wis_by_week_horizon}
 \end{figure}
 
-\begin{table}[hbt!]
+% \begin{table}[hbt!]
+% \centering
+% \begin{tabular}{lrrrr}
+% Model & WIS & MAE & 50\%Coverage  & 95\% Coverage \\ 
+%   \hline
+% ASGD & 0.09 & 0.15 & 42 & 91 \\ 
+%   ASG & 0.13 & 0.18 & 33 & 71 \\ 
+%   ARIMA & 0.13 & 0.18 & 35 & 68 \\ 
+%   BASE & 0.15 & 0.20 & 33 & 65 \\ 
+%   SIRD & 0.15 & 0.23 & 33 & 78 \\ 
+%   SIR & 0.21 & 0.29 & 20 & 51 \\ 
+% \end{tabular}
+% \end{table}
+
+\begin{table}[ht]
 \centering
-\begin{tabular}{lrrrr}
-Model & WIS & MAE & 50\%Coverage  & 95\% Coverage \\ 
+\begin{tabular}{lrrr}
+Model & WIS & 50\%Coverage  & 95\% Coverage \\ 
   \hline
-ASGD & 0.09 & 0.15 & 42 & 91 \\ 
-  ASG & 0.13 & 0.18 & 33 & 71 \\ 
-  ARIMA & 0.13 & 0.18 & 35 & 68 \\ 
-  BASE & 0.15 & 0.20 & 33 & 65 \\ 
-  SIRD & 0.15 & 0.23 & 33 & 78 \\ 
-  SIR & 0.21 & 0.29 & 20 & 51 \\ 
+ASGD & 0.02 & 0.42 & 0.91 \\ 
+  ASG & 0.03 & 0.33 & 0.71 \\ 
+  ARIMA & 0.03 & 0.35 & 0.68 \\ 
+  BASE & 0.03 & 0.33 & 0.65 \\ 
+  SIRD & 0.03 & 0.33 & 0.78 \\ 
+  SIR & 0.05 & 0.20 & 0.51 \\
 \end{tabular}
 \end{table}
 
@@ -1210,6 +1224,22 @@ quadratic models appear to do a better job predicting  hospitalizations at
 the season peak but a poorer job predicting after the peak, whereas the linear 
 models seem to predict well or slightly overpredict after the peak. 
 
+
+\begin{figure}[hbt!]
+
+  \centering
+  \includegraphics[width=.49\linewidth, height=6cm]{Images/normal_sq_forecasts_us.png}
+\caption{Forecasts 1-4 weeks ahead for US hospitalizations during the 2023 
+season for weeks 14, 20, 26, and 32. Forecasts are separated by ILI model, 
+and the hospitalization models are all normally distribution. The figure 
+includes hospitalization forecasts where ILI is a linear predictor (left) 
+and where ILI is a quadratic predictor (right). 50\% predictive intervals 
+are pink and 95\% predictive intervals are red.}
+\label{fig:normal_flu_forecasts}
+\end{figure}
+
+
+
 Of the 24 models, the one which produced the best forecasts was that using
 the ASGD ILI model and the NORM quadratic hospitalization model. The results of
 that analysis may be found in the supplementary materials ??. For the remainder 
@@ -1280,7 +1310,7 @@ ASG\_NORM2.
 \begin{figure}[hbt!]
 \begin{adjustwidth}{-3cm}{-1.5cm}
     % \begin{minipage}{\linewidth}
-    % \centering
+    \centering
     \makebox[\linewidth][l]{
     \includegraphics[scale = .45]{Images/state_and_date_lwis.png}
     }

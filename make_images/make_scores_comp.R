@@ -384,14 +384,15 @@ for (sub_date in sub_dates) {
 }
 
 # saveRDS(ili_scores, "~/flu_research/nonlinear_flu_forecast/flu_forecast_23/nl_scores.rds")
-# rbind(ili_scores, team_scores) %>% 
-ili_scores %>% 
+rbind(ili_scores, team_scores) %>%
+# ili_scores %>% 
+  filter(location_name == "US") %>% 
   group_by(model) %>% 
   filter(horizon != -1) %>% 
   unique() %>% 
   filter(!str_detect(model, "tr_")) %>% #, location_name != "Florida") %>% 
   filter(!is.na(wis)) %>% 
-  summarise(m = mean(wis, na.rm = TRUE),
+  summarise(m = mean(lwis, na.rm = TRUE),
             n = n()) %>%
   # filter(str_detect(model, "asg_nm")) %>%
   arrange(m) %>% 
