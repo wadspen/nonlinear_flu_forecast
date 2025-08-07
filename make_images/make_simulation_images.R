@@ -3,7 +3,7 @@ library(dplyr)
 library(stringr)
 library(ggforce)
 library(tidyr)
-
+#make quick fix
 
 
 score_loc <- "../simulation/hosp_sim/scores_"
