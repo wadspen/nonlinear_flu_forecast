@@ -469,6 +469,93 @@ Figure \ref{fig:state_median_points} shows the mean over weeks RWIS for the SIR 
 \caption{RWIS over the whole 2023 flu season for all 53 locations for hospitalization forecasts from an SIRD quadratic hospitalization model with normal errors (left) and forecasts from an ASGD linear hospitalization model with normal errors (right). An RWIS less than 1 (left of vertical grey line) indicates the model forecasts outperformed the baseline forecasts for that particular region.}
 \label{fig:state_median_points}
 \end{figure}
+
+
+
+
+\section{Prior distributions}
+
+The prior distributions under the SIR model are in (\ref{eq:sir_prior}). 
+Because we set $S_{0s} = 0.9$, prior distributions were assigned only to 
+$I_{0s}$, $\beta_s$ and $\rho_s$, recalling the parameter for the recovery 
+rate $\delta_s = \rho_s \beta_s$. Here $\vmathbb{1}_{A}$ represents the 
+indicator function for values within the set $A$.
+
+\begin{equation}
+\begin{aligned}
+    \label{eq:sir_prior}
+        I_{0s} &\sim N(0.005, 0.03) \vmathbb{1}_{(0, .1)} \\
+        \beta_s &\sim N^+(0.8, 0.3) \\
+        \rho_s &\sim N^+(0.68, 0.08)
+\end{aligned}
+\end{equation}
+For the ASG model, the MLE 
+$\hat{\theta}_s = (\hat{\lambda}_s, \hat{\eta}_s, \hat{\mu}_s, \hat{\sigma}_{1s}^2, \hat{\sigma}_{2s}^2)$ 
+was calculated. % and $\hat{\lambda}_s$ was accepted as a fixed value. 
+These estimates were used as starting values for posterior sampling. 
+The transformation 
+$T(\theta_s) = (\lambda_s, \text{log}(\eta_s), \mu_s, \text{log}(\sigma_{1s}^2), \text{log}(\sigma_{2s}^2))$ 
+was made, and a prior distribution was assigned to $T(\theta_s)$.
+The prior distributions for the ILI model under the ASG function are shown 
+in (\ref{eq:ili_prior}). These are slightly informative priors because for 
+most parameters we have an idea what reasonable values may be. Here 
+$m = (-4.5, 0.3, 23, 3.69, 4.7)$ and $C = \text{diag}(0.3, 0.2, 5, 2, 2)$
+where $\text{diag}(\cdot)$ 
+is the diagonal matrix for the given entries.
+
+
+\begin{equation}
+\begin{aligned}
+\label{eq:ili_prior}
+                T(\theta_s) &\overset{ind}{\sim} MVN(\theta, \Sigma) \\
+                T(\theta) &\overset{ind}{\sim} MVN(m, C)\\
+                \Sigma &= \text{diag}(\zeta^2_1,...,\zeta^2_4) \\
+                \zeta_i &\overset{ind}{\sim} N^+(0,4^2)
+\end{aligned}
+\end{equation}
+Parameters shared by both the SIR and ASG models are the scale parameter 
+$\kappa_s$ and the discrepancy parameters $\sigma_{\gamma}^2$ and 
+$\sigma_{\gamma_W}^2$. These priors are in (\ref{eq:shared_ili_priors}). 
+
+\begin{equation}
+\begin{aligned}
+    \label{eq:shared_ili_priors}
+        \kappa_s &\overset{ind}{\sim} N^+(0, 10,000^2) \\
+        \sigma_{\gamma}^2 &\sim N^+(0, .02^2) \\
+        \sigma_{\gamma_W}^2 &\sim N^+(\hat{\sigma}_W^2, 1^2) \\
+        \sigma_{\upsilon_{s,w}} &\sim N^+(0, .1^2)
+\end{aligned}
+\end{equation}
+Because of the limited information for estimating $\sigma_{\gamma_W}^2$, 
+we selected an informative prior distribution by first estimating  
+$\hat{\sigma}_{\gamma_W}^2$. This was estimated for a given state by first 
+calculating the MLE for $\theta_s$. 
+% We set the likelihood function as $\mathcal{L}(\theta_s) = \prod_{w = 1}^W f_{\theta_s}(w)$ and  calculated $\hat{\theta}_s$ where $\label{eq:theta_hat}
+%     \hat{\theta}_s = \underset{\theta_s}{\mathrm{argmin}} \, \mathcal{L}(\theta_s)$.
+$\widehat{ILI}_{s,w}$ was then predicted such that 
+$\text{logit}(\widehat{ILI}_{s,W}) = f_{\hat{\theta}_s}(W)$ for each season. 
+Then $\hat{\sigma}_{\gamma_W}^2$ was calculated as the estimated variance over 
+seasons of the differences 
+$\text{logit}(\widehat{ILI}_{s,w}) - \text{logit}(ILI_{s,w})$. 
+When $f_{\theta_s}(w)$ was the SIR function, $\widehat{\theta}_s$ was 
+calculated using the \texttt{mle2} function in the \texttt{bblme} package 
+\cite[]{bolker2023bblme} and the \texttt{ode} function in the \texttt{deSolve} 
+package \cite[]{soetaert2010desolve} function in \texttt{R}. Where the ASG 
+function was used,  $\hat{\theta}_s$ was calculated using the \texttt{optim} 
+function.
+The prior for the hospitalization models are in (\ref{eq:shared_hosp_priors}).
+
+\begin{equation}
+\begin{aligned}
+\label{eq:shared_hosp_priors}
+        \alpha_{0s} &\overset{ind}{\sim} N(0, 5^2)\\
+        \alpha_{1s} &\overset{ind}{\sim} N(0, 5^2)\\
+        \alpha_{2s} &\overset{ind}{\sim} N(0, 5^2) \\
+        \phi &\sim N(0, .4)\vmathbb{1}_{(-1,1)} \\
+        \sigma_{\epsilon_s} &\overset{ind}{\sim} N^+(0, 4^2) \\
+        \omega_s &\overset{ind}{\sim} N^+(0, 15^2)
+\end{aligned}
+\end{equation}
 \end{supplement}
 
 

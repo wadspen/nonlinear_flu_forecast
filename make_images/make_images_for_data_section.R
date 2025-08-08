@@ -1,13 +1,21 @@
 
 setwd("./nonlinear_flu_forecast/")
-source('./functions_data/get_data_functions_new.R')
-source('./nonlinear_flu_forecast/functions_data/mle_functions.R')
+source('./flu_forecast_23/get_data_functions_new.R')
+source('./flu_forecast_23/mle_functions.R')
+library(geofacet)
+library(datasets)
+library(ggtext)
+state.name <- c(state.name, "Puerto Rico", "District of Columbia", "US")
+state.abb <- c(state.abb, "PR", "DC", "US")
+states <- data.frame(loc_abb = state.abb, region = state.name)
 
 
-
-both_flu <- comb_data(lag = 2) %>% 
+both_flu <- comb_data(lag = 1) %>% 
   mutate(uw_odd = (unweighted_ili/100)/(1 - (unweighted_ili/100)))
 ILINet <- get_ili_data()
+
+both_flu <- readRDS("./flu_forecast_23/both_flu.rds")
+ILINet <- readRDS("./flu_forecast_23/ILINet.rds")
 
 state <- "US"
 sample(unique(ILINet$region), 6)
@@ -15,21 +23,30 @@ dat <- get_stan_data(ILINet, both_flu, s_region = "Texas")
 stan_dat <- dat[[1]]
 
 mean_ili <- ILINet %>%
+  left_join(states, by = "region") %>% 
   filter(season %in% c(2010:2022)) %>%
-  group_by(region, season_week) %>%
+  group_by(loc_abb, season_week) %>%
   summarise(
     mean_ili = mean(unweighted_ili, na.rm = TRUE)
   ) %>%
-  filter(region %in% c("District of Columbia", "Alabama", "Texas",
-                       "Ohio", "Iowa", "Montana")) %>%
-  mutate(region = factor(region, levels=c("District of Columbia", "Alabama",
-                                         "Texas", "Ohio", "Iowa", "Montana")))
+  filter(!is.na(loc_abb))
+  # filter(region %in% c("District of Columbia", "Alabama", "Texas",
+  #                      "Ohio", "Iowa", "Montana")) %>%
+  mutate(region = factor(region))
+  # mutate(region = factor(region, levels=c("District of Columbia", "Alabama",
+  #                                        "Texas", "Ohio", "Iowa", "Montana")))
 
 ILINet %>% filter(region == state, season >= 2010) %>% 
   ggplot() +
   geom_line(aes(x = season_week, y = unweighted_ili),
             show.legend = FALSE, size = 1) +
   facet_wrap(~season) +
+  # ggh4x::facet_wrap2(~season, scales = "free_x", axes = "all") +
+  # scale_x_date(date_labels = "%b", date_breaks = "3 months") +
+  scale_x_continuous(
+    breaks = c(1, 13, 26, 39, 51),
+    labels = c("Aug", "Oct", "Feb", "May", "Jul")
+  ) +
   ylab("ILI %") +
   xlab("") +
   # geom_vline(aes(xintercept = 22)) +
@@ -43,12 +60,58 @@ both_flu %>% filter(region == "US", season >= 2022) %>%
   geom_line(aes(x = season_week, y = value),
             show.legend = FALSE, size = 1.4) +
   facet_wrap(~season) +
+  # ggh4x::facet_wrap2(~season, scales = "free_x", axes = "all") +
+  # scale_x_date(date_labels = "%b", date_breaks = "3 months") +
+  scale_x_continuous(
+    breaks = c(1, 13, 26, 39, 51),
+    labels = c("Aug", "Oct", "Feb", "May", "Jul")
+  ) +
   ylab("Hospitalizations") +
   xlab("Week") +
   theme_bw() + 
   theme(axis.text=element_text(size=16),
         axis.title=element_text(size=19),
         strip.text=element_text(size = 17))
+
+ILINet %>%
+  filter(!(region %in% c("New York City", "Virgin Islands", "US"))) %>% 
+  left_join(states, by = "region") %>% 
+  left_join(mean_ili, by = c("loc_abb", "season_week")) %>% 
+  filter(season %in% 2010:2022) %>% 
+  # filter(region %in% c("Alabama", "District of Columbia", "Texas",
+  #                      "Ohio", "Iowa", "Montana"),
+  #        season %in% c(2010:2023)) %>%
+  # mutate(region = factor(region, levels=c("Alabama", "District of Columbia",
+  #                                         "Iowa", "Montana",
+  #                                         "Ohio", "Texas"))) %>%
+  ggplot() +
+  geom_line(aes(x = season_week, y = unweighted_ili, group = season),
+            colour = "darkgrey", size = .7) +
+  geom_line(aes(x = season_week, y = mean_ili), size = 1) +
+  # geom_line(data = mean_ili, aes(x = season_week, y = mean_ili), size = .4) +
+  # facet_wrap(~region, scales = "free") +
+  facet_geo(~ loc_abb, grid = "us_state_grid2") +
+  scale_x_continuous(
+    breaks = c(13,  39),
+    labels = c("Oct", "May")
+  ) +
+  ylab("ILI %") +
+  xlab("Week") +
+  theme_bw() +
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=17),
+        strip.text=element_text(size=9))
+
+mean_ili %>% 
+  # mutate(loc_abb = as.character(loc_abb)) %>% 
+  ggplot() +
+  geom_line(data = ILINet %>% left_join(states, by = "region") %>% 
+                      filter(season %in% 2010:2022), 
+            aes(x = season_week, y = unweighted_ili, group = season), 
+            colour = "grey", size = .7) +
+  geom_line(aes(x = season_week, y = mean_ili)) +
+  facet_geo(~loc_abb, grid = "us_state_grid2")
+
 
 ILINet %>%
   filter(region %in% c("Alabama", "District of Columbia", "Texas",
@@ -70,22 +133,32 @@ ILINet %>%
         strip.text=element_text(size=13))
 
 both_flu %>%
-  filter(region %in% c("District of Columbia", "Alabama", "Texas",
-                       "Ohio", "Iowa", "Montana"), 
-         season %in% 2022:2023) %>%
+  left_join(states, by = "region") %>% 
+  filter(season %in% 2022:2023) %>% 
+  # filter(region %in% c("District of Columbia", "Alabama", "Texas",
+  #                      "Ohio", "Iowa", "Montana"), 
+  #        season %in% 2022:2023) %>%
   ggplot() +
   geom_line(aes(x = season_week, y = value, group = season,
                 colour = factor(season)), 
             size = 1) +
-  facet_wrap(~region, scales = "free") +
+  # facet_wrap(~region, scales = "free") +
+  facet_geo(~loc_abb, grid = "us_state_grid2") +
   scale_color_manual(values = c("darkgrey", "black")) +
   labs(colour = "Season") +
+  scale_x_continuous(
+    breaks = c(13,  39),
+    labels = c("Oct", "May")
+  ) +
   ylab("Hospitalizations") +
   xlab("Week") +
   theme_bw() +
   theme(axis.text=element_text(size=12),
         axis.title=element_text(size=17),
-        strip.text=element_text(size=13))
+        strip.text=element_text(size=9),
+        legend.title = element_text(size = 15),
+        legend.text = element_text(size = 13),
+        legend.position = c(.9, .1))
 
 
 both_flu %>%

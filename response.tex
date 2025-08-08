@@ -38,41 +38,86 @@ procedure reminds me of the "Bayesian cut" in the version described by Plummer
 \href{(https://link.springer.com/article/10.1007/s11222-014-9503-z)}{(https://link.springer.com/article/10.1007/s11222-014-9503-z)}.
 This may be a useful reference.
 
-\spencer{In the forecasting competition, the data comes generally by the afternoon and
-forecasts are due by the evening. We initially did a full Bayesian procedure
-(minus the MLE selection of the $\lambda$ parameter in the ASG ILI model), but fit 
-was very slow and made it difficutl to get forecasts submitted in time. We switched
-to using two separate models because of the time saved in model fitting. We also
-found that in terms of the proper scoring rules and predictive interval coverage,
-there wasn't a drop in performance although the parameter estimation did 
-change.
+\spencer{We appreciated this comment and the included reference to the Bayesian
+cut. This led to several new insights. 
+We added a couple paragraphs of discussion to address this. They appear in
+the revised manuscript as below.
 
-\begin{equation}
-\begin{aligned}
-    p(\tilde{H}_{s,w^*} | \textbf{ILI}, \textbf{H}) &= \int 
-       p(\tilde{H}_{s,w^*} | \textbf{ILI}, \textbf{H}, \boldsymbol{\alpha}) 
-       p(\boldsymbol{\alpha} | \textbf{ILI}, \textbf{H}) d\boldsymbol{\alpha} \\
-    p(\tilde{H}_{s,w^*} | \textbf{ILI}, \textbf{H}, \boldsymbol{\alpha}) &= 
-       \int p(\tilde{H}_{s,w^*} | \textbf{H}, \textbf{ILI}, 
-       \widetilde{ILI}_{s,w^*}, \boldsymbol{\alpha}) 
-       p(\widetilde{ILI}_{s,w^*} | \textbf{ILI}) d\widetilde{ILI}_{s,w^*}
-\end{aligned}
-\end{equation}
-}
+``This two-component modeling is remeniscent of the "Bayesian cut" as 
+described in \cite{plummer2015cuts} and \cite{nott2023bayesian}. Cutting a model
+into two component models or "modules" may be justfied for several reasons
+including to reduce time to fit the model, avoiding mixing issues of posterior
+sampling distributions, improving predictive performance or to prevent
+model misspecification in one model to influence the other 
+\cite[]{nott2023bayesian, jacob2020unbiased, jacob2017better, plummer2015cuts}.
+
+The decision to cut the model into two components was made for several reasons.
+When fitting the fully Bayesian joint model, the time to fit a single model using
+Markov chain Monte Carlo (MCMC) sampling and
+obtain forecasts was sometimes upwards of 4 hours whereas fitting the two models
+separately usually took less than 1 hour. When assessing convergence of model
+parameters, it was rare that posterior sampling chains for the joint model
+showed convergence even after 55,000 iterations, whereas the component model 
+fits gave no signs which raised concern for convergence. And most importantly,
+the forecasts from the component models generally outperformed those of the 
+joing model in terms of minimizing proper scoring rules. 
+The process for obtaining forecasts is described in the following paragraphs 
+and computation is described in section \ref{sec:implementation_posterior}."}
+
+% \spencer{In the forecasting competition, the data comes generally by the afternoon and
+% forecasts are due by the evening. We initially did a full Bayesian procedure
+% (minus the MLE selection of the $\lambda$ parameter in the ASG ILI model), but fit 
+% was very slow and made it difficutl to get forecasts submitted in time. We switched
+% to using two separate models because of the time saved in model fitting. We also
+% found that in terms of the proper scoring rules and predictive interval coverage,
+% there wasn't a drop in performance although the parameter estimation did 
+% change.
+% 
+% \begin{equation}
+% \begin{aligned}
+%     p(\tilde{H}_{s,w^*} | \textbf{ILI}, \textbf{H}) &= \int 
+%        p(\tilde{H}_{s,w^*} | \textbf{ILI}, \textbf{H}, \boldsymbol{\alpha}) 
+%        p(\boldsymbol{\alpha} | \textbf{ILI}, \textbf{H}) d\boldsymbol{\alpha} \\
+%     p(\tilde{H}_{s,w^*} | \textbf{ILI}, \textbf{H}, \boldsymbol{\alpha}) &= 
+%        \int p(\tilde{H}_{s,w^*} | \textbf{H}, \textbf{ILI}, 
+%        \widetilde{ILI}_{s,w^*}, \boldsymbol{\alpha}) 
+%        p(\widetilde{ILI}_{s,w^*} | \textbf{ILI}) d\widetilde{ILI}_{s,w^*}
+% \end{aligned}
+% \end{equation}
+% }
 
 \item The authors employ a "modular Bayesian approach" mixing maximum likelihood and
 Bayesian estimation. The authors should provide more ample references to the literature concerning
 this type of procedure (is "modular Bayesian" a standard term?).
+
+\spencer{In the revised manuscript we no longer use the modular approach
+where some parameters are set as their MLEs before fitting a Bayesian 
+model. Instead
+we assign a strong prior to the parameter which was giving us trouble
+and fit a full Bayesian model. This is
+described in the following statement added to revised manuscript:
+
+``In a previous version of this manuscript, when fitting an ASG model
+with discrepancy components,
+rather than estimating all parameters in a Bayesian way,
+identifiability was encouraged by setting
+the parameter $\lambda_s$ from (\ref{eq:asg_function_rep})
+to be equal to its MLE. In this updated manuscript, 
+however, we use empirical Bayes and center the first component of the 
+hierarichal prior $\theta$ to be the mean of MLEs for $\lambda_s$ across
+all seasons and set the variance parameter so the prior was tight around the
+mean. This led to improved mixing of posterior draws and better forecasts."}
+
 \item Also, it should be argued explicitly why this approach was chosen over a standard fully
 Bayesian approach in the setting at hand. Was a fully Bayesian approach also explored? Which
 difficulties were encountered?
 
-\spencer{Without assuming a value for the $\lambda$ parameter in the ASG model, there were
-serious problems with parameter identifiability. 
-Osthus et al. in their SIR model doe something similar by setting $S_0 = 0.9$}
+\spencer{See response to comment 1b.}
 
 \item Notably it would be helpful to comment on how this approach affects the uncertainty
 propagation / overall quantification of forecast uncertainty.
+
+\spencer{See response to comment 1b.}
 
 \end{enumerate}
 
@@ -85,13 +130,23 @@ similar symptoms. How reasonable is it to assume SIR dynamics for such an indica
 really assume that the tipping point due to susceptible depletion can be captured reasonably here? In
 my understanding this would be the only reason to include an S compartment.
 
-\spencer{I agree with these comments on the SIR model. Perhaps we emphasized the SIR model more than we 
-should have. Osthus et al. use the SIR model in combination with a data driven model
-in an attempt to capture some aspect of the science in their forecast model.
-More important in the argument of this paper than that the specific SIR model is
-a superior in some way for modeling ILI is that the ASG model may
-be a reasonable alternative to existing compartmental models at least in terms
-of forecast performance.}
+\spencer{Obviously the SIR dynamics are not a perfect match for ILI data, but
+the disease transmission mechanism of influenza is at least partially 
+responsible for ILI. We touch on this a little more directly in the revised 
+manuscript by stating:
+
+``The SIR is a mechanistic model used to capture transmission of a particular
+disease, and the ASG is a smooth function which may approximate the 
+same shape as the ILI trajectory. As ILI may be influenced by more 
+diseases than influenza, the disease transmission described by the SIR model
+can only partially contribute to the true ILI data-generating mechanism[44].
+Though the ASG function may be able to roughly capture ILI, there may still be 
+systematic behavior which it cannot capture. Thus when using either the SIR
+or ASG models, an additional component for modeling discrepancy should be 
+included."
+
+We cite Osthus et al. 2019, who also touch on this.}
+
 
 \item My impression is that the SIR does not really have any mechanistic meaning here and is just a
 way of parameterizing curves that look qualitatively like ILI seasons. The ASG approach can be
@@ -111,22 +166,76 @@ other pheneomena with similar rises and falls (i.e. crop moisture)}.
 should be more clear in Section 2.2. If it is influenza-specific: to which degree should we expect ILI
 to be a helpful predictor given that it also contains COVID, RSV etc.? The influenza dynamics are
 likely somewhat hidden in the ILI indicator.
-\spencer{Yes, hospitalizations here are specific to lab confirmed influenza patients. 
-I believe figure 6 in the text gives reason to believe ILI is a good predictor. Maybe 
-we should add some additional EDA with an $R^2$ value to further defend this?}
+
+\spencer{Yes, the hospitalization indicator is specific to influenza. See 
+response to the next comment (2d.) for how it was addressed in the manuscript. 
+
+For your second point on how well ILI can be a helpful predictor of hospitalizations,
+we addressed this in the manuscript by adding the following discussion about
+figure 6. See also 
+
+
+``Figure 6 helps
+illustrate why this modeling decision was made.
+The figure shows scatterplots of ILI percentage and 
+hospitalizations on the top row.
+The bottom row shows scatterplots of the difference between hospitalizations and 
+1 week lags scaled 
+by ILI percentage at the US national level. The plots in the right column
+are of the logarithm of hospitalizations. The lines through the points are
+drawn by connecting hospitalizations for consecutive weeks during the flu 
+season.
+These plots show that a linear or quadratic relationship between ILI percentage 
+and hospitalizations does not capture much of the temporal correlation in 
+hospitalizations as shown by the obvious loops drawn in the plot. 
+However, when including a 
+single autoregressive lag of hospitalizations in the model, much of the time 
+correlation is
+accounted for as shown by the tighter and more frequent crossing of lines
+in the bottom row. Higher than order 1 autoregressions showed little or no 
+improvement over order 1, hence we consider the ARX(1) reasonably well 
+suited for modeling ILI and hospitalzations."}
+
+
 
 
 \item Does the hospitalization indicator refer to incident (new) hospitalization or prevalence, i.e.,
 bed occupancy?
-\spencer{The weekly hospitalization indicator refers to new incident hospitalizations}
+
+\spencer{We revised the first paragraph in section 2.2 to read:
+
+``Weekly hospital admission data, which was used as the object of FluSight 
+forecasting for the 
+2022 and 2023 seasons, is based on the CDC's National Healthcare Safety 
+Network (NHSN) dataset entitled \textit{HealthData.gov COVID-19 Reported 
+Patient Impact and Hospital Capacity by State Timeseries}. 
+In February 2022 it became mandatory for 
+all hospitals to report the number of COVID-19 and influenza hospitalizations, 
+and since then reporting of hospitalizations has become widespread. These data 
+were updated every Wednesday and Friday according to NHSN guidelines 
+\cite[]{healthdata2024covidts}. Weekly influenza hospitalization data is
+defined as the number of newly hospitalized patients with a confirmed diagnosis 
+of influenza. From hereon, influenza hospitalizations
+will be referrred to as hospitalizations."}
+
+
 
 \item Is there any "mechanistic" rationale behind the ARX formulation for the hospitalizations? If we
 predict prevalence / bed occupancy I can sort of see why the differences between weeks would be
 explained by ILI. If we predict new hospitalizations I am not sure what motivates this ARX
 formulation.
 
+\spencer{ILI is useful as a predictor of hospitalizations, but it fails to 
+capture the correlation between consecutive hospitalizations. By adding the 
+AR1 component to a model with ILI as a predictor, much of the correlation
+structure is then accounted for. 
+See the second part of our response to comment 2c. above for how this is 
+addressed in the revised manuscript.}
+
 \item Currently the ILI value from the same week is used in equation (7). Would there be a point in
 exploring different lags?
+
+
 \spencer{Exploring different lags is an important idea here, especially considering there
 may be a reporting lag. However, the reporting lag is not as big an issue as it has
 been in the past. We assessed ILI lags for both one and two weeks previous to the current
@@ -134,6 +243,25 @@ week and found that ILI had less predictive power. }
 
 \item On page 14 it says: "all negative values of [...] were set to 0 to reflect realistic values of
 hospitalizations". Could this be handled more naturally by appropriate distributional assumptions?
+
+\spencer{We tried both fitting log-hospitalizations as well as assuming 
+hospitalizations followed a distribution truncated at 0, but this led to
+poorer forecasts or problems fitting the posterior distribution. We make this
+statement in the revised manuscript:
+
+``The sample $\{H^*_{s,w + i}\}^K$ was then used as the probabilistic forecast 
+for hospitalizations at week $w + i$. 
+Occasionally $\{H^*_{s,w + i}\}^K$ included a small number of negative values,
+which do not make sense when the distribution is meant to forecast
+hospitalizations, a nonnegative number. We attempted to alleviate this problem
+by modeling log-hospitalizations or by assuming hospitalizations followed a
+distribution truncated at 0, but the cost of doing so led to poorer forecasts
+or problems drawing from the posterior distribution.
+For the forecast competition analysis in 
+section \ref{sec:analysis}, all negative values of $\{H^*_{s,w + i}\}^K$ were 
+set to 0 to reflect realistic values of hospitalizations and comply with the 
+FluSight forecasting rules. This ultimately made almost no difference in 
+results."}
 
 \end{enumerate}
 
@@ -148,19 +276,47 @@ forecast) and some out-of-the-box model applied directly to the hospitalizations
 ARIMA). Given the forecasting task was taken from the CDC challenge it would also be interesting
 to see how the proposed models fare against the other participants of the challenge.
 
+
+\spencer{In the revised manuscript, 
+both the simulation study and the real data analysis were updated to include
+comparison of our models to others. In the simulation study, we included out 
+of the box methods including an ARIMA model and a random walk baseline model
+(similar to the baseline used in the FluSight competition).
+In the real data analysis, our model forecasts are compared to those of 20
+non-ensemble models submitted to the FluSight competition during the 2023-24
+season. In both the simulation study and the real data analysis, 
+our models show very good performance when compared to the other models. 
+The original real data analysis where we compare several models that
+belong to our framework is now in the supplementary materials.}
+
+
+
 \item The measure the authors call LWIS tends to give a lot of weight to forecast tasks with low
 (expected) incidence as the relative differences between predictions and observations can be quite
 large then. The "regular" WIS gives most weight to weeks with high incidence. So in a sense both
 are complementary and it may be helpful to also discuss regular WIS a little more.
 
+\spencer{In the revised manuscript, we discuss both the WIS and LWIS in the 
+real data analysis section and report both measures. The results for both are
+very similar, so to save space we focus a bit more on the LWIS and included 
+a little more discussion, including a few plots,
+on WIS results in the supplementrary materials.}
+
 \item Why was the CRPS used in the simulation and WIS in the data example? These two are sort of
 the same (WIS approximates CRPS), so things would be more coherent if one was used throughout.
-\spencer{Probably use CRPS throughout and not WIS at all.}
+
+\spencer{In the revised manuscript we do use the CRPS, but rather 
+use the WIS in both the simulation study
+and the real data analysis. We decided on the WIS because that was the measure
+used in the FluSight competition and the forecasts which we }
 
 \item Some assessment of calibration, e.g. interval coverage, should be added.
-\spencer{We can add this. I don't think it will look good, but maybe we recommend
-further research involving calibration of posterior credible regions (Syring \& Martin 2019)
-or generalized predictive distributions (Wu \& Martin 2021).}
+
+\spencer{We updated figures 7 and 9, which show results for the simulation
+study and the real data analysis respectively, to include a plot showing
+empirical predictive coverage for several nominal levels. This showed that 
+our forecasts are reasonably well calibrated relative to others which we 
+compare them to.}
 
 \end{enumerate}
 
@@ -168,6 +324,8 @@ or generalized predictive distributions (Wu \& Martin 2021).}
 units as done e.g. in
 \href{https://www.nature.com/articles/s41467-021-23234-5}{https://www.nature.com/articles/s41467-021-23234-5}
 by Osthus and Moran.
+
+\spencer{Add statement to discussion on this ??}
 
 \end{enumerate}
 
@@ -191,8 +349,42 @@ the model borrow information between different model parts, propagate
 uncertainty ... In the introduction none of this is mentioned so the question 
 arises whether Bayesian Analysis is the right journal.
 
-\spencer{The ILI models are hierarchical and intended to be made so that information
-accross all previous seasons may be borrowed for modeling the current season.}
+\spencer{
+
+Statement at the beginning of section 3.
+
+``With the goal of producing a probablistic forecast, Bayesian modeling is a 
+natural framework for describing forecast uncertainty. 
+Though our main interest is in effeciently producing a probabilistic 
+forecast and not 
+necessarily in estimating model parameters, decisions on certain prior
+distributions and how the models were fit proved critical in producing good 
+forecasts. After defining the ILI and hospitalization models in this section, 
+we describe the 
+selection of prior distributions, model fitting, and producing forecasts
+from the posterior predictive distribution by combining ILI and hospitalization
+models in a way similar to using the 
+Bayesian cut [46]."
+
+
+Here's an example of one of a 
+few other statements we added which describes the imporance of 
+an informative prior for a 
+specific parameter.
+
+``Modeling discrepancy can lead to 
+overfitting, particularly in forecasting scenarios, and may also lead to 
+identifiability issues. 
+Thus, care must be taken in setting parameter constraints as well as in the 
+selection of prior distributions \cite[]{osthus2019dynamic,
+brynjarsdottir2014learning}. 
+For instance, when setting $f_{\theta_s}(w)$ to
+be the ASG function
+in model (\ref{eq:ili_model}), we found the parameter $\lambda$ from 
+in (\ref{eq:asg_function_rep}) difficult to consistently 
+estimate precisely because of lack of identifiability. This was resolved by 
+assigning to $\lambda$ a more informative prior distribution."
+?? incomplete}
 
 \item As I understand one challenge of forecasting hospitalisation data is that the 
 start of the collection of these data is very recent, so that a model only 
@@ -201,14 +393,52 @@ of using ILI data is natural. The authors could emphasize more and discuss
 potential alternative models that could even be included in the simulation 
 study. I am missing a comparison to models that are not the newly proposed 
 ones within the paper.
-\spencer{Should include comparison to a naive baseline (probably a random walk) 
-and an out of the box ARMA or ARIMA, and maybe exponential smoothing.}
+
+
+\spencer{In the revised manuscript, 
+both the simulation study and the real data analysis were updated to include
+comparison of our models to others. In the simulation study, we included out 
+of the box methods including an ARIMA model and a random walk baseline model
+(similar to the baseline used in the FluSight competition).
+In the real data analysis, our model forecasts are compared to those of 20
+non-ensemble models submitted to the FluSight competition during the 2023-24
+season. In both the simulation study and the real data analysis, 
+our models show very good performance when compared to the other models. 
+The original real data analysis where we compare several models that
+belong to our framework is now in the supplementary materials.}
 
 \item Why is it sensible to include ILI as a linear function when modelling 
 hospitalisation. Please motivate more. 
 
-\spencer{I think this is supported in figure 6 in the paper, though as mentioned 
-in response to previous reviewer, maybe additional EDA would be helpful.}
+\spencer{In the original manuscript, figure 6 and some surrounding discussion
+were intended to get across the point that hospitalizations can reasonably
+taken as a linear predictor of ILI along with an autoregressive component.
+Obviously it didn't get the point across very well. 
+In the revised manuscript, figure 6 has been replaced with an updated and more
+descriptive figure (also titled "figure 6") along with the in manuscript
+text.
+
+``Figure 6 helps
+illustrate why this modeling decision was made.
+The figure shows scatterplots of ILI percentage and 
+hospitalizations on the top row.
+The bottom row shows scatterplots of the difference between hospitalizations and 
+1 week 
+lags scaled 
+by ILI percentage at the US national level. The plots in the right column
+are of the logarithm of hospitalizations. The lines through the points are
+drawn by connecting hospitalizations for consecutive weeks during the flu 
+season.
+These plots show that a linear or quadratic relationship between ILI percentage 
+and hospitalizations does not capture much of the temporal correlation in 
+hospitalizations as shown by the obvious loops drawn in the plot. 
+However, when including a 
+single autoregressive lag of hospitalizations in the model, much of the time 
+correlation is
+accounted for as shown by the tighter and more frequent crossing of lines
+in the bottom row. Higher than order 1 autoregressions showed little or no 
+improvement over order 1, hence we consider the ARX(1) reasonably well 
+suited for modeling ILI and hospitalzations."}
 
 \item The authors provide also state level predictions. However, I do not see 
 where a spatial component is included in the model. Is this only via P or are 
@@ -216,6 +446,20 @@ all states just modelled independently. For influenza I would think that it
 might be reasonable to assume that neighbouring states show similar behaviour 
 in both ILI and hosptialisation so that borrowing strength between states 
 within one model seems sensible. Please discuss.
+
+
+\spencer{Yes, borrowing strength between states would be reasonable, but 
+fitting such a model would likely take much more time than was give by FluSight
+to produce forecasts. In the revised manuscript, after defining the ILI model
+we state:
+
+``Model (\ref{eq:ili_model}) was fit 
+independently for each location. This decision was made largely due to the 
+limited time given by FluSight to produce forecasts. That is,
+during the competition, data were typically released on Wednesday afternoons and
+forecasts were due by the evening of the same day giving only a few hours to 
+produce forecasts. A natural extension of the model would be to allow for states
+to borrow information from neighboring states." ??Add something to discussion}
 
 \end{enumerate}
 
@@ -226,6 +470,9 @@ within one model seems sensible. Please discuss.
 
 \item Section 2, page 3: please be more clear on what you mean by the 
 "first seven season". Provide a time frame.
+
+\spencer{The ``first seven seasons" was replaced with 
+`` the first seven seasons, 2013 to 2019,".} 
 
 \item Figure 1: I was wondering whether the R-package geofacet could be useful to 
 show also a spatial trend across US states, in addition to temporal trend, for 
@@ -240,28 +487,76 @@ week 1 is not the first week in January.
 
 Can the hospitalization figures also be shown on state level at least in an appendix.
 
+\spencer{I made the changes to the x-axes so that they are labeled by date, 
+listed as month, rather than by week. I also added in the 
+supplementary material the geofacet plots showing 
+ILI and hospitalizations for each state organized by geographic location. Some
+discussion about the relation between neighboring states is made there.}
+
 \item Section 3.5: Please be clear what the strength of a Bayesian inference scheme is. 
 
 \item Equation 6): What does the tilde mean?
-\spencer{The tilde indicates forecast ILI. Maybe it just shouldn't be there?}
+
+\spencer{In the revised manuscript we state:
+
+``Here $\widetilde{ILI}_{s,w + i}$ represents the 
+predicted or forecast ILI at $i$ weeks in the future."}
 
 \item Page 11: Please motivate the choice of an autoregressive process of order 1 
 more clearly. Why not use a higher order? Would this be beneficial?
+
+
 \spencer{We explored higher orders and found that they didn't provide any more
-predictive power than order 1 did.}
+predictive power than order 1 did. See our response to your general comment 3.}
 
 \item Page 14: Please discuss the assumption that all components of $\alpha_s$ and 
 $\sigma_\epsilon^2$ are assumed to be same across all seasons. Is this realistic?
 
+\spencer{We do not generally make this assumption in our model. The only time
+we make this assumption is when modeling log-hospitalizations instead of 
+hospitalizations and then we do it becuase otherwise the predictive variance
+was unreasonably large for lack of hospitalization data.
+Where this is pertinent in the supplementary materials, we note ??.
+In the simulation study,
+we simulate hospitalization data which we attempt to forecast for each left
+out season in the leave one season out scheme. For clarification, we added 
+the following.
+
+``Note that this is not
+a model assumption we make but only a simplyfying assumption for simiulating
+the data."}
+
 \item Figure 7: Please make clear in the caption what the columns represent in an 
 intuitive manner. 
+
+\spencer{In the updated manuscript, this figure was replaced with another figure
+which included 3 plots we believe is much more intuitive and descriptive than
+the original figure. The title of the new figure remains ``figure 7" and 
+the caption is hopefully understandable.}
 
 \item Equation 11, 12, 13, 14: Please motivate. The authors write in Section 3.4 
 that the modelling of discrepancy might require careful selection of priors. 
 Please underline more how this is taken care of in this manuscript.
 
-\spencer{It was precisely the inclusion of the discrepancy that caused the serious problems
-with identifiability which motivated the modular Bayesian approach. }
+\spencer{We decided to put equations 11 - 14 in the supplementary materials, and
+give more of an over description of the prior distributions in section 3.6. Here
+is one updated paragraph describing how a prior distribution was assigned to
+improve identifiability issues introduced by including discprepancy modeling.
+
+``Additional prior constraints were made to improve parameter identifiability. 
+Just as was done in Osthus et al. \cite[]{osthus2019dynamic},
+we set the initial value of the 
+susceptible population compartment of the SIR model was set to $S_0 = 0.9$. 
+The parameters $I_{0s}$, $\beta_s$, and $\rho_s$ were assigned informative 
+priors. In a previous version of this manuscript, when fitting an ASG model
+with discrepancy components,
+rather than estimating all parameters in a Bayesian way,
+we set the parameter $\lambda_s$ from (\ref{eq:asg_function_rep})
+to be equal to its MLE. In this updated manuscript, 
+however, we use empirical Bayes and center the first component of the 
+hierarichal prior $\theta$ to be the mean of MLEs for $\lambda_s$ across
+all seasons and set the variance parameter so the prior was tight around the
+mean."}
 
 \item Please check for typos.
   
