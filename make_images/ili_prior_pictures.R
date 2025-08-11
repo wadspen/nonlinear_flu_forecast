@@ -5,6 +5,7 @@ library(truncnorm)
 
 weeks <- c(14, 20, 26)
 mods <- c("asg_nm", "asg_disc2_nm", "sir", "sir_disc2")
+model <- c("ASG", "ASGD", "SIR", "SIRD")
 
 
 asg14 <- readRDS("../flu_forecast_23/asg_nm_summary.rds") %>% 
@@ -26,7 +27,28 @@ asg_model_post <- rbind(asg14, asgd14) %>%
 sir_model_post <- rbind(sir14, sird14) %>% 
   select(model, variable, q2.5, q97.5) %>% 
   mutate(variable = as.character(variable)) 
-  
+
+
+for_dir <- "../flu_forecast_23/"
+all_model_post <- data.frame()
+
+for (i in 1:length(weeks)) {
+  for (j in 1:length(mods)) {
+    dir <- paste(for_dir, mods[j], "_", weeks[i], "_", "summary.rds", sep = "")
+    post <- readRDS(dir)
+    post$model <- model[j]
+    post$week <- as.character(weeks[i])
+    all_model_post <- rbind(all_model_post, post)
+  }
+}  
+
+all_model_post %>% 
+  group_by(model, week) %>% 
+  summarise(maw = round(max(rhat, na.rm = TRUE), 4),
+            mis = min(ess_bulk, na.rm = TRUE))
+
+all_posts <- all_model_post %>% 
+  select(model, week, variable, q2.5, q97.5)
 
 variables <- c("I0", "beta", "rho")
 sm <- c(.005, .8, .68)
@@ -47,15 +69,19 @@ sir_bounds <- apply(sir_samps, MARGIN = 2,
 colnames(sir_bounds) <- c("q2.5", "q97.5")
 sir_bounds <- as.data.frame(sir_bounds)
 sir_priors <- cbind(model = "prior", variable = variables, sir_bounds)
+sir_priors$week <- "prior"
+sir_priors <- sir_priors %>% 
+  select(model, week, variable, q2.5, q97.5)
 
+# one <- rbind(sir_model_post); one$week <- "14"
+# two <- rbind(sir_model_post); two$week <- "20"
+# three <- rbind(sir_model_post, sir_priors); three$week <- "26"
 
-one <- rbind(sir_model_post); one$week <- "14"
-two <- rbind(sir_model_post); two$week <- "20"
-three <- rbind(sir_model_post, sir_priors); three$week <- "26"
+sir_plot_data <- all_posts %>%
+  filter(variable %in% c("I0[13]", "beta[13]", "rho[13]")) %>% 
+  mutate(variable = str_replace(variable, "\\[13\\]", "")) 
 
-sir_plot_data <- rbind(one, two, three) %>%
-  filter(variable %in% c("I0[26]", "beta[26]", "rho[26]")) %>% 
-  mutate(variable = str_replace(variable, "\\[26\\]", "")) %>% 
+sir_plot_data <- rbind(sir_plot_data, sir_priors) %>% 
   mutate(
     week = ifelse(model == "prior", "prior", week),
     week = factor(week, levels = c("prior", "14", "20", "26")),
@@ -84,22 +110,30 @@ sir_plot_data %>%
   geom_segment(aes(x = q2.5, xend = q97.5, y = y_pos, yend = y_pos, colour = model),
                size = 1.2) +
   scale_y_continuous(
-    breaks = sort(unique(plot_data$week_num)),
-    labels = levels(plot_data$week)
+    breaks = sort(unique(sir_plot_data$week_num)),
+    labels = levels(sir_plot_data$week)
   ) +
   facet_wrap(~variable, scales = "free_x", 
              labeller = labeller(variable = label_parsed),
              nrow = 1) +
   labs(y = "Week", x = "", colour = "Model") +
-  scale_colour_manual(values = c("prior" = "#E69F00",  # orange
+  scale_colour_manual(values = c("prior" = "#009E73",  # orange
                                  "ASG" = "#56B4E9",  # sky blue
-                                 "ASGD" = "#009E73",  # bluish green
-                                 "SIR" = "#F0E442",  # yellow
+                                 "ASGD" = "#E69F00",  # bluish green
+                                 "SIR" = "#D6C840",  # yellow
                                  "SIRD" = "#0072B2"   # blue
   )) + 
   theme_bw() +
-  theme(legend.position = c(.95,.65),
-        strip.text = element_text(size = 12))
+  theme(legend.position = c(.93,.65),
+        strip.text = element_text(size = 12),
+        axis.text = element_text(size = 11),
+        axis.title = element_text(size = 14),
+        legend.background = element_rect(
+          fill = "white",      # legend background fill
+          colour = "grey50",   # border color
+          linewidth = 0.5      # border thickness
+        ))
+
 
 
 
@@ -149,6 +183,9 @@ theta_bounds <- apply(theta_samps, MARGIN = 2, FUN = quantile, probs = c(.025, .
 colnames(theta_bounds) <- c("q2.5", "q97.5")
 theta_bounds <- as.data.frame(theta_bounds)
 theta_priors <- cbind(model = "prior", variable = variables, theta_bounds)
+theta_priors$week <- "prior"
+theta_priors <- theta_priors %>% 
+  select(model, week, variable, q2.5, q97.5)
 
 zeta_bounds <- rtruncnorm(2000, 0, Inf, 0, 4) %>% 
   quantile(., probs = c(.025, .975)) %>% 
@@ -158,15 +195,18 @@ zeta_bounds <- rtruncnorm(2000, 0, Inf, 0, 4) %>%
 colnames(zeta_bounds) <- c("q2.5", "q97.5")
 variables <- paste0("zeta[", 1:5, "]")
 zeta_priors <- cbind(model = "prior", variable = variables, zeta_bounds)
+zeta_priors <- zeta_priors %>% 
+  mutate(week = "prior") %>% 
+  select(model, week, variable, q2.5, q97.5)
 
 priors <- rbind(theta_priors, zeta_priors)
 
 
-one <- rbind(asg_model_post); one$week <- "14"
-two <- rbind(asg_model_post); two$week <- "20"
-three <- rbind(asg_model_post, priors); three$week <- "26"
+# one <- rbind(asg_model_post); one$week <- "14"
+# two <- rbind(asg_model_post); two$week <- "20"
+# three <- rbind(asg_model_post, priors); three$week <- "26"
 
-asg_plot_data <- rbind(one, two, three) %>%
+asg_plot_data <- rbind(all_posts, priors) %>%
   mutate(
     week = ifelse(model == "prior", "prior", week),
     week = factor(week, levels = c("prior", "14", "20", "26")),
@@ -216,22 +256,29 @@ asg_plot_data %>%
   geom_segment(aes(x = q2.5, xend = q97.5, y = y_pos, yend = y_pos, colour = model),
                size = 1.2) +
   scale_y_continuous(
-    breaks = sort(unique(plot_data$week_num)),
-    labels = levels(plot_data$week)
+    breaks = sort(unique(asg_plot_data$week_num)),
+    labels = levels(asg_plot_data$week)
   ) +
   facet_wrap(~variable_label, scales = "free_x", 
              labeller = labeller(variable_label = label_parsed),
              nrow = 2) +
   labs(y = "Week", x = "", colour = "Model") +
-  scale_colour_manual(values = c("prior" = "#E69F00",  # orange
+  scale_colour_manual(values = c("prior" = "#009E73",  # orange
                                  "ASG" = "#56B4E9",  # sky blue
-                                 "ASGD" = "#009E73",  # bluish green
-                                 "SIR" = "#F0E442",  # yellow
+                                 "ASGD" = "#E69F00",  # bluish green
+                                 "SIR" = "#D6C840",  # yellow
                                  "SIRD" = "#0072B2"   # blue
-                                 )) + 
+  )) + 
   theme_bw() +
-  theme(legend.position = c(.95,.85),
-        strip.text = element_text(size = 12))
+  theme(legend.position = c(.93,.85),
+        strip.text = element_text(size = 12),
+        axis.text = element_text(size = 11),
+        axis.title = element_text(size = 14),
+        legend.background = element_rect(
+          fill = "white",      # legend background fill
+          colour = "grey50",   # border color
+          linewidth = 0.5      # border thickness
+        ))
 
 
 
@@ -247,10 +294,10 @@ asg_plot_data %>%
 
 
 
-comb_model_post <- rbind(asg_model_post, sir_model_post) %>% 
+comb_model_post <- all_posts %>% 
   filter(variable %in% c("sigma_gamma", "sigma_upsilon",
-                         "kappas[26]")) %>% 
-  mutate(variable = str_replace(variable, "s\\[26\\]", ""))
+                         "kappas[13]")) %>% 
+  mutate(variable = str_replace(variable, "s\\[13\\]", ""))
 
 variables <- c("kappa", "sigma_gamma", "sigma_upsilon")
 sds <- c(10000, .02, .1) %>% as.matrix()
@@ -269,18 +316,21 @@ colnames(bounds) <- c("q2.5", "q97.5")
 bounds <- as.data.frame(bounds)
 priors <- cbind(model = "prior", variable = variables, bounds, week = "prior")
 
-one <- comb_model_post %>%
-  mutate(week = "14")
-two <- comb_model_post %>%
-  mutate(week = "20")
-three <- comb_model_post %>%
-  mutate(week = "26")
+priors <- priors %>% 
+  mutate(week = "prior") %>% 
+  select(model, week, variable, q2.5, q97.5)
+# one <- comb_model_post %>%
+#   mutate(week = "14")
+# two <- comb_model_post %>%
+#   mutate(week = "20")
+# three <- comb_model_post %>%
+#   mutate(week = "26")
 
 
 
 
 
-comb_plot_data <- rbind(one, two, three, priors) %>%
+comb_plot_data <- rbind(comb_model_post, priors) %>%
   mutate(
     week = ifelse(model == "prior", "prior", week),
     week = factor(week, levels = c("prior", "14", "20", "26")),
@@ -317,24 +367,29 @@ comb_plot_data %>%
   geom_segment(aes(x = q2.5, xend = q97.5, y = y_pos, yend = y_pos, colour = model),
                size = 1.2) +
   scale_y_continuous(
-    breaks = sort(unique(plot_data$week_num)),
-    labels = levels(plot_data$week)
+    breaks = sort(unique(comb_model_post$week_num)),
+    labels = levels(comb_model_post$week)
   ) +
   facet_wrap(~variable_label, scales = "free_x", 
              labeller = labeller(variable_label = label_parsed),
              nrow = 2) +
   labs(y = "Week", x = "", colour = "Model") +
-  scale_colour_manual(values = c("prior" = "#E69F00",  # orange
+  scale_colour_manual(values = c("prior" = "#009E73",  # orange
                                  "ASG" = "#56B4E9",  # sky blue
-                                 "ASGD" = "#009E73",  # bluish green
-                                 "SIR" = "#F0E442",  # yellow
+                                 "ASGD" = "#E69F00",  # bluish green
+                                 "SIR" = "#D6C840",  # yellow
                                  "SIRD" = "#0072B2"   # blue
   )) + 
   theme_bw() +
-  theme(legend.position = c(.95,.85),
+  theme(legend.position = c(.93,.82),
         strip.text = element_text(size = 12),
-        panel.grid.minor.y = element_blank(),
-        panel.grid.major.y = element_blank())
+        axis.text = element_text(size = 11),
+        axis.title = element_text(size = 14),
+        legend.background = element_rect(
+          fill = "white",      # legend background fill
+          colour = "grey50",   # border color
+          linewidth = 0.5      # border thickness
+        ))
 
 
 
