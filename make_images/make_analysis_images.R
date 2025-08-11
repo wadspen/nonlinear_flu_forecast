@@ -14,8 +14,7 @@ date_weeks <- both_flu %>%
 ILINet <- get_ili_data()
 
 
-setwd("~/Documents/Research/nonlinear_flu_forecast/models")
-
+setwd("./flu_forecast_23/fin_hosp_forecasts/")
 #season_week 10 is "2023-10-14"
 
 target_data <- read.csv("../../FluSight-forecast-hub/target-data/target-hospital-admissions.csv") %>%
@@ -56,65 +55,66 @@ baseline_wis <- baseline_forecasts %>%
   ) %>%
   mutate(model = base)
 
-team_scores <- data.frame()
-for (sub_date in sub_dates) {
-  for (i in 1:length(models)) {
-    forecast_file <- paste(models[i], "/", sub_date, "-",
-                           models[i], ".csv", sep = "")
-    
-    if (file.exists(forecast_file) == FALSE) next
-    forecast <- read.csv(forecast_file) %>%
-      mutate(location = as.character(location),
-             output_type_id = as.character(output_type_id)) %>%
-      mutate(location = ifelse(nchar(location) < 2, paste0("0",location),
-                               location)) %>%
-      filter(output_type == "quantile", horizon != -1) %>%
-      mutate(location = as.character(location)) %>% # %>% select(reference_date, horizon, target, target_end_date, location, output_type, output_type_id, value)
-      mutate(value = ifelse(value < 0, 0, value)) #%>%
-    # mutate(target_end_date = as.character(date(target_end_date) - 7))
-    
-    for_wis <- forecast %>%
-      filter(horizon %in% 0:3) %>%
-      left_join(target_data,
-                by = c("location", "target_end_date" = "date")) %>%
-      mutate(output_type_id = as.numeric(output_type_id),
-             value = as.numeric(value),
-             true_value = as.numeric(true_value))
-    
-    # if (mean(is.na(for_wis$location_name)) == 0) next
-    if (nrow(for_wis) == 0) next
-    wis <- for_wis %>%
-      filter(is.na(location_name) == FALSE) %>%
-      group_by(reference_date, location_name, horizon) %>%
-      reframe(
-        wis = weighted_interval_score(output_type_id,
-                                      value, true_value),
-        lwis = weighted_interval_score(output_type_id,
-                                       log(value + 1), log(true_value + 1)),
-        mae = abs(median(value) - unique(true_value)),
-        width = sort(value, partial = 17)[17] - sort(value, partial = 7)[7]
-      ) %>%
-      mutate(model = models[i]) %>%
-      left_join(unique(ILINet[c("region", "count_rate2")]),
-                by = c("location_name" = "region"))
-    
-    wis <- wis %>%
-      left_join(baseline_wis[c("reference_date", "location_name",
-                               "horizon", "bwis", "blwis")],
-                by = c("reference_date", "location_name", "horizon")) %>%
-      mutate(relative_wis = wis/bwis,
-             relative_lwis = lwis/blwis)
-    
-    team_scores <- rbind(team_scores, wis)
-    
-  }
-}
+# team_scores <- data.frame()
+# for (sub_date in sub_dates) {
+#   for (i in 1:length(models)) {
+#     forecast_file <- paste(models[i], "/", sub_date, "-",
+#                            models[i], ".csv", sep = "")
+#     
+#     if (file.exists(forecast_file) == FALSE) next
+#     forecast <- read.csv(forecast_file) %>%
+#       mutate(location = as.character(location),
+#              output_type_id = as.character(output_type_id)) %>%
+#       mutate(location = ifelse(nchar(location) < 2, paste0("0",location),
+#                                location)) %>%
+#       filter(output_type == "quantile", horizon != -1) %>%
+#       mutate(location = as.character(location)) %>% # %>% select(reference_date, horizon, target, target_end_date, location, output_type, output_type_id, value)
+#       mutate(value = ifelse(value < 0, 0, value)) #%>%
+#     # mutate(target_end_date = as.character(date(target_end_date) - 7))
+#     
+#     for_wis <- forecast %>%
+#       filter(horizon %in% 0:3) %>%
+#       left_join(target_data,
+#                 by = c("location", "target_end_date" = "date")) %>%
+#       mutate(output_type_id = as.numeric(output_type_id),
+#              value = as.numeric(value),
+#              true_value = as.numeric(true_value))
+#     
+#     # if (mean(is.na(for_wis$location_name)) == 0) next
+#     if (nrow(for_wis) == 0) next
+#     wis <- for_wis %>%
+#       filter(is.na(location_name) == FALSE) %>%
+#       group_by(reference_date, location_name, horizon) %>%
+#       reframe(
+#         wis = weighted_interval_score(output_type_id,
+#                                       value, true_value),
+#         lwis = weighted_interval_score(output_type_id,
+#                                        log(value + 1), log(true_value + 1)),
+#         mae = abs(median(value) - unique(true_value)),
+#         width = sort(value, partial = 17)[17] - sort(value, partial = 7)[7]
+#       ) %>%
+#       mutate(model = models[i]) %>%
+#       left_join(unique(ILINet[c("region", "count_rate2")]),
+#                 by = c("location_name" = "region"))
+#     
+#     wis <- wis %>%
+#       left_join(baseline_wis[c("reference_date", "location_name",
+#                                "horizon", "bwis", "blwis")],
+#                 by = c("reference_date", "location_name", "horizon")) %>%
+#       mutate(relative_wis = wis/bwis,
+#              relative_lwis = lwis/blwis)
+#     
+#     team_scores <- rbind(team_scores, wis)
+#     
+#   }
+# }
 
+team_scores <- readRDS("../nl_scores.rds")
 
 team_scores <- team_scores %>%
   mutate(traj = ifelse(str_detect(model, "asg"), "ASG",
                        ifelse(str_detect(model, "sir"), "SIR", " ")),
-         disc = ifelse(str_detect(model, "disc"), "D", " "),
+         disc = ifelse(str_detect(model, "disc2"), "D", " "),
          dist = ifelse(str_detect(model, "lst"), "LST",
                        ifelse(str_detect(model, "log"), "LNORM",
                               ifelse(str_detect(model, "FluSight"), " ", 
@@ -196,7 +196,7 @@ team_scores %>%
         legend.title = element_text(size = 14),
         legend.position = "none")
 
-bres <- read.csv("../models/res.csv")
+# bres <- read.csv("../models/res.csv")
 
 all_bres <- bres %>% 
   filter(horizon %in% hor) %>% 
@@ -215,7 +215,7 @@ all_bres <- bres %>%
 
 
 
-loc <- "Alaska"
+loc <- "US"
 hor <- 0
 team_scores %>% 
   # filter(horizon %in% hor) %>%
@@ -237,10 +237,11 @@ team_scores %>%
   summarise(mrwis = mean(lwis)) %>% 
   rowwise() %>% 
   mutate(minwis = mean(mrwis)) %>% 
-  ggplot(aes(x = season_week, y = minwis, colour = disc)) +
+  ggplot(aes(x = season_week, y = minwis, colour = disc, linetype = disc)) +
   geom_vline(xintercept = 22, size = 8, colour = "lightgrey") +
   geom_line(size = 1) +
   scale_color_manual(values = c("darkgrey", "black")) +
+  scale_linetype_manual(values = c("solid", "longdash")) +
   facet_grid(traj~distq) +
   ylab("LWIS") +
   xlab("Week") +
@@ -263,6 +264,7 @@ team_scores %>%
               group_by(season_week) %>% 
               summarise(mrwis = mean(lwis)), aes(x = season_week, y = mrwis), 
             inherit.aes = FALSE, colour = "red") +
+  
   theme_bw() +
   theme(axis.text.x=element_text(size=14),
         axis.text.y = element_text(size = 14, angle = 90, hjust = .45),
@@ -392,11 +394,12 @@ team_scores_sum <- team_scores %>%
               unique(),
             by = join_by(forecast_date == date), multiple = "all") %>% 
   group_by(dist, traj, disc, sq) %>% 
-  summarise(mrwis = mean(lwis)) %>% 
+  summarise(mrwis = mean(lwis, na.rm = TRUE),
+            mwis = mean(wis, na.rm = TRUE)) %>% 
   rowwise() %>% 
   mutate(minwis = mrwis) %>% 
   arrange(traj, sq, disc, dist) %>% 
-  select(traj, sq, disc, dist, mrwis)
+  select(traj, sq, disc, dist, mrwis, mwis)
 
 
 
