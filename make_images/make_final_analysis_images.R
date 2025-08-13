@@ -17,22 +17,16 @@ ili_scores <- readRDS("../flu_forecast_23/nl_scores.rds") %>%
   left_join(states, by = "location_name") %>% 
   unique()
   
+team_scores <- rbind(team_scores, ili_scores %>% 
+                       filter(model == "sir_disc2_hosp_sq_ar1")) %>% 
+  mutate(model = ifelse(model == "sir_disc2_hosp_sq_ar1", 
+                        "<span style='font-size:12pt'><b><i>SIRD_NORM2</i></b></span>",
+                        model))
 
 
-rbind(team_scores, ili_scores) %>% 
-  # filter(str_detect(model, "asg")) %>%
-  # filter(location_name != "Florida") %>% 
-  group_by(model) %>% 
-  summarise(m = mean(lwis, na.rm = TRUE),
-            n = n()) %>% 
-  arrange(m)
 
 
-rbind(team_scores, ili_scores) %>% 
-  filter(model %in% c("asg_disc2_nm_hosp_sq_ar1", "FluSight-baseline")) %>% 
-  ggplot() +
-  geom_boxplot(aes(x = factor(horizon), y = lwis, colour = model)) #+
-  scale_y_log10() 
+
 
 team_scores <- rbind(team_scores, 
                      ili_scores %>% 
@@ -289,8 +283,12 @@ state_diff / date_diff
 #############Coverage#############
 ##################################
 # saveRDS(ili_coverage, "./nl_cover.rds")
-team_coverage <- readRDS("./hub_cover_no_ens.rds")
-ili_coverage <- readRDS("./nl_cover.rds")
+team_coverage <- readRDS("../flu_forecast_23/hub_cover_no_ens.rds")
+ili_coverage <- readRDS("../flu_forecast_23/nl_cover.rds")
+# team_coverage <- rbind(team_coverage, ili_coverage %>% 
+#                          filter(model == "sir_disc2_hosp_sq_ar1")) %>% 
+#   mutate(model = ifelse(model == "sir_disc2_hosp_sq_ar1", "SIRD_NORM2",
+#                         model))
 pcover <- team_coverage %>% 
   filter(!str_detect(model, "FluSight-baseline")) %>% 
   dplyr::select(reference_date, horizon, location, model, contains("cover")) %>% 
@@ -316,6 +314,18 @@ pcover <- team_coverage %>%
               summarise(pcover = mean(covered)),
             aes(x = coverage, y = pcover, linetype = model, colour = model), 
             size = 1.2) +
+  geom_line(data = ili_coverage %>%
+              filter(model == "sir_disc2_hosp_sq_ar1") %>%
+              mutate(model = "SIRD_NORM2") %>% 
+              dplyr::select(reference_date, horizon, location, model, contains("cover")) %>% 
+              pivot_longer(contains("cover"), names_to = "coverage", 
+                           values_to = "covered") %>% 
+              filter(horizon >= 0 & !is.na(covered)) %>% 
+              mutate(coverage = .01*as.numeric(str_extract(coverage, "\\d+"))) %>% 
+              group_by(model, coverage) %>% 
+              summarise(pcover = mean(covered)),
+            aes(x = coverage, y = pcover, linetype = model, colour = model), 
+            size = 1.2) +
   geom_line(data = team_coverage %>%
               filter(str_detect(model, "FluSight-baseline")) %>%
               mutate(model = "FluSight-baseline") %>% 
@@ -328,9 +338,12 @@ pcover <- team_coverage %>%
               summarise(pcover = mean(covered)),
             aes(x = coverage, y = pcover, linetype = model, colour = model), 
             size = 1.2) +
-  scale_color_manual(values = c("ASGD_NORM2" = "blue3", "FluSight-baseline" = "red1")) +
+  scale_color_manual(values = c("ASGD_NORM2" = "blue3", 
+                                "FluSight-baseline" = "red1",
+                                "SIRD_NORM2" = "forestgreen")) +
   scale_linetype_manual(values = c("ASGD_NORM2" = "dashed", 
-                                   "FluSight-baseline" = "twodash")) +
+                                   "FluSight-baseline" = "twodash",
+                                   "SIRD_NORM2" = "longdash")) +
   
   xlab("Theoretical Coverage") +
   ylab("Empirical Coverage") +
@@ -344,9 +357,13 @@ pcover <- team_coverage %>%
 
 
 plwis <- team_scores %>% 
-  filter(str_detect(model, "asg") | str_detect(model, "FluSight-baseline")) %>% 
+  filter(str_detect(model, "asg") | str_detect(model, "FluSight-baseline")
+         | str_detect(model, "SIRD")) %>% 
   mutate(model = ifelse(str_detect(model, "asg"), "ASGD_NORM2", 
-                                   "FluSight-baseline")) %>% 
+                                   ifelse(str_detect(model, "SIRD"), 
+                                   "SIRD_NORM2", "FluSight-baseline"))) %>% 
+  mutate(model = factor(model, levels = c("ASGD_NORM2", "SIRD_NORM2",
+                        "FluSight-baseline"))) %>% 
   group_by(model, reference_date) %>% 
   summarise(mlwis = mean(lwis, na.rm = TRUE),
             mwis = mean(wis, na.rm = TRUE)) %>% 
@@ -360,13 +377,16 @@ plwis <- team_scores %>%
             colour = "grey", size = .9) + 
   geom_line(aes(x = date(reference_date), y = mlwis, 
                 colour = model, linetype = model), size = 1.2) +
-  scale_color_manual(values = c("ASGD_NORM2" = "blue3", "FluSight-baseline" = "red1")) +
+  scale_color_manual(values = c("ASGD_NORM2" = "blue3", 
+                                "FluSight-baseline" = "red1",
+                                "SIRD_NORM2" = "forestgreen")) +
   scale_linetype_manual(values = c("ASGD_NORM2" = "dashed", 
-                                   "FluSight-baseline" = "twodash")) +
+                                   "FluSight-baseline" = "twodash",
+                                   "SIRD_NORM2" = "longdash")) +
   xlab("Date") +
   ylab("LWIS") +
   theme_bw() +
-  theme(legend.position = c(.75, .89),
+  theme(legend.position = c(.75, .83),
         legend.title = element_blank(),
         axis.title = element_text(size = 16),
         axis.text.y = element_text(size = 10),
@@ -375,9 +395,13 @@ plwis <- team_scores %>%
 
 
 pwis <- team_scores %>% 
-  filter(str_detect(model, "asg") | str_detect(model, "FluSight-baseline")) %>% 
+  filter(str_detect(model, "asg") | str_detect(model, "FluSight-baseline")
+         | str_detect(model, "SIRD")) %>% 
   mutate(model = ifelse(str_detect(model, "asg"), "ASGD_NORM2", 
-                        "FluSight-baseline")) %>% 
+                        ifelse(str_detect(model, "SIRD"), 
+                               "SIRD_NORM2", "FluSight-baseline"))) %>% 
+  mutate(model = factor(model, levels = c("ASGD_NORM2", "SIRD_NORM2",
+                        "FluSight-baseline"))) %>%
   group_by(model, reference_date) %>% 
   summarise(mlwis = mean(lwis, na.rm = TRUE),
             mwis = mean(wis, na.rm = TRUE)) %>% 
@@ -391,40 +415,22 @@ pwis <- team_scores %>%
             colour = "grey", size = .9) + 
   geom_line(aes(x = date(reference_date), y = mwis, 
                 colour = model, linetype = model), size = 1.2) +
-  scale_color_manual(values = c("ASGD_NORM2" = "blue3", "FluSight-baseline" = "red1")) +
+  scale_color_manual(values = c("ASGD_NORM2" = "blue3", 
+                                "FluSight-baseline" = "red1",
+                                "SIRD_NORM2" = "forestgreen")) +
   scale_linetype_manual(values = c("ASGD_NORM2" = "dashed", 
-                                   "FluSight-baseline" = "twodash")) +
+                                   "FluSight-baseline" = "twodash",
+                                   "SIRD_NORM2" = "longdash")) +
   xlab("Date") +
   ylab("WIS") +
   theme_bw() +
-  theme(legend.position = c(.75, .89),
+  theme(legend.position = c(.75, .83),
         legend.title = element_blank(),
         axis.title = element_text(size = 16),
         axis.text.y = element_text(size = 10),
         axis.text.x = element_text(size = 12),
         legend.text = element_text(size = 12))
 
-team_scores %>% 
-  filter(str_detect(model, "asg") | str_detect(model, "FluSight-baseline")) %>% 
-  mutate(model = ifelse(str_detect(model, "asg"), "ASGD_NORM2", 
-                        "FluSight-baseline")) %>% 
-  group_by(model, reference_date) %>% 
-  summarise(mlwis = mean(lwis, na.rm = TRUE),
-            mwis = mean(wis, na.rm = TRUE)) %>% 
-  ggplot() +
-  geom_line(aes(x = date(reference_date), y = mlwis, 
-                colour = model, linetype = model), size = .9) +
-  scale_colour_manual(values = c("ASGD_NORM2" = "blue3", 
-                                 "FluSight-baseline" = "red1")) +
-  xlab("Date") +
-  ylab("WIS") +
-  theme_bw() +
-  theme(legend.position = c(.2, .89),
-        legend.title = element_blank(),
-        axis.title = element_text(size = 16),
-        axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 12),
-        legend.text = element_text(size = 12))
 
 
 
@@ -433,9 +439,13 @@ library(patchwork)
 
 plbox <- rbind(team_scores, ili_scores) %>% 
   filter(model %in% c("asg_disc2_nm_hosp_sq_ar1") |
-           str_detect(model, "FluSight")) %>% 
+           str_detect(model, "FluSight") |
+           str_detect(model, "SIRD")) %>% 
   mutate(model = ifelse(str_detect(model, "asg"), "ASGD_NORM2",
-                                   "FluSight-baseline")) %>% 
+                        ifelse(str_detect(model, "SIRD"), "SIRD_NORM2",
+                        "FluSight-baseline"))) %>% 
+  mutate(model = factor(model, levels = c("ASGD_NORM2", "SIRD_NORM2",
+                                          "FluSight-baseline"))) %>% 
   select(model, horizon, lwis, wis) %>% 
   pivot_longer(cols = c("wis", "lwis"), 
                names_to = "score", values_to = "wis") %>% 
@@ -444,7 +454,8 @@ plbox <- rbind(team_scores, ili_scores) %>%
   filter(score == "LWIS") %>%
   ggplot() +
   geom_boxplot(aes(x = factor(horizon + 1), y = wis, colour = model)) +
-  scale_colour_manual(values = c("ASGD_NORM2" = "blue3", "FluSight-baseline" = "red1")) +
+  scale_colour_manual(values = c("ASGD_NORM2" = "blue3", "FluSight-baseline" = "red1",
+                                 "SIRD_NORM2" = "forestgreen")) +
   # scale_y_log10() +
   xlab("Weeks Ahead") +
   ylab("") +
@@ -461,9 +472,13 @@ plbox <- rbind(team_scores, ili_scores) %>%
 
 pbox <- rbind(team_scores, ili_scores) %>% 
   filter(model %in% c("asg_disc2_nm_hosp_sq_ar1") |
-           str_detect(model, "FluSight")) %>% 
+           str_detect(model, "FluSight") |
+           str_detect(model, "SIRD")) %>% 
   mutate(model = ifelse(str_detect(model, "asg"), "ASGD_NORM2",
-                        "FluSight-baseline")) %>% 
+                        ifelse(str_detect(model, "SIRD"), "SIRD_NORM2",
+                               "FluSight-baseline"))) %>% 
+  mutate(model = factor(model, levels = c("ASGD_NORM2", "SIRD_NORM2",
+                                          "FluSight-baseline"))) %>%  
   select(model, horizon, lwis, wis) %>% 
   pivot_longer(cols = c("wis", "lwis"), 
                names_to = "score", values_to = "wis") %>% 
@@ -472,7 +487,9 @@ pbox <- rbind(team_scores, ili_scores) %>%
   filter(score == "WIS") %>%
   ggplot() +
   geom_boxplot(aes(x = factor(horizon + 1), y = wis, colour = model)) +
-  scale_colour_manual(values = c("ASGD_NORM2" = "blue3", "FluSight-baseline" = "red1")) +
+  scale_colour_manual(values = c("ASGD_NORM2" = "blue3", 
+                                 "FluSight-baseline" = "red1",
+                                 "SIRD_NORM2" = "forestgreen")) +
   scale_y_log10() +
   xlab("Weeks Ahead") +
   ylab("") +
@@ -498,10 +515,13 @@ plot_grid(pwis, pbox, labels = c("a)", "b)"))
 
 library(xtable)
 cover_sum <- rbind(team_coverage, ili_coverage %>% unique() %>% 
-        filter(model == "asg_disc2_nm_hosp_sq_ar1")) %>% 
+        filter(model %in% c("asg_disc2_nm_hosp_sq_ar1",
+                            "sir_disc2_hosp_sq_ar1"))) %>% 
   mutate(model = ifelse(str_detect(model, "asg"), "ASGD_NORM2", model)) %>% 
   mutate(model = ifelse(str_detect(model, "FluSight"), 
-                        "FluSight-baseline", model)) %>% 
+                        "FluSight-baseline", 
+                        ifelse(str_detect(model, "sir_d"), "SIRD_NORM2",
+                               model))) %>% 
   # filter(!str_detect(model, "FluSight-baseline")) %>% 
   dplyr::select(reference_date, horizon, location, model, contains("cover")) %>% 
   pivot_longer(contains("cover"), names_to = "coverage", 
@@ -519,6 +539,7 @@ wis_sum <- team_scores %>% unique() %>%
   mutate(model = ifelse(str_detect(model, "asg"), "ASGD_NORM2", model)) %>% 
   mutate(model = ifelse(str_detect(model, "FluSight"), 
                         "FluSight-baseline", model)) %>% 
+  mutate(model = ifelse(str_detect(model, "SIR"), "SIRD_NORM2", model)) %>% 
   group_by(model) %>% 
   summarise(mdwis = median(wis, na.rm = TRUE),
             mdlwis = median(lwis, na.rm = TRUE),
@@ -534,6 +555,8 @@ rel_scores <- team_scores %>%
   mutate(model = ifelse(str_detect(model, "asg"), "ASGD_NORM2", model)) %>% 
   mutate(model = ifelse(str_detect(model, "FluSight"), 
                         "FluSight-baseline", model)) %>% 
+  mutate(model = ifelse(str_detect(model, "SIRD"), 
+                        "SIRD_NORM2", model)) %>% 
   left_join(best_nl, by = c("reference_date", "loc_abb", "horizon")) %>% 
   group_by(model) %>% 
   # filter(model != "GH-model") %>% 

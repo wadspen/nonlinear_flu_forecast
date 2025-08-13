@@ -174,11 +174,11 @@ current season.
 
 The top of figure \ref{fig:us_ili} shows the ILI data at the national level for 
 flu seasons 2010 to 2023. For most seasons there are 52 weeks listed, but for 
-the 2010, 2015, and 2021 seasons there are 53 weeks because there were 53 
-Sundays during those seasons. 
+the 2010, 2015, and 2021 seasons there are 53 weeks because those
+seasons had 53 Sundays. 
 To better align with the flu behavior, week 1 is set as the first week of 
 August and week 52 or 53 is the last week in July of the following year. For 
-example week 1 of the 2013 season corresponds to the first week of August 2013, 
+example, week 1 of the 2013 season corresponds to the first week of August 2013, 
 and week 52 of the same season corresponds to the last week of July 2014. This 
 convention is used for the remainder of this manuscript. 
 
@@ -208,7 +208,7 @@ Whether local or global, the ILI holiday peak is generally expected and thought
 to be due to widespread holiday travel, school closure, or other unique social 
 behavior   
 \cite[]{ewing2017contact, garza2013effect}.
-The only seasons when there was not a peak at week 22 were season 2022 where 
+The only seasons when there was not a peak at week 22 were season 2022 when 
 the season peak occurred particularly early and season 2020 which was greatly 
 influenced by the COVID-19 pandemic. 
 
@@ -237,18 +237,16 @@ of influenza. From hereon, influenza hospitalizations
 will be referrred to as hospitalizations.
 
 The bottom of figure \ref{fig:us_ili} shows the weekly national 
-hospitalizations for the 2022 and 2023 flu seasons. These plots show 
-similarities to the ILI plots in the top of the figure in that at the early 
+hospitalizations for the 2022 and 2023 flu seasons. These plots show a 
+trend similar to the ILI plots in the top of the figure in that during the early 
 weeks of the season hospitalizations are low, but they increase in the fall 
-to a peak after which they decrease until the flu outbreak ends. For both the 
+to a peak and then decrease until the flu outbreak ends. For both the 
 2022 and 2023 seasons, the hospitalizations peaked during the same week as 
 ILI, and in 2023 that peak occurred during the holiday week 22. Additional 
 plots of ILI data and hospitalization
 data for all 50 US states are included in the supplementary material 
-\cite[]{wadsworth2024bas}. These plots show flu outbreak trajectories similar 
-to 
-those in figure \ref{fig:us_ili} with activity increasing
-to a peak and then decreasing.    
+\cite[]{wadsworth2024bas}. These plots show similarly flu outbreak trajectories 
+similar to those in figure \ref{fig:us_ili}. 
 
 
 % \begin{figure}
@@ -291,21 +289,26 @@ to a peak and then decreasing.
 % \jarad{Why not start with the ILI model from Osthus et al? It makes a lot more sense to me to start with what has already been done and then expand upon what they have done. Later you have a section called ILI Model, but isn't this the ILI model?}
 
 The typical behavior of the ILI data which starts at lower values in the late 
-summer and fall but which increases to a peak, usually in December or January, 
-followed by a decline motivates the use of a nonlinear function which follows 
+summer, increases to a peak in the winter, 
+and declines in the spring motivates the use of a nonlinear function which follows 
 a similar trajectory. Compartmental models are standard mathematical models 
 used for modelling disease outbreaks. One important compartmental model is the 
 susceptible-infectious-recovered (SIR) 
 disease transmission model, which has been used by some to model 
-ILI data \cite[]{osthus2019dynamic, allen2017primer}. Ulloa \cite[]{ulloa2019} 
-chose to use the asymmetric Gaussian (ASG) function to model ILI data. 
+ILI data \cite[]{osthus2019dynamic, allen2017primer}.  
 The SIR is a mechanistic model used to capture transmission of a particular
-disease, and the ASG is a smooth function which may approximate the 
-same shape as the ILI trajectory. As ILI may be influenced by more 
+disease, and since ILI may be influenced by more 
 diseases than influenza, the disease transmission described by the SIR model
 can only partially contribute to the true ILI data-generating mechanism
 \cite[]{osthus2019dynamic}.
-Though the ASG function may be able to roughly capture ILI, there may still be 
+
+Ulloa \cite[]{ulloa2019} 
+chose to use the asymmetric Gaussian (ASG) function to model ILI data.
+The ASG is a smooth function which may approximate the 
+same shape as the ILI trajectory.
+The ASG function has more parameters and is thus slightly more flexible than
+the SIR model, and thus may be able to roughly capture ILI.
+However, there may still be 
 systematic behavior which it cannot capture. Thus when using either the SIR
 or ASG models, an additional component for modeling discrepancy should be 
 included.
@@ -313,21 +316,22 @@ included.
 In the first part of this section, we present an ILI model 
 similar to the model in Osthus et al. \cite[]{osthus2019dynamic}. With some 
 generalization, the model may incorporate any appropriate nonlinear function, 
-though the focus here is on the SIR and ASG functions which are defined. 
+though the focus here is on the SIR and ASG functions, defined later
+in this section. 
 With the aim of forecasting hospitalizations, we also introduce a linear 
-model of hospitalizations data with ILI as a predictive covariate. To forecast 
-hospitalizations, ILI data is first forecasted and the forecast is then 
-plugged in as a covariate in the hospitalization model, thus producing 
-hospitalization forecasts. The hospitalization model is also defined in this 
-section.
+model of hospitalization data with ILI as a predictive covariate. To forecast 
+hospitalizations, ILI data is first forecasted and the forecast is then,
+as a covariate,
+plugged into the hospitalization model to produce
+hospitalization forecasts.
 
-The forecasts produced should be probabilistic, making Bayesian modeling a 
+Because we desire probabilistic forecasts, Bayesian modeling is a 
 natural framework for describing forecast uncertainty. 
 Though our main interest is in effeciently producing a probabilistic 
 forecast and not 
-necessarily in estimating model parameters, decisions on certain prior
-distributions and how the models were fit proved critical in producing good 
-forecasts. After defining the ILI and hospitalization models in this section, 
+necessarily in estimating model parameters, certain modeling decisions and 
+prior distribution selections proved critical in producing good 
+forecasts. After defining the ILI and hospitalization models, 
 we describe the 
 selection of prior distributions, model fitting, and producing forecasts
 from the posterior predictive distribution by combining ILI and hospitalization
@@ -346,8 +350,12 @@ selection for modeling. Under the parameterization in of the Beta distribution
 used in (\ref{eq:ili_model}) the expected value is $\pi_{s,w}$ and the 
 variance is $\pi_{s,w}(1 - \pi_{s,w})/(1 + \kappa_s)$, making $\kappa_s$ a 
 scale parameter. The nonlinear function $f_{\theta_s}(w)$ captures the 
-trajectory of the ILI, and $\gamma_w$ is a discrepancy term for capturing the 
-systematic patterns which $f_{\theta_s}(w)$ does not capture. 
+trajectory of the ILI, and $\gamma_w$ is a discrepancy term shared by 
+all seasons which captures 
+systematic patterns not captured by $f_{\theta_s}(w)$. The additional 
+discrepancy term $\upsilon_{s,w}$ captures additional season 
+specific patterns.
+
 \begin{equation}
 \begin{aligned}
     \label{eq:ili_model}
@@ -363,8 +371,8 @@ compartment of the SIR model from (\ref{eq:sir_diff}) in section
 \ref{sec:sir_func}. In Ulloa \cite[]{ulloa2019} 
 $f_{\theta_s}(w) = ASG_{\theta}(w)$ from (\ref{eq:asg_function}) in section 
 \ref{sec:asg_func}. In Ulloa \cite[]{ulloa2019} modeling is done hierarchically 
-over seasons. Herein we also adopt the hierarchical modeling as it proved a 
-powerful tool for improving forecasts.
+over seasons. Herein we also adopt the hierarchical modeling so as to exploit 
+information contained in the data across all seasons.
 
 Model (\ref{eq:ili_model}) was fit 
 independently for each location. This decision was made largely due to the 
@@ -379,9 +387,9 @@ to borrow information from neighboring states.
 \subsection{Susceptible-Infectious-Recovered (SIR) compartmental model} \label{sec:sir_func}
 
 The SIR compartmental model is a mathematical model used for modeling disease 
-outbreaks and was introduced by Kermack and McKendrick 
+outbreaks and was introduced in 1927 by Kermack and McKendrick 
 \cite[]{kermack1927contribution}. Since then, compartmental models have 
-become standard for modeling infectious diseases 
+become standard in modeling infectious diseases 
 \cite[]{allen2008mathematical}, and many extensions have been made and 
 studied \cite[for example]{simon2020sir, allen2017primer, van2008deterministic}. 
 The SIR mathematical model includes three compartments and assumes that at 
@@ -400,7 +408,7 @@ determined by the disease transmission rate $\beta > 0$ and the recovery
 rate $\delta > 0$. Respectively, these may be thought of as the expected 
 proportion of susceptible individuals who will be infected by an infectious 
 individual and the expected rate of recovery to an immune state for a newly 
-infected person. Whether or not a disease outbreak is classified as an 
+infected individual. Whether or not a disease outbreak is classified as an 
 epidemic is determined by the initial susceptible population $S_0$, or the 
 susceptible population at time $0$, and the parameter $\rho = \delta/
 \beta$. If $S_0/\rho > 1$, the outbreak is considered an epidemic. It is 
@@ -408,10 +416,12 @@ non-epidemic if $S_0/\rho \leq 1$ \cite[]{osthus2019dynamic}. Figure
 \ref{fig:sir_traj} shows the trajectory of the three compartments of an SIR 
 model where $S_0$ and $\rho$ were selected to match an outbreak that is an 
 epidemic. In the case where $S_0 \leq \rho$, the trajectory for the $I$ 
-compartment would never be increasing. The increase to a peak and subsequent 
-decrease in the $I$ compartment of figure \ref{fig:sir_traj} suggest it is 
+compartment will be to never increase. The increase to a peak and subsequent 
+decrease in the $I$ compartment of figure \ref{fig:sir_traj} illustrate why
+it is 
 reasonable to model ILI by this compartment. Thus in modeling the ILI data, 
-we consider the data to be analogous to the $I$ proportion of the population.
+we consider the data to be rouchly 
+analogous to the $I$ proportion of the population.
 
 \begin{figure}[hbt!]
     \centering
@@ -430,12 +440,13 @@ we consider the data to be analogous to the $I$ proportion of the population.
 \subsection{Asymmetric Gaussian (ASG) function} \label{sec:asg_func}
 The ASG function is another example of a nonlinear function which can 
 approximate the trajectory of the flu outbreak. The ASG was previously used 
-by Ulloa to model and forecast ILI \cite[]{ulloa2019}, and it has been used 
+by Ulloa to model and forecast ILI \cite[]{ulloa2019}. It has also been used 
 to model vegetation growth and satellite sensor data 
 \cite[]{lewis2020extracting, jonsson2002seasonality, hird2009noise, 
 beck2006improved, atkinson2012inter}. The ASG is a modification of the 
 asymmetric Gaussian distribution \cite[]{wallis2014two} and is characterized 
-by its rise to a peak and fall from that peak which may not occur at the same 
+by its rise to a peak and fall from that peak, which rise and fall 
+may not occur at the same 
 rate, as shown in figure \ref{fig:asg_function}. The ASG function is denoted 
 as $ASG_\theta(w)$ where 
 $\theta = (\lambda, \nu, \mu, \sigma_1^2, \sigma_2^2)$, $\nu > 0$, 
@@ -460,8 +471,9 @@ $w \in (1, ..., W)$ is week. The function is defined in
         \lambda + (\nu - \lambda) \text{exp}[-(w - \mu)^2/2\sigma^2_2], \;\;\; w \geq \mu
     \end{cases}
 \end{equation}
-For modeling in this manuscript, we use a slightly reparameterized version of 
-the function in (\ref{eq:asg_function_rep}), where $\eta = \nu - \lambda > 0$. 
+In this manuscript, we use a slightly reparameterized version of function
+(\ref{eq:asg_function}) shown in (\ref{eq:asg_function_rep}), 
+where $\eta = \nu - \lambda > 0$. 
 This constraint guarantees that the function has a peak greater than $\lambda$.
 
 \begin{equation}
@@ -495,7 +507,7 @@ for the same seasons. The grey lines show the difference between the data and
 the functions from figure \ref{fig:asg_fits} for each season, and the black 
 line is the average by week over all seasons. The lines show that the ASG 
 function typically underpredicts week 22 and overpredicts week 23. Perhaps 
-for other weeks, like week 30 for example, there also tends to be systematic 
+for other weeks, week 30 for example, there tends to be systematic 
 behavior not captured by the ASG function.
 
 
@@ -540,9 +552,9 @@ The terms $\gamma_w$ and $\upsilon_{s,w}$, where $s$ is the season and $w$ is th
 season week, are included in 
 (\ref{eq:ili_model}) to capture the per week discrepancy between ILI and the 
 function. Here $\gamma_w$ is shared across all seasons, whereas $\upsilon_{s,w}$
-is specific to season $s$. In fact, to assist in identifying $\gamma_w$,
-$\upsilon_{s,w}$ is only included for the current season being forecast and none of
-the previous seasons.
+is specific to season $s$. To assist in identifying $\gamma_w$,
+$\upsilon_{s,w}$ is only included for the current season being forecast and 
+none of the previous seasons.
  As in Osthus's model, 
 $\gamma_w$ and $\upsilon_{s,w}$ are modeled as reverse random walks, as shown 
 in (\ref{eq:rw}). 
@@ -564,7 +576,7 @@ Reverse random walks have also been used with success in election forecasting
 and other flu forecasting models \cite[]{osthus2021multiscale, 
 osthus2019dynamic, linzer2013dynamic}. The sum to zero constraint 
 $-\gamma_1 = \sum_{w=2}^W \gamma_w$ is imposed on (\ref{eq:rw}) to improve 
-identifiability. An additional constraint is $\upsilon_{s, W} = 0$.
+identifiability as well as the constraint $\upsilon_{s, W} = 0$.
 
 
 
@@ -592,13 +604,13 @@ the autoregressive lag is one (ARX(1))
     \end{aligned}
 \end{equation}
 
-Figure \ref{fig:lag_scatter} helps
+Figure \ref{fig:lag_scatter} shows US national level data which helps
 illustrate why this modeling decision was made.
 The figure shows scatterplots of ILI percentage and 
 hospitalizations on the top row.
 The bottom row shows scatterplots of the difference between hospitalizations and 
-1 week lags scaled 
-by ILI percentage at the US national level. The plots in the right column
+1 week lags
+by ILI percentage. The plots in the right column
 are of the logarithm of hospitalizations. The lines through the points are
 drawn by connecting hospitalizations for consecutive weeks during the flu 
 season.
@@ -606,12 +618,11 @@ These plots show that a linear or quadratic relationship between ILI percentage
 and hospitalizations does not capture much of the temporal correlation in 
 hospitalizations as shown by the obvious loops drawn in the plot. 
 However, when including a 
-single autoregressive lag of hospitalizations in the model, much of the time 
+single AR lag of hospitalizations in the model, much of the time 
 correlation is
 accounted for as shown by the tighter and more frequent crossing of lines
-in the bottom row. Higher than order 1 autoregressions showed little or no 
-improvement over order 1, hence we consider the ARX(1) reasonably well 
-suited for modeling ILI and hospitalzations. 
+in the bottom row. Models with more than 1 AR lag showed little or no 
+improvement over 1 lag. 
 
 \begin{figure}[hbt!]
     \includegraphics[scale=.2]{Images/ili_v_svat_vs_lagdiff.png}
@@ -634,14 +645,14 @@ when $D_s$ belongs to the location-scale t (LST) family.
 
 
 Like the ILI model (\ref{eq:ili_model}), 
-the hospitalization model was fit independently fore each location.
+the hospitalization model was fit independently for each location.
 For fitting purposes $ILI_{s,w}$ is always 
 multiplied by $P$ which is proportional to the population of the state or 
 territory, in this case the total population divided by 50,000. This is done 
 as a means of scaling so that the prior distribution assigned to  
 $\boldsymbol{\alpha}_s = (\alpha_{0s}, \alpha_{1s}, \alpha_{2s})$, 
 $\sigma_{\epsilon_s}$, and $\omega_s$ might reasonably be the same for all 
-states.
+locations.
 
 
 Like the ILI model, the hospitalization model in (\ref{eq:final_hosp}) is also 
@@ -649,7 +660,8 @@ fit via Bayesian posterior updating. To obtain forecasts for $H_{s, w^* + i}$,
 the ILI posterior predictive distribution is used along with the posterior 
 distribution for the parameters in (\ref{eq:final_hosp}). 
 We let $D_s$ belong to the normal family, though in the supplementary materials
-?? we show a real data analysis where we considered other distribution families
+we present a real forecast
+analysis where we considered other distribution families
 including the LST and lognormal families.
 
 % We considered three 
@@ -690,12 +702,12 @@ for $\sigma_{\gamma}^2$ and $\sigma_{\gamma_W}^2$. For these two scale
 parameters only, rather than assigning a half-normal prior to the standard 
 deviation parameters, as recommended by Gelman \cite[]{gelman2006prior}, the 
 priors were assigned to the variance parameters. Univariate parameters were 
-assigned either a normal distribution prior if the support is on $\mathbb{R}$, 
+assigned either a normal distribution prior if the support was on $\mathbb{R}$, 
 a half-normal prior if the support is nonnegative, or a truncated-normal 
 prior to match a more specific support. Under the ASG model, $\theta_s$ was 
 modeled hierarchically over seasons so that for each season the transformed 
 parameter $T(\theta_s) \sim N(\theta, \Sigma$) and priors distributions are 
-assigned to $\theta$ and $\Sigma$. Here 
+assigned to $\theta$ and $\Sigma$ where
 $T(\theta_s) = (\lambda_s, \text{log}(\eta_s), \mu_s, \text{log}(\sigma_{1s}^2)$.
 
 
@@ -708,7 +720,7 @@ susceptible population compartment of the SIR model was set to $S_0 = 0.9$.
 The parameters $I_{0s}$, $\beta_s$, and $\rho_s$ were assigned informative 
 priors. In a previous version of this manuscript, when fitting an ASG model
 with discrepancy components,
-rather than estimating all parameters in a Bayesian way,
+rather than estimating all parameters through posterior updating,
 identifiability was encouraged by setting
 the parameter $\lambda_s$ from (\ref{eq:asg_function_rep})
 to be equal to its MLE. In this updated manuscript, 
@@ -718,7 +730,7 @@ all seasons and set the variance parameter so the prior was tight around the
 mean. This led to improved mixing of posterior draws and better forecasts.
 The 
 specific prior distributions assigned to each parameter are listed in the 
-supplementary materials ??.
+supplementary materials.
 
 
 % To improve identifiability when $f_{\theta_s}(w) = ASG_{\theta_s}(w)$ 
@@ -759,11 +771,12 @@ sampling distributions, improving predictive performance or to prevent
 model misspecification in one model to influence the other 
 \cite[]{nott2023bayesian, jacob2020unbiased, jacob2017better, plummer2015cuts}.
 
-The decision to cut the model into two components was made for several reasons.
+The decision to cut the forecast modelinto two component models
+was made for several reasons.
 When fitting the fully Bayesian joint model, the time to fit a single model using
 Markov chain Monte Carlo (MCMC) sampling and
-obtain forecasts was sometimes upwards of 4 hours whereas fitting the two models
-separately usually took less than 1 hour. When assessing convergence of model
+obtain forecasts was sometimes many hours whereas fitting the two models
+separately took a fraction of the time. When assessing convergence of model
 parameters, it was rare that posterior sampling chains for the joint model
 showed convergence even after 55,000 iterations, whereas the component model 
 fits gave no signs which raised concern for convergence. And most importantly,
@@ -773,16 +786,16 @@ The process for obtaining forecasts is described in the following paragraphs
 and computation is described in section \ref{sec:implementation_posterior}.
 
 
-Model (\ref{eq:ili_model}) is fit via Bayesian posterior updating. Future ILI 
-forecasts are obtained via the posterior predictive distribution where for
-week $w$, the predictive distribution is obtained by integrating over the 
+Model (\ref{eq:ili_model}) was fit via Bayesian posterior updating. Future ILI 
+forecasts were obtained via the posterior predictive distribution where for
+week $w$, the predictive distribution was obtained by integrating over the 
 parameters $\pi_s$, $\kappa_s$, $\sigma^2_{\gamma}$, and $\sigma^2_{\gamma_W}$ 
 as in (\ref{eq:ili_post}) where 
 $p(\boldsymbol{\pi}_s, \kappa_s, \sigma^2_{\gamma}, \sigma^2_{\gamma_W} | \textbf{ILI})$ 
 is the density function of the posterior distribution for the model parameters. 
-If the current week is $w$ then the desired forecasts are for weeks $w + i$ 
+If the current week was $w$ then the desired forecasts were for weeks $w + i$ 
 where $i$ is a positive integer. Here $\widetilde{ILI}_{s,w + i}$ represents the 
-predicted or forecast ILI at $i$ weeks in the future.
+predicted or forecasted ILI at $i$ weeks in the future.
 
 \begin{equation}
     \label{eq:ili_post}
@@ -794,10 +807,10 @@ predicted or forecast ILI at $i$ weeks in the future.
 \end{equation}
 % \jarad{It doesn't make sense to have 4 $\int$ here since $\pi_s$ is a vector.}
 % \spencer{Isn't that captured in $d \pi_s$?}
-Hospitalization forecasts $\widetilde{H}_{s,w + i}$ at week $w + i$ are then
+Hospitalization forecasts $\widetilde{H}_{s,w + i}$ at week $w + i$ were then
 obtained by combining the posterior predictive distribution of model 
 (\ref{eq:final_hosp}) with (\ref{eq:ili_post}) and integrating over 
-$\widetilde{ILI}_{s,w + i}$ as in (\ref{eq:hosp_post_forc}). Here 
+$\widetilde{ILI}_{s,w + i}$ as in (\ref{eq:hosp_post_forc}). Here,
 $\boldsymbol{\alpha}$ represents all regression and variance parameters in
 model (\ref{eq:final_hosp}).
 
@@ -837,13 +850,11 @@ Development Team \cite[]{stan2024manual} \cite[]{gabry2022stan}. Stan
 implements Hamiltonian Monte Carlo (HMC) sampling with the No-U-turn 
 sampler \cite[]{hoffman2014no}. The \texttt{cmdstanr} package provides 
 several diagnostic statistics for assessing the sampler.
-As mentioned, most model parameter prior distributions were intended to be 
-uninformative.
-Plots of posterior distributions for select parameters from ILI and 
-hospitalization models are shown in the supplementary material 
+Plots of prior and posterior distributions for select parameters from ILI and 
+hospitalization models are included in the supplementary material 
 \cite[]{wadsworth2024bas}.
 
-We assessed the model fit for four ILI models and for 
+Model fit was assessed for four ILI models and for 
 the hospitalization model. The ILI models included the SIR and 
 ASG models and models with and without discrepancy modeling. When discrepancy 
 is included, the models are denoted as SIRD and ASGD. These models were fit 
@@ -852,15 +863,12 @@ using US national data from 2010 to 2023 flu seasons, where data from the
 % Assessment for hospitalization modeling was done for six different models. 
 % These include NORM, LNORM, and LST models, and models where a quadratic ILI 
 % term is included or excluded. 
-To assess posterior sampling convergence, models 
-were fit to data where ILI and hospitalization data up to weeks 14, 20, and 26
-of the 2023 
-season were included. Sampling was done with four chains where from each chain 
+Sampling was done with four chains where from each chain 
 60,000 posterior draws were sampled, and the first 10,000 draws were discarded 
 as a burn-in. The $\hat{R}$ statistic \cite[]{vehtari2021rank} and the 
 effective sample size ($ESS$) \cite[]{gelman2013bayesian} were calculated for 
 each parameter, and for all models fit, the largest $\hat{R}$ was below the 
-recommend threshold of 1.05, and the smallest $ESS$ was over 1,000.
+recommend threshold of 1.05, and the smallest $ESS$ was over 500.
 % Tables \ref{tab:ili_diagnostics} and 
 % \ref{tab:hsop_diagnostics} summarize the maximum $\hat{R}$ and the minimum 
 % $ESS$ over all parameters for ILI and hospitalization models respectively. 
@@ -935,13 +943,12 @@ Occasionally $\{H^*_{s,w + i}\}^K$ included a small number of negative values,
 which do not make sense when the distribution is meant to forecast
 hospitalizations, a nonnegative number. We attempted to alleviate this problem
 by modeling log-hospitalizations or by assuming hospitalizations followed a
-distribution truncated at 0, but the cost of doing so led to poorer forecasts
-or problems drawing from the posterior distribution.
+distribution truncated at 0, but these models led to poorer forecasts
+and issues drawing from the posterior distribution.
 For the forecast competition analysis in 
 section \ref{sec:analysis}, all negative values of $\{H^*_{s,w + i}\}^K$ were 
 set to 0 to reflect realistic values of hospitalizations and comply with the 
-FluSight forecasting rules. This ultimately made almost no difference in 
-results.
+FluSight forecasting rules.
 
 
 
@@ -1379,6 +1386,7 @@ and log-weighted interval scores (RWIS/RLWIS).}
   \hline
 ASGD\_NORM2 & 62 & 0.34 & 14 & 0.23 & 0.001 & 100 & 1 & 1 \\ 
   PSI-PROF & 63 & 0.35 & 15 & 0.23 & 0.003 & 100 & 0.90 & 0.97 \\ 
+  SIRD\_NORM2 & 67 & 0.36 & 16 & 0.26 & 0.001 & 100 & 0.93 & 0.95 \\
   CEPH-Rtrend\_fluH & 69 & 0.39 & 13 & 0.28 & 0.004 & 100 & 0.81 & 0.86 \\ 
   FluSight-baseline & 85 & 0.41 & 16 & 0.32 & 0.023 & 100 & 0.63 & 0.82 \\ 
   UM-DeepOutbreak & 83 & 0.46 & 21 & 0.39 & 0.010 & 99 & 0.64 & 0.72 \\ 

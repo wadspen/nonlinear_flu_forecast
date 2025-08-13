@@ -99,7 +99,7 @@ described in the following statement added to revised manuscript:
 
 ``In a previous version of this manuscript, when fitting an ASG model
 with discrepancy components,
-rather than estimating all parameters in a Bayesian way,
+rather than estimating all parameters through posterior updating,
 identifiability was encouraged by setting
 the parameter $\lambda_s$ from (\ref{eq:asg_function_rep})
 to be equal to its MLE. In this updated manuscript, 
@@ -136,11 +136,18 @@ responsible for ILI. We touch on this a little more directly in the revised
 manuscript by stating:
 
 ``The SIR is a mechanistic model used to capture transmission of a particular
-disease, and the ASG is a smooth function which may approximate the 
-same shape as the ILI trajectory. As ILI may be influenced by more 
+disease, and since ILI may be influenced by more 
 diseases than influenza, the disease transmission described by the SIR model
-can only partially contribute to the true ILI data-generating mechanism[44].
-Though the ASG function may be able to roughly capture ILI, there may still be 
+can only partially contribute to the true ILI data-generating mechanism
+[44].
+
+Ulloa [53]
+chose to use the asymmetric Gaussian (ASG) function to model ILI data.
+The ASG is a smooth function which may approximate the 
+same shape as the ILI trajectory.
+The ASG function has more parameters and is thus slightly more flexible than
+the SIR model, and thus may be able to roughly capture ILI.
+However, there may still be 
 systematic behavior which it cannot capture. Thus when using either the SIR
 or ASG models, an additional component for modeling discrepancy should be 
 included."
@@ -180,7 +187,7 @@ illustrate why this modeling decision was made.
 The figure shows scatterplots of ILI percentage and 
 hospitalizations on the top row.
 The bottom row shows scatterplots of the difference between hospitalizations and 
-1 week lags scaled 
+1 week lags
 by ILI percentage at the US national level. The plots in the right column
 are of the logarithm of hospitalizations. The lines through the points are
 drawn by connecting hospitalizations for consecutive weeks during the flu 
@@ -189,12 +196,11 @@ These plots show that a linear or quadratic relationship between ILI percentage
 and hospitalizations does not capture much of the temporal correlation in 
 hospitalizations as shown by the obvious loops drawn in the plot. 
 However, when including a 
-single autoregressive lag of hospitalizations in the model, much of the time 
+single AR lag of hospitalizations in the model, much of the time 
 correlation is
 accounted for as shown by the tighter and more frequent crossing of lines
-in the bottom row. Higher than order 1 autoregressions showed little or no 
-improvement over order 1, hence we consider the ARX(1) reasonably well 
-suited for modeling ILI and hospitalzations."}
+in the bottom row. Models with more than 1 AR lag showed little or no 
+improvement over 1 lag."}
 
 
 
@@ -255,13 +261,12 @@ Occasionally $\{H^*_{s,w + i}\}^K$ included a small number of negative values,
 which do not make sense when the distribution is meant to forecast
 hospitalizations, a nonnegative number. We attempted to alleviate this problem
 by modeling log-hospitalizations or by assuming hospitalizations followed a
-distribution truncated at 0, but the cost of doing so led to poorer forecasts
-or problems drawing from the posterior distribution.
+distribution truncated at 0, but these models led to poorer forecasts
+and issues drawing from the posterior distribution.
 For the forecast competition analysis in 
 section \ref{sec:analysis}, all negative values of $\{H^*_{s,w + i}\}^K$ were 
 set to 0 to reflect realistic values of hospitalizations and comply with the 
-FluSight forecasting rules. This ultimately made almost no difference in 
-results."}
+FluSight forecasting rules."}
 
 \end{enumerate}
 
@@ -353,13 +358,13 @@ arises whether Bayesian Analysis is the right journal.
 
 Statement at the beginning of section 3.
 
-``With the goal of producing a probablistic forecast, Bayesian modeling is a 
+``Because we desire probabilistic forecasts, Bayesian modeling is a 
 natural framework for describing forecast uncertainty. 
 Though our main interest is in effeciently producing a probabilistic 
 forecast and not 
-necessarily in estimating model parameters, decisions on certain prior
-distributions and how the models were fit proved critical in producing good 
-forecasts. After defining the ILI and hospitalization models in this section, 
+necessarily in estimating model parameters, certain modeling decisions and 
+prior distribution selections proved critical in producing good 
+forecasts. After defining the ILI and hospitalization models, 
 we describe the 
 selection of prior distributions, model fitting, and producing forecasts
 from the posterior predictive distribution by combining ILI and hospitalization
@@ -424,7 +429,7 @@ The figure shows scatterplots of ILI percentage and
 hospitalizations on the top row.
 The bottom row shows scatterplots of the difference between hospitalizations and 
 1 week 
-lags scaled 
+lags
 by ILI percentage at the US national level. The plots in the right column
 are of the logarithm of hospitalizations. The lines through the points are
 drawn by connecting hospitalizations for consecutive weeks during the flu 
@@ -433,12 +438,11 @@ These plots show that a linear or quadratic relationship between ILI percentage
 and hospitalizations does not capture much of the temporal correlation in 
 hospitalizations as shown by the obvious loops drawn in the plot. 
 However, when including a 
-single autoregressive lag of hospitalizations in the model, much of the time 
+single AR lag of hospitalizations in the model, much of the time 
 correlation is
 accounted for as shown by the tighter and more frequent crossing of lines
-in the bottom row. Higher than order 1 autoregressions showed little or no 
-improvement over order 1, hence we consider the ARX(1) reasonably well 
-suited for modeling ILI and hospitalzations."}
+in the bottom row. Models with more than 1 AR lag showed little or no 
+improvement over 1 lag."}
 
 \item The authors provide also state level predictions. However, I do not see 
 where a spatial component is included in the model. Is this only via P or are 
@@ -550,7 +554,7 @@ susceptible population compartment of the SIR model was set to $S_0 = 0.9$.
 The parameters $I_{0s}$, $\beta_s$, and $\rho_s$ were assigned informative 
 priors. In a previous version of this manuscript, when fitting an ASG model
 with discrepancy components,
-rather than estimating all parameters in a Bayesian way,
+rather than estimating all parameters through posterior updating,
 we set the parameter $\lambda_s$ from (\ref{eq:asg_function_rep})
 to be equal to its MLE. In this updated manuscript, 
 however, we use empirical Bayes and center the first component of the 
