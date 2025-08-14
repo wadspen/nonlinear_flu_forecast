@@ -2,7 +2,7 @@
 The annual influenza outbreak leads to significant public health and economic 
 burdens making it desirable to have prompt and accurate probabilistic forecasts 
 of the disease spread. The United States Centers for Disease Control and 
-Prevention (CDC) hosts annually a national flu forecasting competition which has 
+Prevention hosts annually a national flu forecasting competition which has 
 led to the development of a variety of flu forecast modeling methods. For the 
 first several years of the competition, the target to be forecast was weekly 
 percentage of patients with an influenza-like illness (ILI), but in 2021 the 
@@ -10,26 +10,32 @@ target was changed to weekly hospitalization counts. Reliable state and national
 hospitalization data has only been available since 2021, but for ILI the data 
 has been available since 2010 and has been successfully forecast for several 
 seasons.
-In this manuscript, we introduce a two component modeling framework for 
+In this manuscript, we introduce a two component 
+Bayesian modeling framework for 
 forecasting weekly hospitalizations utilizing both hospitalization data and ILI 
 data. The first component is for modeling ILI data using a dynamic nonlinear 
-Bayesian hierarchical model. The second component is for modeling 
+Bayesian hierarchical model. This component includes modeling discrepancy 
+between a functional model and the observed which requires thoughtful decisions
+for modeling constraints and selecting prior parameter distributions.
+The second component is for modeling 
 hospitalizations as a function of ILI. For hospitalization forecasts, ILI is 
-first forecasted and then hospitalizations are forecast with ILI forecasts used 
-as a linear or quadratic predictor. In a simulation study, two ILI forecast 
+first forecasted and then hospitalizations forecasts are produced using
+ILI forecasts 
+as a linear or quadratic predictor. The combination of the models is done in a
+manner similar to using the Bayesian cut.
+In a simulation study, two ILI forecast 
 models, including one similar to the winning model for two seasons of the CDC 
 forecast competition from Osthus et al.
 % \cite[]{osthus2019dynamic} 
 % 
 and a nonlinear Bayesian hierarchical model from Ulloa 
 % \cite[]{ulloa2019}
-are compared. Also assessed is the usefulness of including a systematic model 
-discrepancy term in the ILI model. Forecasts of state and national 
-hospitalizations for the 2023-24 flu season are made, and different modeling 
-decisions are compared. We found that including a discrepancy component in the 
-ILI model tends to improve forecasts during certain weeks of the year. We also 
-found that other modeling decisions such as the exact nonlinear function to be 
-used in the ILI model or the error distribution for hospitalization models may 
-or may not be better than other decisions, depending on the season, location, 
-or week of the forecast.
+are compared with other standard forecasts models.
+The usefulness of including a systematic model 
+discrepancy term in the ILI model is specifically addressed and proves 
+to greatly improve forecasts. In a real data analysis, 
+forecasts of state and national 
+hospitalizations for the 2023-24 flu season are made and compared with forecasts
+from 20 other competing models. The forecasts from the proposed methodology 
+outperformed all but one of 20 competing models. 
 \end{abstract}
