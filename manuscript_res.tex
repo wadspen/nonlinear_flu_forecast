@@ -70,12 +70,14 @@ for flu behavior, more difficult to interpret.
 
 
 
-The contribution of this manuscript is to introduce a two component framework 
+The contribution of this manuscript is to introduce a two component 
+Bayesian model framework 
 for modeling HHS hospitalization forecasts where hospitalization data and 
 years of ILI data are used to inform forecast models. The first modeling 
-component is a model of ILI data and the second is a model of hospitalization 
+component is a hierarchical model of ILI data. 
+The second is a model of hospitalization 
 data with ILI as a predictive covariate.
-Herein we use ILI models similar to those in Osthus et al. 
+Herein we use Bayesian ILI models similar to those in Osthus et al. 
 \cite[]{osthus2019dynamic} and Ulloa \cite[]{ulloa2019} for ILI forecasting.
 The model of Osthus et al. \cite[]{osthus2019dynamic} is a combined data 
 assimilation and statistical regression model which involves a compartmental 
@@ -86,19 +88,26 @@ Kennedy and O'Hagan \cite[]{kennedy2001bayesian}. The model in Ulloa
 \cite[]{ulloa2019} is a Bayesian hierarchical regression model with an 
 underlying function intended to capture the trajectory of the seasonal 
 ILI data. Herein, we provide a framework under which discrepancy modeling may 
-be used along with a general function modeling ILI data, and we show the 
-effectiveness of including discrepancy modeling during certain periods of 
-the flu season. 
+be used along with a general function modeling ILI data. Modeling discrepancy
+introduces some challenges and requires thoughtful selection of model 
+constraints and prior distributions to be used effectively.
+ 
 
 In line with the newer FluSight standard of forecasting hospitalizations, we 
-model hospitalizations as a linear function of ILI. Thus forecasts produced 
-herein target flu hospitalizations and are a mapping of ILI forecasts to 
-hospitalizations. This allows for ILI data from many seasons to be exploited 
-and for ILI forecasts to assist in forecasting hospitalizations, which has 
-fewer seasons of data than ILI. Several modeling schemes and their forecasts 
-for the 2023 flu hospitalization season are compared, and it is shown that the 
-modeling decisions produce good forecast results for different states or times 
-during the flu season.
+model hospitalizations as a linear function of ILI. The Bayesian scheme 
+produces a posterior predictive distribution of hospitalizations, which is 
+shown to be a reasonably well calibrated probabilistic forecast.
+The flu hospitalization forecasts are a mapping of ILI forecasts to 
+hospitalizations, and this allows for ILI data from many seasons to be exploited 
+and for ILI forecasts to assist in forecasting hospitalizations.
+At this state of national flu forecasting, using ILI data can be especially
+useful since there are many more seasons of available ILI data than 
+hospitalization data. 
+The forecasts produced in this manuscript are compared with out of the box 
+forecast models in a simulation study, and in a real data analysis the 
+forecasts are compared with 20 other forecasts from the 2023 FluSight forecast
+competition. The proposed models outperform both the out of the box methods, and
+they also outperform all but one of the FluSight models.
 
 In section \ref{sec:data} we review the ILI and hospitalization data provided 
 by the CDC and targeted by FluSight. 
@@ -1022,18 +1031,21 @@ current standard for comparing performance between probabilistic forecasts
 and selecting the best forecasts according to the notion of maximizing 
 sharpness subject to (auto-)calibration 
 \cite[]{gneiting2007probabilistic, tsyplakov2013evaluation}. Proper scoring 
-rules are commonly used in forecast comparison and have the property that a 
+rules are commonly used in forecast comparison, and they are deisgned such 
+that a 
 forecaster is incentivized to be honest in the reporting of their forecasts 
 \cite[]{gneiting2007strictly, gneiting2014probabilistic}.
-The proper scoring rules primarily used in the FluSight competition and the 
-COVID-19 Forecast Hub and which we will use herein are the negatively oriented
+The proper scoring rule primarily used in the FluSight competition and the 
+COVID-19 Forecast Hub, and which is used in this simulation study,
+is the negatively oriented
 (smaller is better)
 weighted interval score (WIS)
 \cite[]{mathis2024evaluation, bracher2021evaluating}.
 The WIS is used for scoring quantile or interval 
-forecasts 
-\cite[]{gneiting2007strictly, gneiting2014probabilistic, bracher2021evaluating} 
-and is defined in (\ref{eq:wis2}) where $Q$ is a forecast represented by all 
+forecasts, or forecasts made up of predicitive intervals of several nominal 
+levels
+\cite[]{gneiting2007strictly, gneiting2014probabilistic, bracher2021evaluating}. 
+The WIS defined in (\ref{eq:wis2}) where $Q$ is a forecast represented by all 
 included quantiles, $B$ is the number of intervals,  $y^*$ is the observed 
 value targeted by the forecast, $w_0 = 1/2$ and $w_b = \alpha_b / 2$ are 
 weights for each interval, and $\alpha_b$ is the nominal level of the $b^{th}$ 
@@ -1087,18 +1099,19 @@ making each forecast a set of 11 predictive intervals and a predictive median.
 Figure \ref{fig:wis_by_week_horizon} gives three plots showing results of the 
 study. Plot a) shows WIS scores averaged over each left out season and each 
 of the 500 simulation replicates. The ASGD forecasts on average clearly 
-outperformed the other models considered for almost each week. The ASGD does
-especially well at week 20 which contains forecasts of the holiday week 22, 
-showing the particular importance of modeling discrepancy at and around that 
+outperformed the other models considered in almost every week. The ASGD does
+especially well at week 20 which contains forecasts of the holiday week 22. 
+This demonstrates the
+particular importance of modeling discrepancy at and around that 
 week. The SIRD outperforms the SIR model, again showing the importance of 
 modeling discrepancy, but it is still outperformed by the ASG and even for a
 few weeks by the BASE and ARIMA models. Plot b) shows boxplots of all forecast
 scores by model and separated by horizon forecasts of 1 to 4 weeks ahead. Here
-also the ASGD appears to perform the best with the other variations of the 
+also the ASGD performs the best with the other variations of the 
 nonlinear models not always outperforming the BASE or ARIMA models. 
 To assess calibration, plot c)
 shows the empirical coverage of each model for 11 predictive intervals from 
-10\% to 98\% nominal levels. Each model is was undercalibrated, but the ASGD 
+10\% to 98\% nominal levels. Each model is undercalibrated, but the ASGD 
 model is the closest to being well calibrated, especially at the hightest 
 nominal levels. Table \ref{tab:sim_wis_res} shows summaries of the mean WIS and
 coverage for 50\% and 95\% predictive intervals.
@@ -1223,10 +1236,11 @@ was the week of May 4, 2024 making 30 total weeks of forecasts.
 % Nearly teams participated and forecasts from over 40 models were submitted throughout the duration of the season. 
  Primary scores for evaluating each forecast were the WIS and the 
  log-weighted intveral score (LWIS). The LWIS is defined the same as the WIS
- but where the log of the observation as well as the forecast quatiles are taken
+ but where the log of the observation as well as the 
+ log forecast quantiles are taken
  prior to calculating the score. We primarily use the LWIS in this section,
- though forecasting results in terms of the WIS may also be found in the 
- supplementary materials ??.
+ though we including results for the WIS in the 
+ supplementary materials.
  
 
 Figure \ref{fig:normal_flu_forecasts} shows hospitalization forecasts at 
@@ -1252,17 +1266,18 @@ quadratic predictor.}
 
 For the
 remainder of this section, focus will be made on forecasts made by coupling the
-ASGD model with normal hospitalization model where ILI is a quadratic predictor.
-We denote this model as ASGD\_NORM2. 
-This decision was based on the ASGD's performance in the simulation study in 
-section \ref{sec:simulation2} as well as an analysis of several other forecast
+ASGD and SIRD models with the 
+normal hospitalization model where ILI is a quadratic predictor.
+These forecast schemes are denoted as ASGD\_NORM2 and SIRD\_NOMR2. 
+In the supplementary materials, we include analysis of 2023 hospitalization
+forecasts for several other forecast
 models including ASG, SIRD, SIR ILI models coupled with other variations of the
-hospitalization model where the ASGD\_NORM2 model showed the best performance.
-Details
-of that analysis are found in the supplementary materials ??. 
+hospitalization model where the ASGD\_NORM2 and SIRD\_NORM2 models
+showed the best and second best results respectively.
+
 
 The FluSight 
-models to which the ASGD\_NORM2 model are compared are the 
+models to which are used for comparison are
 20 non-ensemble models
 submitted to FluSight during the 2023 season.
 The submitted forecasts may be found at \cite{mathis2023flusight}.
@@ -1277,20 +1292,22 @@ previous flu forecasting seasons and in the COVID-19 hub
 \cite[]{mathis2024evaluation, Cramer2022-hub-dataset}.
 
 Figure \ref{fig:lwis_cover_sum} shows forecast results for 2023 flu 
-hospitalization forecasts for all 21 models being compared but with results
-for the ASGD\_NORM2 and FluSight baseline models highlighted. 
+hospitalization forecasts for all 22 models being compared but with results
+for the ASGD\_NORM2, SIRD\_NORM2, and FluSight baseline models highlighted. 
 For each week of the 2023 season, the  
 LWIS averaged over location and horizon 
 for each model is shown in a). Boxplots of LWIS for 1, 2, 3, and 4-week ahead
-horizons for the ASGD\_NORM2 and baseline models are shown in b). And 
+horizons for the ASGD\_NORM2, SIRD\_NORM2, and baseline models are shown in b). 
+And 
 overall empirical coverage of the 11 predictive intervals for all models is 
-shown in c) with ASGD\_NORM2 and the baseline model again highlighted. 
+shown in c) with ASGD\_NORM2, SIRD\_NORM2
+and the baseline model again highlighted. 
 These plots show that over the season the ASGD\_NORM2 model tended to 
 outperform most others in terms of LWIS, and in general is superior to the 
 baseline model. The coverage plot shows that the ASGD\_NORM2 model is well 
 calibrated at most levels, with slight overcoverage at the lower levels
 up to about 80\%, and has better coverage than all other models. Similar results
-for the WIS are shown in the supplementary materials ??.
+for the WIS are shown in the supplementary materials.
 
 
 
@@ -1319,33 +1336,34 @@ for the WIS are shown in the supplementary materials ??.
 
 During the FluSight competition, most participating teams would occasionally 
 miss a forecast submission for some week, location, or horizon. This makes a 
-simple average of scores an imperfect measure of comparison, as forecasts
+simple average of scores an imperfect measure for comparison, as forecasts
 of certain targets included for one model may be excluded by another model.
 Thus in figure \ref{fig:state_and_date_lwis} 
-we compare the ASGD\_NORM2 model with all 
-other models directly by comparing LWIS scores averaged over only shared
-forecasts. Each tile in the plots represents the ratio of average ASGD\_NORM2
+the ASGD\_NORM2 model is compared with all 
+other models individually using LWIS scores averaged over only the 
+forecasts shared by the two models.
+Each tile represents the ratio of average ASGD\_NORM2
 LWIS to that of one FluSight model by location or by week.
 We call this the relative LWIS or RLWIS. A value smaller than
-1 indicates the ASGD\_NORM2 model outperforms the other model with 
-increasing outperformance as the value goes to 0. A value 
+1 indicates the ASGD\_NORM2 model outperforms the competing model. A value 
 higher than 1 indicateds the ASGD\_NORM2 is outperformed. A grey tile indicates
 the competing model had no forecasts matching the specified target.
-Similar plots showing WIS scores are found in the supplementary materials ??.
+Similar plots showing WIS scores are found in the supplementary materials. 
+The ASGD\_NORM2 outperforms most other competing models more often than not, but
+there are some weeks or locations where forecasting was poorer. For example, 
+the plot shows the ASGD\_NORM2 performed poorly in Montana relative to the other
+models.
 
-Our model outperforms most other models with only the 
-UGA\_flucast-INFLAenza model appearing to outperform ours. 
 Table \ref{tab:fin_analysis_stats} gives summary results for mean and median
 WIS and LWIS scores, predictive coverage, and relative RWIS and RLWIS scores
-for each model. These summary values show the ASGD\_NORM2 as performing very
-well compared to all other models, and outperforming all models except
-UGA\_flucast-INFLAenza by RWIS and RLWIS. 
-The takeaway of this section, like those of section \ref{sec:simulation2}, show
-the combination of well performing model of ILI, the 
-hierarchical Bayesian ASGD, with a 
-straightforward hospitalization model lead to good forecasts which 
-outperformed almost all other non-ensemble forecasts during of the 2023
-FluSight competition.
+for each model. Along with the plots in this section, it 
+show that over the course of the 
+2023 season, 
+the ASGD\_NORM2 outperformed every other model except the 
+UGA\_flucast-INFLAenza. The SIRD\_NORM2 is also one of the top performing 
+forecast models.
+ 
+
 
 \begin{figure}[hbt!]
 \begin{adjustwidth}{-1.2cm}{-1.5cm}
@@ -1424,32 +1442,47 @@ ASGD\_NORM2 & 62 & 0.34 & 14 & 0.23 & 0.001 & 100 & 1 & 1 \\
 \label{sec:conclusion}
 
  In this manuscript we introduce a statistical modeling framework which allows 
- for the incorporation of several ILI forecast modeling methods. Specifically, 
+ for the incorporation of several nonlinear
+ ILI forecast modeling methods. Specifically, 
  we built upon Osthus et al. \cite[]{osthus2019dynamic} and introduced a 
  framework for modeling ILI which includes the use of an arbitrary function 
- for modeling the main trajectory of ILI along with modeling the discrepancy. 
+ for modeling the main trajectory of ILI along with modeling the discrepancy and
+ specifically incorporate the smooth ASG function and compare forecasts using 
+ the ASG with those using SIR. 
  We model flu hospitalizations by incorporating the ILI forecast model into a 
  model forecasting hospitalizations where hospitalization predictions are a 
- linear or quadratic function of ILI.
+ linear or quadratic function of ILI. Utlizing the ILI data which has been
+ available for many more years than flu hospitalization, greatly improves
+ one's ability to forecast hospitalizations, and the borrowing information 
+ from all previous seasons through hierarhcical modeling is able to further
+ exploit the ILI data. Including model iscrepancy was an important piece of 
+ successful forecasting, but it required making thoughtful model constraints
+ and selection of prior distributions.
 
-The simulation study in section \ref{sec:simulation2} suggests the ASG 
-function in ILI modeling may slightly outperform the SIR model according to 
-the LogS and CRPS scoring rules, but in the analysis of the 2023 flu season 
-forecasts, the SIR model was overall superior. The results from both the 
-simulation study and the real data analysis suggest that the addition of a 
-discrepancy component in ILI modeling may improve forecasts especially near 
-the holiday week between Christmas and New Years day. It should not be assumed 
-that these conclusions may be generalized for all locations in the US, weeks 
-of a season, or for future flu seasons. 
+The simulation study in section \ref{sec:simulation2} suggests the ASGD 
+function in ILI modeling outperforms the SIRD model and out of the box 
+forecast methods according to 
+the WIS scoring rule, and in the analysis of 2023 FluSight forecasts the 
+ASGD\_NORM2 modeling scheme outperformed all but one of the competing
+forecasts when looking at the whole season. Though the ASGD\_NORM2 did very 
+well across all seasons, for some weeks and locations its perfomance was not
+as good. It should also not be assumed that ASGD\_NORM2 forecasts would perform
+as well in every season given that each flu season will come with its own
+challenges which the modeling scheme may or may not address.
 % Rather than deciding to use or not to use certain of the modeling techniques here, a more promising option may be to combine forecasts from various models into an ensemble forecast. 
 
-Forecasting the seasonal influenza outbreak remains a challenging task for 
-forecasters. The general modeling framework in this manuscript is successful 
-under diverse modeling conditions for all locations in the US and may 
-contribute to future forecasting efforts. All forecast models were presented 
-as separate from one another, but in the various locations and times of the 
-flu season, different models perform better than others. To build on the work 
-done here, a natural step forward would be to combine all or a few selected 
-forecasts into an ensemble forecast. Such an ensemble may work to cancel out 
-certain model biases or highlight model strengths, leading to more robust 
-forecasts. 
+The models in this manuscript were such that the data in each
+location were modeled as
+independent from all other locations. It is reasonable to assume that a
+disease outbreak in one state will share characterstics with the outbreak in 
+neighboring states, and indeed the behavior of ILI and hospitalizations is more
+closely related for neighboring states as shown in data plots in the
+supplementary materials. The one 2023 FluSight forecast model which outperformed
+the ASGD\_NORM2, the UGA\_flucast-INFLAenza, was listed as being a spatial
+model. And in past seasons, some of the top performing forecast models also 
+explicitly modeled spatial relationships \cite[]{osthus2021multiscale}.
+Likewise, the forecasts to which ours was compared were all non-ensemble 
+forecasts which were all outperformed by the ensemble forecasts in FluSight.
+Futher extensions of the models herein could include explicit modeling of 
+spatial relationships between states and inclusion in an ensemble of other
+forecast models.
