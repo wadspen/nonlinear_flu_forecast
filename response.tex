@@ -44,25 +44,24 @@ We added a couple paragraphs of discussion to address this. They appear in
 the revised manuscript as below.
 
 ``This two-component modeling is remeniscent of the "Bayesian cut" as 
-described in \cite{plummer2015cuts} and \cite{nott2023bayesian}. Cutting a model
-into two component models or "modules" may be justfied for several reasons
+described in [44] and [41]. Cutting a model
+into two component models or ``modules`` may be justfied for several reasons
 including to reduce time to fit the model, avoiding mixing issues of posterior
 sampling distributions, improving predictive performance or to prevent
 model misspecification in one model to influence the other 
-\cite[]{nott2023bayesian, jacob2020unbiased, jacob2017better, plummer2015cuts}.
+[41, 27, 26, 44].
 
-The decision to cut the model into two components was made for several reasons.
+The decision to cut the forecast model into two component models
+was made for several reasons.
 When fitting the fully Bayesian joint model, the time to fit a single model using
 Markov chain Monte Carlo (MCMC) sampling and
-obtain forecasts was sometimes upwards of 4 hours whereas fitting the two models
-separately usually took less than 1 hour. When assessing convergence of model
+obtain forecasts was sometimes many hours whereas fitting the two models
+separately took a fraction of the time. When assessing convergence of model
 parameters, it was rare that posterior sampling chains for the joint model
 showed convergence even after 55,000 iterations, whereas the component model 
 fits gave no signs which raised concern for convergence. And most importantly,
 the forecasts from the component models generally outperformed those of the 
-joing model in terms of minimizing proper scoring rules. 
-The process for obtaining forecasts is described in the following paragraphs 
-and computation is described in section \ref{sec:implementation_posterior}."}
+joint model in terms of minimizing proper scoring rules.``}
 
 % \spencer{In the forecasting competition, the data comes generally by the afternoon and
 % forecasts are due by the evening. We initially did a full Bayesian procedure
@@ -101,12 +100,12 @@ described in the following statement added to revised manuscript:
 with discrepancy components,
 rather than estimating all parameters through posterior updating,
 identifiability was encouraged by setting
-the parameter $\lambda_s$ from (\ref{eq:asg_function_rep})
+the parameter $\lambda_s$ from (4)
 to be equal to its MLE. In this updated manuscript, 
 however, we use empirical Bayes and center the first component of the 
 hierarichal prior $\theta$ to be the mean of MLEs for $\lambda_s$ across
 all seasons and set the variance parameter so the prior was tight around the
-mean. This led to improved mixing of posterior draws and better forecasts."}
+mean. This led to improved mixing of posterior draws and better forecasts.``}
 
 \item Also, it should be argued explicitly why this approach was chosen over a standard fully
 Bayesian approach in the setting at hand. Was a fully Bayesian approach also explored? Which
@@ -179,7 +178,7 @@ response to the next comment (2d.) for how it was addressed in the manuscript.
 
 For your second point on how well ILI can be a helpful predictor of hospitalizations,
 we addressed this in the manuscript by adding the following discussion about
-figure 6. See also 
+figure 6.
 
 
 ``Figure 6 helps
@@ -196,11 +195,12 @@ These plots show that a linear or quadratic relationship between ILI percentage
 and hospitalizations does not capture much of the temporal correlation in 
 hospitalizations as shown by the obvious loops drawn in the plot. 
 However, when including a 
-single AR lag of hospitalizations in the model, much of the time 
+single autoregressive lag of hospitalizations in the model, much of the time 
 correlation is
 accounted for as shown by the tighter and more frequent crossing of lines
-in the bottom row. Models with more than 1 AR lag showed little or no 
-improvement over 1 lag."}
+in the bottom row. Models with more than 1 autoregressive
+lag showed little or no 
+improvement over 1 lag.``}
 
 
 
@@ -208,7 +208,8 @@ improvement over 1 lag."}
 \item Does the hospitalization indicator refer to incident (new) hospitalization or prevalence, i.e.,
 bed occupancy?
 
-\spencer{We revised the first paragraph in section 2.2 to read:
+\spencer{It refers to new hospitalizations. 
+We revised the first paragraph in section 2.2 to read:
 
 ``Weekly hospital admission data, which was used as the object of FluSight 
 forecasting for the 
@@ -219,10 +220,10 @@ In February 2022 it became mandatory for
 all hospitals to report the number of COVID-19 and influenza hospitalizations, 
 and since then reporting of hospitalizations has become widespread. These data 
 were updated every Wednesday and Friday according to NHSN guidelines 
-\cite[]{healthdata2024covidts}. Weekly influenza hospitalization data is
+[22]. Weekly influenza hospitalization data is
 defined as the number of newly hospitalized patients with a confirmed diagnosis 
 of influenza. From hereon, influenza hospitalizations
-will be referrred to as hospitalizations."}
+will be referrred to as hospitalizations.``}
 
 
 
@@ -245,7 +246,12 @@ exploring different lags?
 \spencer{Exploring different lags is an important idea here, especially considering there
 may be a reporting lag. However, the reporting lag is not as big an issue as it has
 been in the past. We assessed ILI lags for both one and two weeks previous to the current
-week and found that ILI had less predictive power. }
+week and found that ILI had less predictive power. We note this in the
+revised manuscript by saying:
+
+`` We found that models
+ with more than 1 autoregressive lag showed 
+ little or no forecast improvement over 1 lag.``}
 
 \item On page 14 it says: "all negative values of [...] were set to 0 to reflect realistic values of
 hospitalizations". Could this be handled more naturally by appropriate distributional assumptions?
@@ -264,9 +270,9 @@ by modeling log-hospitalizations or by assuming hospitalizations followed a
 distribution truncated at 0, but these models led to poorer forecasts
 and issues drawing from the posterior distribution.
 For the forecast competition analysis in 
-section \ref{sec:analysis}, all negative values of $\{H^*_{s,w + i}\}^K$ were 
+section 5, all negative values of $\{H^*_{s,w + i}\}^K$ were 
 set to 0 to reflect realistic values of hospitalizations and comply with the 
-FluSight forecasting rules."}
+FluSight forecasting rules.``}
 
 \end{enumerate}
 
@@ -313,7 +319,7 @@ the same (WIS approximates CRPS), so things would be more coherent if one was us
 \spencer{In the revised manuscript we do use the CRPS, but rather 
 use the WIS in both the simulation study
 and the real data analysis. We decided on the WIS because that was the measure
-used in the FluSight competition and the forecasts which we }
+used in the FluSight competition.}
 
 \item Some assessment of calibration, e.g. interval coverage, should be added.
 
@@ -330,7 +336,28 @@ units as done e.g. in
 \href{https://www.nature.com/articles/s41467-021-23234-5}{https://www.nature.com/articles/s41467-021-23234-5}
 by Osthus and Moran.
 
-\spencer{Add statement to discussion on this ??}
+\spencer{The following two statements were added. The first in the main body
+and the second in the conslusion.
+
+``Model (1) was fit 
+independently for each location. This decision was made largely due to the 
+limited time given by FluSight to produce forecasts. That is,
+during the competition, data were typically released on Wednesday afternoons and
+forecasts were due by the evening of the same day giving only a few hours to 
+produce forecasts. A natural extension of the model would be to allow for states
+to borrow information from neighboring states.``
+
+``The models in this manuscript were such that the data in each
+location were modeled as
+independent from all other locations. It is reasonable to assume that a
+disease outbreak in one state will share characterstics with the outbreak in 
+neighboring states, and indeed the behavior of ILI and hospitalizations is more
+closely related for neighboring states as shown in data plots in the
+supplementary materials. Notably, the one 2023 FluSight forecast model which 
+outperformed
+the ASGD\_NORM2, the UGA\_flucast-INFLAenza, was listed as being a spatial
+model. And in past seasons, some of the top performing forecast models also 
+explicitly modeled spatial relationships [43].``}
 
 \end{enumerate}
 
@@ -381,15 +408,13 @@ specific parameter.
 overfitting, particularly in forecasting scenarios, and may also lead to 
 identifiability issues. 
 Thus, care must be taken in setting parameter constraints as well as in the 
-selection of prior distributions \cite[]{osthus2019dynamic,
-brynjarsdottir2014learning}. 
+selection of prior distributions [42,8]. 
 For instance, when setting $f_{\theta_s}(w)$ to
 be the ASG function
-in model (\ref{eq:ili_model}), we found the parameter $\lambda$ from 
+in model (1), we found the parameter $\lambda$ from 
 in (\ref{eq:asg_function_rep}) difficult to consistently 
 estimate precisely because of lack of identifiability. This was resolved by 
-assigning to $\lambda$ a more informative prior distribution."
-?? incomplete}
+assigning to $\lambda$ a more informative prior distribution.``}
 
 \item As I understand one challenge of forecasting hospitalisation data is that the 
 start of the collection of these data is very recent, so that a model only 
@@ -457,13 +482,13 @@ fitting such a model would likely take much more time than was give by FluSight
 to produce forecasts. In the revised manuscript, after defining the ILI model
 we state:
 
-``Model (\ref{eq:ili_model}) was fit 
+``Model (1) was fit 
 independently for each location. This decision was made largely due to the 
 limited time given by FluSight to produce forecasts. That is,
 during the competition, data were typically released on Wednesday afternoons and
 forecasts were due by the evening of the same day giving only a few hours to 
 produce forecasts. A natural extension of the model would be to allow for states
-to borrow information from neighboring states." 
+to borrow information from neighboring states.`` 
 
 We also added the following to the discussion:
 
@@ -473,10 +498,11 @@ independent from all other locations. It is reasonable to assume that a
 disease outbreak in one state will share characterstics with the outbreak in 
 neighboring states, and indeed the behavior of ILI and hospitalizations is more
 closely related for neighboring states as shown in data plots in the
-supplementary materials. The one 2023 FluSight forecast model which outperformed
+supplementary materials. Notably, the one 2023 FluSight forecast model which 
+outperformed
 the ASGD\_NORM2, the UGA\_flucast-INFLAenza, was listed as being a spatial
 model. And in past seasons, some of the top performing forecast models also 
-explicitly modeled spatial relationships."}
+explicitly modeled spatial relationships [43].``}
 
 \end{enumerate}
 
@@ -561,14 +587,14 @@ is one updated paragraph describing how a prior distribution was assigned to
 improve identifiability issues introduced by including discprepancy modeling.
 
 ``Additional prior constraints were made to improve parameter identifiability. 
-Just as was done in Osthus et al. \cite[]{osthus2019dynamic},
+Just as was done in Osthus et al. [42],
 we set the initial value of the 
 susceptible population compartment of the SIR model was set to $S_0 = 0.9$. 
 The parameters $I_{0s}$, $\beta_s$, and $\rho_s$ were assigned informative 
 priors. In a previous version of this manuscript, when fitting an ASG model
 with discrepancy components,
 rather than estimating all parameters through posterior updating,
-we set the parameter $\lambda_s$ from (\ref{eq:asg_function_rep})
+we set the parameter $\lambda_s$ from (4)
 to be equal to its MLE. In this updated manuscript, 
 however, we use empirical Bayes and center the first component of the 
 hierarichal prior $\theta$ to be the mean of MLEs for $\lambda_s$ across

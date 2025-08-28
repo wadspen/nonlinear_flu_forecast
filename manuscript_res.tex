@@ -21,11 +21,15 @@ To better inform public decision making regarding the flu epidemic, in 2013 the
 United States Centers for Disease Control and Prevention (CDC) organized a 
 national flu forecasting competition, also known as FluSight 
 \cite[]{biggerstaff2016results, mathis2024evaluation,cdcfluforecasting2024}. 
-Originally, over a dozen teams of researchers from academic and industry 
+The competition lasted from the fall of 2013 through spring of 2014, and
+originally over a dozen teams of researchers from academic and industry 
 backgrounds participated in FluSight by contributing their own forecast models. 
-Besides the 2020 season --or the flu season spanning the fall of 2020 and the 
-winter of 2021-- FluSight has been operated annually and researchers outside 
-the CDC have been invited to participate. Initially the target data for 
+Besides the 2020-21 season, FluSight has been operated annually and 
+researchers outside 
+the CDC have been invited to participate. From hereon, we denote a 
+flu season by the year in which the outbreak began, i.e. the 2020 season 
+season outbreak began in 2020 and lasted until spring 2021.
+Initially the target data for 
 forecasts was influenza-like illness (ILI) data. ILI is the proportion of 
 patients who meet a healthcare provider and who display flu like symptoms, 
 and ILI data has been available at the state and national level since the 2010 
@@ -33,14 +37,14 @@ flu season \cite[]{cdcfluview2023,cdc2024fluviewportal}.
 The collaborative ILI forecasting effort has led to a number of modeling 
 developments in flu forecasting 
 \cite[see references therein for more examples]{mcandrew2021adaptively, 
-osthus2021multiscale, osthus2019dynamic, ulloa2019}, and in their paper's 
+osthus2021multiscale, osthus2019dynamic, ulloa2019}, and in their 
 introduction, Osthus et al.  \cite[]{osthus2019dynamic} categorized the most 
 commonly used flu forecasting models into four classes including mechanistic 
 models based on differential equation compartmental models, agent based models 
 based on population simulation, machine learning/regression models including 
 data driven machine learning and statistical models, and data assimilation 
 models which are constructed by assimilating mechanistic models into a 
-probabilistic framework. An additional forecast model used in FluSight 
+probabilistic framework. An additional forecast modeling class used in FluSight 
 involves the combination of several forecasts into a single ensemble forecast, 
 which has been shown to perform well relative to individual models 
 \cite[]{mcandrew2021adaptively, ray2020ensemble, yamana2016superensemble}.
@@ -61,17 +65,18 @@ of a multi-model ensemble forecast as the official forecast of the CDC
 \cite[]{bracher2021evaluating, Cramer2022-hub-dataset}. Using estimated 
 quantiles for representing forecast uncertainty and creating a multi-model 
 ensemble are both aspects of the COVID-19 Forecast Hub which were adopted by 
-the flu forecast competition. Additionally the target of the flu forecasts 
+FluSight. Additionally the target of the flu forecasts 
 changed from being ILI data to being HHS hospitalization data, which reports 
 the number of hospitalizations due to a laboratory confirmed flu infection  
-\cite[]{mathis2024evaluation,healthdata2024covidts}. This is as a result of 
+\cite[]{mathis2024evaluation,healthdata2024covidts}. This in part was 
+as a result of 
 having COVID-19 cases in the population making ILI data, already only a proxy 
 for flu behavior, more difficult to interpret.
 
 
 
 The contribution of this manuscript is to introduce a two component 
-Bayesian model framework 
+Bayesian modeling framework 
 for modeling HHS hospitalization forecasts where hospitalization data and 
 years of ILI data are used to inform forecast models. The first modeling 
 component is a hierarchical model of ILI data. 
@@ -89,25 +94,26 @@ Kennedy and O'Hagan \cite[]{kennedy2001bayesian}. The model in Ulloa
 underlying function intended to capture the trajectory of the seasonal 
 ILI data. Herein, we provide a framework under which discrepancy modeling may 
 be used along with a general function modeling ILI data. Modeling discrepancy
-introduces some challenges and requires thoughtful selection of model 
+introduced challenges which required thoughtful selection of model 
 constraints and prior distributions to be used effectively.
  
 
 In line with the newer FluSight standard of forecasting hospitalizations, we 
-model hospitalizations as a linear function of ILI. The Bayesian scheme 
-produces a posterior predictive distribution of hospitalizations, which is 
-shown to be a reasonably well calibrated probabilistic forecast.
-The flu hospitalization forecasts are a mapping of ILI forecasts to 
-hospitalizations, and this allows for ILI data from many seasons to be exploited 
-and for ILI forecasts to assist in forecasting hospitalizations.
-At this state of national flu forecasting, using ILI data can be especially
-useful since there are many more seasons of available ILI data than 
-hospitalization data. 
+model hospitalizations as a linear function of ILI. 
+The flu hospitalization forecasts are a linear mapping of ILI forecasts
+allowing for ILI data from many seasons to be exploited
+and assist in forecasting hospitalizations.
+To produce hospitalization forecasts, a scheme similar to 
+the Bayesian cut is used where forecasts from the posterior predictive
+distribution of an ILI model are plugged into the hospitalization model
+to produce a posterior predictive hospitalization forecast distribution.
+We show that this scheme produces accurate and reasonably well calibrated
+probabilistic forecasts.
 The forecasts produced in this manuscript are compared with out of the box 
 forecast models in a simulation study, and in a real data analysis the 
 forecasts are compared with 20 other forecasts from the 2023 FluSight forecast
 competition. The proposed models outperform both the out of the box methods, and
-they also outperform all but one of the FluSight models.
+they outperform all but one of the FluSight models.
 
 In section \ref{sec:data} we review the ILI and hospitalization data provided 
 by the CDC and targeted by FluSight. 
@@ -120,10 +126,9 @@ defined.
  and implementation are described at the end of the section. Section 
  \ref{sec:simulation2} includes a simulation study where four ILI forecast 
  models and their use in forecasting hospitalizations are compared. Commonly 
- used proper scoring rules \cite[]{gneiting2007strictly}, which are also 
- introduced and defined in section \ref{sec:simulation2}, are used for 
+ used proper scoring rules \cite[]{gneiting2007strictly} are used for 
  comparing the forecasts. Forecasting of the 2023 flu outbreak along with 
- assessment and comparison under several selected models is performed in 
+ assessment and comparison of 20 FluSight models is performed in 
  section \ref{sec:analysis}. 
  Finally, the manuscript is concluded in section \ref{sec:conclusion} with 
  general observations and some discussion.
@@ -140,28 +145,29 @@ defined.
  
  
  \section{Flu outbreak data} \label{sec:data}
-In this section we introduce and define ILI and hospitalization data and 
-visually evaluate the data. ILI and hospitalization data have been the object 
+In this section we introduce, define, and visually evaluate
+ILI and hospitalization 
+data. ILI and hospitalization data have been the object 
 of forecasting for FluSight with ILI being the target for the first seven
 seasons, 2013 to 2019, and hospitalizations being the target since the 
 2022 season. Both of 
-these data were collected at the state, territorial, and national level and 
+these data were collected at the state, territorial, and national levels and 
 were reported at least weekly. Overall the data is reported for 53 locations 
 including the 50 US states, the District of Columbia (DC), Puerto Rico (PR), 
-and at the US national level. We will refer to forecast targets throughout this 
+and the US national level. We will refer to forecast targets throughout this 
 manuscript. A target is the specific horizon, 1, 2, 3, or 4-weeks ahead, for a 
 specific location and week during the season.  
 
 \subsection{Influenza-like illness data}
-The US Outpatient Influenza-like Illness Surveillance Network (ILINet) collects 
+The US Outpatient Influenza-like Illness Surveillance Network collects 
 information on respiratory illness from outpatient visits to health care 
 providers. Each week, over 3,400 outpatient health care providers in all 50 
 US states, PR, 
 DC, and the US Virgin Islands report the total number of outpatient 
 visits along with the number of ILI cases. An ILI case is defined as a 
 ``fever (temperature of $100^{\circ}$F[$37.8^{\circ}$C] or greater) and a cough 
-and/or a sore throat." Prior to the 2021 season, the definition included 
-``without a known cause other than influenza" \cite[]{cdcfluview2023}. Because 
+and/or a sore throat.`` Prior to the 2021 season, the definition included 
+``without a known cause other than influenza`` \cite[]{cdcfluview2023}. Because 
 other illnesses such as COVID-19, RSV, and the common cold may induce similar 
 respiratory symptoms, ILI may include patients infected with some disease 
 other than influenza. To know whether or not a sick patient is infected with 
@@ -177,7 +183,7 @@ viewing at the national, HHS region, census, and state levels
 \cite[]{cdc2024fluviewportal}. To obtain ILI data, we used the \texttt{R} 
 package \texttt{cdcfluview} which provides functions for downloading the data 
 \cite[]{rudis2021cdcfluview}. Weekly ILI data from the national, HHS region, 
-and census levels are available from the 1997 flu season until the current 
+and census levels are available from the 1997 flu season up to the current 
 season. At the state level, data is available from the 2010 flu season to the 
 current season. 
 
@@ -217,8 +223,8 @@ Whether local or global, the ILI holiday peak is generally expected and thought
 to be due to widespread holiday travel, school closure, or other unique social 
 behavior   
 \cite[]{ewing2017contact, garza2013effect}.
-The only seasons when there was not a peak at week 22 were season 2022 when 
-the season peak occurred particularly early and season 2020 which was greatly 
+The only seasons when there was not a peak at week 22 were 2022, when 
+the season peak occurred particularly early, and 2020 which was greatly 
 influenced by the COVID-19 pandemic. 
 
 
@@ -247,14 +253,14 @@ will be referrred to as hospitalizations.
 
 The bottom of figure \ref{fig:us_ili} shows the weekly national 
 hospitalizations for the 2022 and 2023 flu seasons. These plots show a 
-trend similar to the ILI plots in the top of the figure in that during the early 
+trend similar to the ILI plots in that during the early 
 weeks of the season hospitalizations are low, but they increase in the fall 
 to a peak and then decrease until the flu outbreak ends. For both the 
 2022 and 2023 seasons, the hospitalizations peaked during the same week as 
 ILI, and in 2023 that peak occurred during the holiday week 22. Additional 
 plots of ILI data and hospitalization
 data for all 50 US states are included in the supplementary material 
-\cite[]{wadsworth2024bas}. These plots show similarly flu outbreak trajectories 
+\cite[]{wadsworth2024bas}. These plots show flu outbreak trajectories 
 similar to those in figure \ref{fig:us_ili}. 
 
 
@@ -297,11 +303,11 @@ similar to those in figure \ref{fig:us_ili}.
 
 % \jarad{Why not start with the ILI model from Osthus et al? It makes a lot more sense to me to start with what has already been done and then expand upon what they have done. Later you have a section called ILI Model, but isn't this the ILI model?}
 
-The typical behavior of the ILI data which starts at lower values in the late 
-summer, increases to a peak in the winter, 
-and declines in the spring motivates the use of a nonlinear function which follows 
+The typical behavior of the ILI data to begin low, rise to a peak, and then 
+fall motivates the use of a nonlinear function which follows 
 a similar trajectory. Compartmental models are standard mathematical models 
-used for modelling disease outbreaks. One important compartmental model is the 
+used for modelling disease outbreaks which may capture ILI behavior. 
+One important compartmental model is the 
 susceptible-infectious-recovered (SIR) 
 disease transmission model, which has been used by some to model 
 ILI data \cite[]{osthus2019dynamic, allen2017primer}.  
@@ -324,7 +330,8 @@ included.
 
 In the first part of this section, we present an ILI model 
 similar to the model in Osthus et al. \cite[]{osthus2019dynamic}. With some 
-generalization, the model may incorporate any appropriate nonlinear function, 
+generalization, the model may incorporate any appropriate linear or
+nonlinear function, 
 though the focus here is on the SIR and ASG functions, defined later
 in this section. 
 With the aim of forecasting hospitalizations, we also introduce a linear 
@@ -344,7 +351,7 @@ forecasts. After defining the ILI and hospitalization models,
 we describe the 
 selection of prior distributions, model fitting, and producing forecasts
 from the posterior predictive distribution by combining ILI and hospitalization
-models in a way similar to using the 
+models using a scheme similar to the 
 Bayesian cut \cite[]{plummer2015cuts}.
 
 
@@ -355,7 +362,7 @@ The proposed model for ILI for any location is given in (\ref{eq:ili_model}).
 Here $ILI_{s,w}$ is the ILI for flu season $s$ and week $w = 1, 2, ..., W$, 
 where $W = 52$ or $W = 53$, depending on how many Sundays there are in a given 
 season. The ILI is a proportion, so the Beta random variable is a natural 
-selection for modeling. Under the parameterization in of the Beta distribution 
+selection for modeling. Under the parameterization of the Beta distribution 
 used in (\ref{eq:ili_model}) the expected value is $\pi_{s,w}$ and the 
 variance is $\pi_{s,w}(1 - \pi_{s,w})/(1 + \kappa_s)$, making $\kappa_s$ a 
 scale parameter. The nonlinear function $f_{\theta_s}(w)$ captures the 
@@ -377,10 +384,10 @@ specific patterns.
 In Osthus et al. \cite[]{osthus2019dynamic} 
 $f_{\theta_s}(w) = \text{logit}(I_{s,w})$ where $I_{s,w}$ is the infectious 
 compartment of the SIR model from (\ref{eq:sir_diff}) in section 
-\ref{sec:sir_func}. In Ulloa \cite[]{ulloa2019} 
+\ref{sec:sir_func}. In Ulloa \cite[]{ulloa2019}, 
 $f_{\theta_s}(w) = ASG_{\theta}(w)$ from (\ref{eq:asg_function}) in section 
-\ref{sec:asg_func}. In Ulloa \cite[]{ulloa2019} modeling is done hierarchically 
-over seasons. Herein we also adopt the hierarchical modeling so as to exploit 
+\ref{sec:asg_func}. In Ulloa \cite[]{ulloa2019}, modeling is done hierarchically 
+over seasons. Herein we also adopt the hierarchical modeling so as to borrow 
 information contained in the data across all seasons.
 
 Model (\ref{eq:ili_model}) was fit 
@@ -428,9 +435,9 @@ epidemic. In the case where $S_0 \leq \rho$, the trajectory for the $I$
 compartment will be to never increase. The increase to a peak and subsequent 
 decrease in the $I$ compartment of figure \ref{fig:sir_traj} illustrate why
 it is 
-reasonable to model ILI by this compartment. Thus in modeling the ILI data, 
-we consider the data to be rouchly 
-analogous to the $I$ proportion of the population.
+reasonable to use the SIR model to partially capture ILI, although it is
+unlikely to completely capture the true data generating mechanism. Thus the 
+use of modeling discrepancy.
 
 \begin{figure}[hbt!]
     \centering
@@ -502,21 +509,21 @@ This constraint guarantees that the function has a peak greater than $\lambda$.
 The SIR and ASG functions are useful for capturing the main trend of the ILI 
 data, but as Osthsu et al. \cite[]{osthus2019dynamic} point out there may be 
 systematic behavior in the ILI that these or other possible functions may not 
-capture. As noted in section \ref{sec:data}, figure \ref{fig:us_ili} shows a 
-regular peak at week 22 of the flu season. 
+capture. 
 Figures \ref{fig:asg_fits} and \ref{fig:discrepancy} are used together to 
-illustrate the systematic discrepancy from a fitted function. Figure 
+illustrate the systematic discrepancy from a fitted function to ILI  data.
+Figure 
 \ref{fig:asg_fits} shows the US ILI percentage for all flu seasons from 2010 
 to 2022 excluding 2020 with a best fit ASG function plotted over the ILI. The 
-fits for each season were made by obtaining the maximum likelihood estimate 
+fits for each season were made by computing the maximum likelihood estimate 
 (MLE) of a model given the ILI data where we assume the ASG function is the 
 mean parameter of a Beta distributed random variable. Figure 
 \ref{fig:discrepancy} shows the discrepancy between the model fit and the data 
 for the same seasons. The grey lines show the difference between the data and 
 the functions from figure \ref{fig:asg_fits} for each season, and the black 
-line is the average by week over all seasons. The lines show that the ASG 
+line is the average discrepancy over all seasons. The lines show that the ASG 
 function typically underpredicts week 22 and overpredicts week 23. Perhaps 
-for other weeks, week 30 for example, there tends to be systematic 
+for other weeks, week 30 for example, there tends to be additional systematic 
 behavior not captured by the ASG function.
 
 
@@ -551,7 +558,7 @@ brynjarsdottir2014learning}.
 For instance, when setting $f_{\theta_s}(w)$ to
 be the ASG function
 in model (\ref{eq:ili_model}), we found the parameter $\lambda$ from 
-in (\ref{eq:asg_function_rep}) difficult to consistently 
+(\ref{eq:asg_function_rep}) difficult to 
 estimate precisely because of lack of identifiability. This was resolved by 
 assigning to $\lambda$ a more informative prior distribution.
 Modeling of the discrepancy for ILI was done by Osthus et al. during the 2015 
@@ -561,7 +568,7 @@ The terms $\gamma_w$ and $\upsilon_{s,w}$, where $s$ is the season and $w$ is th
 season week, are included in 
 (\ref{eq:ili_model}) to capture the per week discrepancy between ILI and the 
 function. Here $\gamma_w$ is shared across all seasons, whereas $\upsilon_{s,w}$
-is specific to season $s$. To assist in identifying $\gamma_w$,
+is specific to season $s$. To assist in estimating $\gamma_w$,
 $\upsilon_{s,w}$ is only included for the current season being forecast and 
 none of the previous seasons.
  As in Osthus's model, 
@@ -627,10 +634,11 @@ These plots show that a linear or quadratic relationship between ILI percentage
 and hospitalizations does not capture much of the temporal correlation in 
 hospitalizations as shown by the obvious loops drawn in the plot. 
 However, when including a 
-single AR lag of hospitalizations in the model, much of the time 
+single autoregressive lag of hospitalizations in the model, much of the time 
 correlation is
 accounted for as shown by the tighter and more frequent crossing of lines
-in the bottom row. Models with more than 1 AR lag showed little or no 
+in the bottom row. We found that models with more than 1 autoregressive
+lag showed little or no forecast
 improvement over 1 lag. 
 
 \begin{figure}[hbt!]
@@ -638,7 +646,8 @@ improvement over 1 lag.
     \caption{Scatterplots of national hospitalizations (left) or log 
     hospitalizations (right) lag differences by ILI \% where the lag is 
     scaled by $\phi$. Points are colored by season. For hospitalizations 
-    $\phi = 0.6$, and for log hospitalizations $\phi = 0.77$. }
+    $\phi = 0.6$, and for log hospitalizations $\phi = 0.77$. Lines through
+    the points follow the weekly progression of influenza.}
     \label{fig:lag_scatter}
 \end{figure}
 
@@ -689,7 +698,8 @@ including the LST and lognormal families.
 \subsection{Prior selection}
 
 
-The priors selected for the ILI data model under both the SIR and ASG models 
+The prior distributions
+selected for the ILI data model under both the SIR and ASG models 
 largely follow the prior distribution 
 selections in Osthus et al. \cite[]{osthus2019dynamic} 
 and Ulloa \cite[]{ulloa2019} with a few exceptions where selecting
@@ -717,7 +727,7 @@ prior to match a more specific support. Under the ASG model, $\theta_s$ was
 modeled hierarchically over seasons so that for each season the transformed 
 parameter $T(\theta_s) \sim N(\theta, \Sigma$) and priors distributions are 
 assigned to $\theta$ and $\Sigma$ where
-$T(\theta_s) = (\lambda_s, \text{log}(\eta_s), \mu_s, \text{log}(\sigma_{1s}^2)$.
+$T(\theta_s) = (\lambda_s, \text{log}(\eta_s), \mu_s, \text{log}(\sigma_{1s}^2), \text{log}(\sigma_{2s}^2))$.
 
 
 
@@ -772,15 +782,15 @@ hospitalization data and the posterior distribution of model
 two components, but propagation of uncertainty in ILI forecasts was still 
 permitted in the estimating of hospitalization forecasts.
 
-This two-component modeling is remeniscent of the "Bayesian cut" as 
+This two-component modeling is remeniscent of the Bayesian cut 
 described in \cite{plummer2015cuts} and \cite{nott2023bayesian}. Cutting a model
-into two component models or "modules" may be justfied for several reasons
+into two component models or ``modules`` may be justfied for several reasons
 including to reduce time to fit the model, avoiding mixing issues of posterior
 sampling distributions, improving predictive performance or to prevent
 model misspecification in one model to influence the other 
 \cite[]{nott2023bayesian, jacob2020unbiased, jacob2017better, plummer2015cuts}.
 
-The decision to cut the forecast modelinto two component models
+The decision to cut the forecast model into two component models
 was made for several reasons.
 When fitting the fully Bayesian joint model, the time to fit a single model using
 Markov chain Monte Carlo (MCMC) sampling and
@@ -790,9 +800,7 @@ parameters, it was rare that posterior sampling chains for the joint model
 showed convergence even after 55,000 iterations, whereas the component model 
 fits gave no signs which raised concern for convergence. And most importantly,
 the forecasts from the component models generally outperformed those of the 
-joing model in terms of minimizing proper scoring rules. 
-The process for obtaining forecasts is described in the following paragraphs 
-and computation is described in section \ref{sec:implementation_posterior}.
+joint model in terms of minimizing proper scoring rules.
 
 
 Model (\ref{eq:ili_model}) was fit via Bayesian posterior updating. Future ILI 
@@ -929,7 +937,7 @@ posterior distribution of the hospitalizations model. When fitting model
 saved. Model (\ref{eq:final_hosp}) was fit and MCMC samples for the marginal 
 distributions for the model parameters were saved. To obtain forecast 
 distributions for $H_{s,w + i}$ where $i \in \{1,2,3,4\}$, the following 
-steps are repeated $K$ times where $K$ is an integer for the number of desired 
+steps were repeated $K$ times where $K$ is an integer for the number of desired 
 samples. We set $K = 50,000$.
 
 \begin{quote}
@@ -984,7 +992,7 @@ A leave-one-season-out (LOSO) approach was combined with a Monte Carlo
 simulation approach. For each replication, we simulated log-hospitalizations 
 for all weeks during seasons 2010, ..., 2022, excluding 2020, using the 
 existing ILI data as a predictive covariate. Each season was in turn 
-``left-out" and treated as if it was the most recent season for which forecasts
+``left-out`` and treated as if it was the most recent season for which forecasts
 are desired. Fitting and forecasting was then done for weeks 14, 20, 26, 32, 
 and 38 of the left out season, giving two weeks that tend to occur as flu 
 cases increase, two as cases decrease, and one that occurs when the cases may 
@@ -1031,7 +1039,7 @@ current standard for comparing performance between probabilistic forecasts
 and selecting the best forecasts according to the notion of maximizing 
 sharpness subject to (auto-)calibration 
 \cite[]{gneiting2007probabilistic, tsyplakov2013evaluation}. Proper scoring 
-rules are commonly used in forecast comparison, and they are deisgned such 
+rules are commonly used in forecast comparison, and they are designed such 
 that a 
 forecaster is incentivized to be honest in the reporting of their forecasts 
 \cite[]{gneiting2007strictly, gneiting2014probabilistic}.
@@ -1228,7 +1236,7 @@ forecasts submitted to FluSight. The scoring of the forecasts is in the
 context of the FluSight competition where each competing forecast was 
 submitted as a set of 23 quantiles corresponding to given probabilities.
 Forecasts of 1, 2, 3, and 4-week ahead hospitalization counts were requested, 
-and forecasts were made at the state and national level. The first week of 
+and forecasts were made at the state and national levels. The first week of 
 forecasting took place during the week of October 7, 2023, and the final week 
 was the week of May 4, 2024 making 30 total weeks of forecasts.
  The same format was used during the 2021 and 2022 seasons and for the 
@@ -1249,7 +1257,8 @@ where hospitalizations are modeled according to model (\ref{eq:final_hosp})
 where ILI is a quadratic predictor of hospitalizations, and hospitalizations
 are assumed to be normally distributed. Of these forecasts, the ASGD appears 
 to do the best job at capturing the trajectory of hospitalizations as well
-as usually making the sharpest predictions, particularly later in the season. 
+as most frequently
+making the sharpest predictions, particularly later in the season. 
 
 \begin{figure}[hbt!]
 
@@ -1271,13 +1280,13 @@ normal hospitalization model where ILI is a quadratic predictor.
 These forecast schemes are denoted as ASGD\_NORM2 and SIRD\_NOMR2. 
 In the supplementary materials, we include analysis of 2023 hospitalization
 forecasts for several other forecast
-models including ASG, SIRD, SIR ILI models coupled with other variations of the
+models including ASG and SIR ILI models coupled with other variations of the
 hospitalization model where the ASGD\_NORM2 showed the best results
-and the SIRD\_NORM2 performed nearly as well.
+and the SIRD\_NORM2 performed nearly as well as the ASGD\_NORM2.
 
 
 The FluSight 
-models to which are used for comparison are
+models which are used for comparison are the
 20 non-ensemble models
 submitted to FluSight during the 2023 season.
 The submitted forecasts may be found at \cite{mathis2023flusight}.
@@ -1286,12 +1295,12 @@ was the FluSight baseline. The baseline forecast had as a median the most
 recently observed 
 hospitalization count, and the forecast uncertainty was based on 
 differences between 
-previous hospitalizations. The baseline forecasts was
-similar to the baseline forecast used in
+previous hospitalizations. The baseline forecast model was
+similar to the baseline forecast model used in
 previous flu forecasting seasons and in the COVID-19 hub 
 \cite[]{mathis2024evaluation, Cramer2022-hub-dataset}.
 
-Figure \ref{fig:lwis_cover_sum} shows forecast results for 2023 flu 
+Figure \ref{fig:lwis_cover_sum} shows forecast results for the 2023 flu 
 hospitalization forecasts for all 22 models being compared but with results
 for the ASGD\_NORM2, SIRD\_NORM2, and FluSight baseline models highlighted. 
 For each week of the 2023 season, the  
@@ -1301,7 +1310,7 @@ horizons for the ASGD\_NORM2, SIRD\_NORM2, and baseline models are shown in b).
 And 
 overall empirical coverage of the 11 predictive intervals for all models is 
 shown in c) with ASGD\_NORM2, SIRD\_NORM2
-and the baseline model again highlighted. 
+and the baseline model highlighted. 
 These plots show that over the season the ASGD\_NORM2 model tended to 
 outperform most others in terms of LWIS, and in general is superior to the 
 baseline model. The coverage plot shows that the ASGD\_NORM2 model is well 
@@ -1317,10 +1326,10 @@ for the WIS are shown in the supplementary materials.
 \begin{figure}[hbt!]
     
     % \centering
-    \begin{adjustwidth}{-1.2cm}{-1.5cm}
+    \begin{adjustwidth}{0cm}{0cm}
     \includegraphics[scale = .54]{Images/lwis_cover_sum.png}
-    \caption{a) Averaged over location and horizon log-weighted interval score
-    (LWIS) for each week during the season for the 21 models being compared. 
+    \caption{a) Log-weighted interval score (LWIS) averaged 
+    over location and horizon for each week during the season for the 21 models being compared. 
     Each grey line represents one model, but the ASGD\_NORM2 (blue), 
     SIRD\_NORM2 (green), and 
     FluSight-baseline (red) are colored to stand out.
@@ -1329,7 +1338,8 @@ for the WIS are shown in the supplementary materials.
     c) Plot of empirical coverage against theoretical coverage for 11 
     predictive intervals from the 10\% nominal level to the 98\%. The black
     line $x = y$ shows where optimal coverage would fall.
-    Each grey line represents one model, but the ASGD\_NORM2 (blue) and 
+    Each grey line represents one model, but the ASGD\_NORM2 (blue),
+    SIRD\_NORM2 and 
     FluSight-baseline (red) are colored to stand out.}
     \end{adjustwidth}
     \label{fig:lwis_cover_sum}
@@ -1345,20 +1355,20 @@ other models individually using LWIS scores averaged over only the
 forecasts shared by the two models.
 Each tile represents the ratio of average ASGD\_NORM2
 LWIS to that of one FluSight model by location or by week.
-We call this the relative LWIS or RLWIS. A value smaller than
+We call this the relative LWIS (RLWIS). A value smaller than
 1 indicates the ASGD\_NORM2 model outperforms the competing model. A value 
 higher than 1 indicateds the ASGD\_NORM2 is outperformed. A grey tile indicates
 the competing model had no forecasts matching the specified target.
 Similar plots showing WIS scores are found in the supplementary materials. 
 The ASGD\_NORM2 outperforms most other competing models more often than not, but
 there are some weeks or locations where forecasting was poorer. For example, 
-the plot shows the ASGD\_NORM2 performed poorly in Montana relative to the other
+the plot shows the ASGD\_NORM2 performed poorly in Montana relative to most other
 models.
 
 Table \ref{tab:fin_analysis_stats} gives summary results for mean and median
 WIS and LWIS scores, predictive coverage, and relative RWIS and RLWIS scores
 for each model. Along with the plots in this section, it 
-show that over the course of the 
+shows that over the course of the 
 2023 season, 
 the ASGD\_NORM2 outperformed every other model except the 
 UGA\_flucast-INFLAenza. The SIRD\_NORM2 is also one of the top performing 
@@ -1392,13 +1402,14 @@ forecast models.
 \begin{adjustwidth}{-3cm}{-1.5cm}
 \caption{Overall summary scores for each of the 20 non-ensemble FluSight
 models and the ASGD\_NORM2 model. Summaries include mean weighted interval
-and log-weighted interval scoreS (MWIS/MLWIS), 
+and log-weighted interval scores (MWIS/MLWIS), 
 median weighted interval and log-weighted interval scores (MedWIS/MedLWIS), 
 mean squared error
 difference between predictive model empirical and theoretical coverage (MSEC)
 see figure \ref{fig:lwis_cover_sum} c)), percentage of forecasts for all 
 targets during the 2023 season (\% Forcs), and relative weighted interval
 and log-weighted interval scores (RWIS/RLWIS).}
+\small
 \begin{tabular}{lrrrrrrrr}
   % \hline
  & MWIS & MLWIS & MedWIS & MedLWIS & MSEC & \% Forcs & RWIS & RLWIS\\ 
@@ -1448,15 +1459,14 @@ ASGD\_NORM2 & 62 & 0.34 & 14 & 0.23 & 0.001 & 100 & 1 & 1 \\
  we built upon Osthus et al. \cite[]{osthus2019dynamic} and introduced a 
  framework for modeling ILI which includes the use of an arbitrary function 
  for modeling the main trajectory of ILI along with modeling the discrepancy and
- specifically incorporate the smooth ASG function and compare forecasts using 
- the ASG with those using SIR. 
+ specifically incorporate the smooth ASG function.
  We model flu hospitalizations by incorporating the ILI forecast model into a 
  model forecasting hospitalizations where hospitalization predictions are a 
  linear or quadratic function of ILI. Utlizing the ILI data which has been
  available for many more years than flu hospitalization, greatly improves
  one's ability to forecast hospitalizations, and the borrowing information 
  from all previous seasons through hierarhcical modeling is able to further
- exploit the ILI data. Including model iscrepancy was an important piece of 
+ exploit the ILI data. Including model discrepancy was an important piece of 
  successful forecasting, but it required making thoughtful model constraints
  and selection of prior distributions.
 
@@ -1466,8 +1476,9 @@ forecast methods according to
 the WIS scoring rule, and in the analysis of 2023 FluSight forecasts the 
 ASGD\_NORM2 modeling scheme outperformed all but one of the competing
 forecasts when looking at the whole season. Though the ASGD\_NORM2 did very 
-well across all seasons, for some weeks and locations its perfomance was not
-as good. It should also not be assumed that ASGD\_NORM2 forecasts would perform
+well across the whole season, there were a small number of weeks or locations
+where performance was not as good.
+It should not be assumed that ASGD\_NORM2 forecasts would perform
 as well in every season given that each flu season will come with its own
 challenges which the modeling scheme may or may not address.
 % Rather than deciding to use or not to use certain of the modeling techniques here, a more promising option may be to combine forecasts from various models into an ensemble forecast. 
@@ -1478,7 +1489,8 @@ independent from all other locations. It is reasonable to assume that a
 disease outbreak in one state will share characterstics with the outbreak in 
 neighboring states, and indeed the behavior of ILI and hospitalizations is more
 closely related for neighboring states as shown in data plots in the
-supplementary materials. The one 2023 FluSight forecast model which outperformed
+supplementary materials. Notably, the one 2023 FluSight forecast model which 
+outperformed
 the ASGD\_NORM2, the UGA\_flucast-INFLAenza, was listed as being a spatial
 model. And in past seasons, some of the top performing forecast models also 
 explicitly modeled spatial relationships \cite[]{osthus2021multiscale}.
