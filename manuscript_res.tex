@@ -642,6 +642,7 @@ lag showed little or no forecast
 improvement over 1 lag. 
 
 \begin{figure}[hbt!]
+    \centering
     \includegraphics[scale=.2]{Images/ili_v_svat_vs_lagdiff.png}
     \caption{Scatterplots of national hospitalizations (left) or log 
     hospitalizations (right) lag differences by ILI \% where the lag is 
@@ -721,7 +722,7 @@ for $\sigma_{\gamma}^2$ and $\sigma_{\gamma_W}^2$. For these two scale
 parameters only, rather than assigning a half-normal prior to the standard 
 deviation parameters, as recommended by Gelman \cite[]{gelman2006prior}, the 
 priors were assigned to the variance parameters. Univariate parameters were 
-assigned either a normal distribution prior if the support was on $\mathbb{R}$, 
+assigned either a normal distribution prior if the support was on $\mathbb{R}$,
 a half-normal prior if the support is nonnegative, or a truncated-normal 
 prior to match a more specific support. Under the ASG model, $\theta_s$ was 
 modeled hierarchically over seasons so that for each season the transformed 
@@ -1143,10 +1144,10 @@ coverage for 50\% and 95\% predictive intervals.
 
 % \begin{minipage}
 \begin{figure}[hbt!]
-    % \centering
-    \begin{adjustwidth}{-.65cm}{-1.5cm}
+    \centering
+    % \begin{adjustwidth}{-.65cm}{-1.5cm}
     \includegraphics[scale=.45]{Images/all_sim_res.png}
-    \end{adjustwidth}
+    % \end{adjustwidth}
     \caption{Results of forecasts for simulated hospitalizations for ASGD, ASG,
     SIRD, SIR, BASE, and ARIMA models. Plot a), WIS averaged over all
     left out seasons and 500 simulation replicated for each of weeks 14, 20, 
@@ -1263,9 +1264,9 @@ making the sharpest predictions, particularly later in the season.
 \begin{figure}[hbt!]
 
   \centering
-  \begin{adjustwidth}{-1cm}{-1.9cm}
+  % \begin{adjustwidth}{-1cm}{-1.9cm}
   \includegraphics[scale=.45]{Images/normal_sq_forecasts_us.png}
-  \end{adjustwidth}
+  % \end{adjustwidth}
 \caption{Forecasts 1-4 weeks ahead for US hospitalizations during the 2023 
 season for weeks 14, 20, 26, and 32. Forecasts are separated by ILI model, 
 and the hospitalization models are all normally distributed and ILI is a 
@@ -1325,9 +1326,9 @@ for the WIS are shown in the supplementary materials.
 
 \begin{figure}[hbt!]
     
-    % \centering
-    \begin{adjustwidth}{0cm}{0cm}
-    \includegraphics[scale = .54]{Images/lwis_cover_sum.png}
+    \centering
+    % \begin{adjustwidth}{0cm}{0cm}
+    \includegraphics[scale = .6]{Images/lwis_cover_sum.png}
     \caption{a) Log-weighted interval score (LWIS) averaged 
     over location and horizon for each week during the season for the 21 models being compared. 
     Each grey line represents one model, but the ASGD\_NORM2 (blue), 
@@ -1341,7 +1342,7 @@ for the WIS are shown in the supplementary materials.
     Each grey line represents one model, but the ASGD\_NORM2 (blue),
     SIRD\_NORM2 and 
     FluSight-baseline (red) are colored to stand out.}
-    \end{adjustwidth}
+    % \end{adjustwidth}
     \label{fig:lwis_cover_sum}
 \end{figure}
 
@@ -1377,13 +1378,13 @@ forecast models.
 
 
 \begin{figure}[hbt!]
-\begin{adjustwidth}{-1.2cm}{-1.5cm}
+% \begin{adjustwidth}{-1.2cm}{-1.5cm}
     % \begin{minipage}{\linewidth}
     \centering
     \makebox[\linewidth][l]{
     \includegraphics[scale = .5]{Images/state_and_date_lwis.png}
     }
-    \end{adjustwidth}
+    % \end{adjustwidth}
     \caption{Ratio of average log-weighted interval score (LWIS) for ASGD\_NORM2 
     to that of each competing FluSight model. Scores are averaged
     over all targets within indicated location (top) or week (bottom) and 
@@ -1399,7 +1400,7 @@ forecast models.
 
 \begin{table}[ht]
 \centering
-\begin{adjustwidth}{-3cm}{-1.5cm}
+% \begin{adjustwidth}{-3cm}{-1.5cm}
 \caption{Overall summary scores for each of the 20 non-ensemble FluSight
 models and the ASGD\_NORM2 model. Summaries include mean weighted interval
 and log-weighted interval scores (MWIS/MLWIS), 
@@ -1437,7 +1438,7 @@ ASGD\_NORM2 & 62 & 0.34 & 14 & 0.23 & 0.001 & 100 & 1 & 1 \\
   GH-model & 161 & 1.52 & 28 & 1.47 & 0.373 & 17 & 0.18 & 0.27 \\ 
   UGA\_flucast-OKeeffe & 27 & 0.59 & 8 & 0.43 & 0.003 & 10 & 0.60 & 0.58 \\  
 \end{tabular}
-\end{adjustwidth}
+% \end{adjustwidth}
 \label{tab:fin_analysis_stats}
 \end{table}
 

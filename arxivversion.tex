@@ -10,21 +10,28 @@
 \usepackage{amsfonts}       % blackboard math symbols
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
-\usepackage{lipsum}
+% \usepackage{expl3}
+% \usepackage{lipsum}
+% \usepackage{lipsum}
 \usepackage{fancyhdr}       % header
 \usepackage{graphicx}       % graphics
 \graphicspath{{media/}}     % organize your images and other figures under media/ folder
 
 % Packages added by Spencer
+% \usepackage{astron}
 \usepackage{amsmath,amsthm,amssymb,scrextend}
+\usepackage{etoolbox}
 \usepackage{appendix}
 \AtBeginEnvironment{appendices}{\renewcommand\thesection{\Alph{section}}}
 \usepackage{enumerate}
 \usepackage{csquotes}
 \usepackage{subcaption}
-\usepackage{amssymb}
+% \usepackage{amssymb}
+% \usepackage{amsfonts}
+\usepackage{newtxmath}
+\usepackage{changepage}
 % \usepackage{bbm}
-\usepackage[bb=pazo]{mathalpha}
+% \usepackage[bb=pazo]{mathalpha}
 \usepackage{bm}
 
 \pagestyle{empty}
@@ -50,10 +57,10 @@
 % \usepackage{isutraditional}   
 % \chaptertitle
 % Old-style, thesis numbering down to subsubsection
-\alternate
+% \alternate
 \usepackage{rotating}
 % Bibliography without numbers or labels
-\usepackage{natbib}
+% \usepackage[numbers]{natbib}
 % Use the following line if you want square brackets and numbering system
 %\usepackage[square, numbers]{natbib}
 
@@ -67,8 +74,8 @@
 
 % package for tables
 
-\renewcommand{\bibfont}{\setstretch{1}\selectfont}
-\setlength{\bibsep}{13.2pt}
+% \renewcommand{\bibfont}{\setstretch{1}\selectfont}
+% \setlength{\bibsep}{13.2pt}
 
 
 \usepackage{chapterbib}
@@ -117,9 +124,9 @@
 
 \author{
   Spencer Wadsworth \\
-  Iowa State University \\
-  Ames, Iowa\\
-  \texttt{sgw96@iastate.edu} \\
+  University of Connecticut \\
+  Storrs, Connecticut\\
+  \texttt{iac25002@uconn.edu} \\
   %% examples of more authors
    \And
   Jarad Niemi \\
@@ -155,7 +162,7 @@
 % \bibliographystyle{unsrt}  
 % \bibliography{references}  
 
-\bibliographystyle{apa}
+\bibliographystyle{plainnat}
 \bibliography{./master_bib}
 
 

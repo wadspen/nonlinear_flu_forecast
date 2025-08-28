@@ -115,7 +115,7 @@ winter and decreasing thereafter.
     \centering
     \includegraphics[scale=.5]{Images/hosp_vs_week.png}
     \caption{Weekly hospitalization counts for the 50 US states for the 2022 
-    (grey) and 2023 (black) flu seasons}
+    (grey) and 2023 (black) flu seasons.}
     \label{fig:hosp_vs_week}
 \end{figure}
 
@@ -472,33 +472,42 @@ are bolded.}
 
 
 
+
 \section{FluSight forecasts WIS comparison}
 
-Figures \ref{fig:wis_cover_sum} and \ref{fig:state_and_date_wis} are 
-similar to figures \ref{fig:lwis_cover_sum} and \ref{fig:state_and_date_lwis}
+Figures \ref{fig:wis_cover_sum1} and \ref{fig:state_and_date_wis} are 
+similar to figures the main figures in the 2023 flu forecast assessment in the 
+main text
 except that they show WIS scores instead of LWIS scores. The results of 
 foreacst comparison for WIS scores is very similar to those of the LWIS in 
-terms of how well the $ASGD_NORM2$ forecasts did relative to the others from
+terms of how well the ASGD\_NORM2 forecasts did relative to the others from
 the FluSight competition.
 
 
 \begin{figure}[hbt!]
-    
-    % \centering
-    \begin{adjustwidth}{-1.2cm}{-1.5cm}
+\begin{adjustwidth}{-1.2cm}{-1.5cm}
+    % \begin{minipage}{\linewidth}
+    \centering
+    \makebox[\linewidth][l]{
     \includegraphics[scale = .54]{Images/wis_cover_sum.png}
+    }
+    \end{adjustwidth}
     \caption{a) Averaged over location and horizon weighted interval score
-    (WIS) for each week during the season for the 21 models being compared. 
+    (WIS) for each week during the season for the 21 models being compared.
     Each grey line represents one model, but the ASGD\_NORM2 (blue),
-    SIRD\_NORM2 (green), and 
+    SIRD\_NORM2 (green), and
     FluSight-baseline (red) are colored to stand out.
-    b) Boxplots of all WIS scores for 1, 2, 3, and 4-week ahead horizons 
-    for the ASGD\_NORM2 (blue) and FluSight-baseline (red) models. 
+    b) Boxplots of all WIS scores for 1, 2, 3, and 4-week ahead horizons
+    for the ASGD\_NORM2 (blue), SIRD\_NORM2 (green), and
+    FluSight-baseline (red) models.
     To improve vizualization, the $y$-axis
     is on the log scale.}
-    \end{adjustwidth}
-    \label{fig:wis_cover_sum}
+    \label{fig:wis_cover_sum1}
+    % \end{minipage}
+    
 \end{figure}
+
+
 
 \begin{figure}[hbt!]
 \begin{adjustwidth}{-1.2cm}{-1.5cm}
@@ -518,6 +527,25 @@ the FluSight competition.
     % \end{minipage}
     
 \end{figure}
+
+% \begin{figure}[hbt!]
+%     \label{fig:wis_cover_sum1}
+%     % \centering
+%     \begin{adjustwidth}{-1.2cm}{-1.5cm}
+%     \includegraphics[scale = .54]{Images/wis_cover_sum.png}
+%     \caption{a) Averaged over location and horizon weighted interval score
+%     (WIS) for each week during the season for the 21 models being compared. 
+%     Each grey line represents one model, but the ASGD\_NORM2 (blue),
+%     SIRD\_NORM2 (green), and 
+%     FluSight-baseline (red) are colored to stand out.
+%     b) Boxplots of all WIS scores for 1, 2, 3, and 4-week ahead horizons 
+%     for the ASGD\_NORM2 (blue), SIRD\_NORM2 (green), and
+%     FluSight-baseline (red) models. 
+%     To improve vizualization, the $y$-axis
+%     is on the log scale.}
+%     \end{adjustwidth}
+%     
+% \end{figure}
 
 
 
