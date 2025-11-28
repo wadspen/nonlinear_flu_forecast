@@ -102,6 +102,9 @@ state_ord <- team_scores %>%
   arrange(sldiff)
 
 state_ldiff <- team_diffs %>% 
+  filter(!(model %in% c("UNC_IDD-InfluPaint", "NU_UCSD-GLEAM_AI_FLUH",
+                        "SigSci-CREG", "PSI-PROF_beta", "NIH-Flu_ARIMA",
+                        "GH-model", "UGA_flucast-OKeeffe"))) %>% 
   filter(model != "asg_disc2_nm_hosp_sq_ar1") %>%
   mutate(model = factor(model, levels = scores_ord$model),
          loc_abb = factor(loc_abb, levels = state_ord$loc_abb)) %>% 
@@ -134,6 +137,9 @@ state_ldiff <- team_diffs %>%
 
 
 state_diff <- team_diffs %>% 
+  filter(!(model %in% c("UNC_IDD-InfluPaint", "NU_UCSD-GLEAM_AI_FLUH",
+                        "SigSci-CREG", "PSI-PROF_beta", "NIH-Flu_ARIMA",
+                        "GH-model", "UGA_flucast-OKeeffe"))) %>% 
   filter(model != "asg_disc2_nm_hosp_sq_ar1") %>%
   mutate(model = factor(model, levels = scores_ord$model),
          loc_abb = factor(loc_abb, levels = state_ord$loc_abb)) %>% 
@@ -177,6 +183,9 @@ state_diff <- team_diffs %>%
 
 
 team_ddiffs <- team_scores %>% 
+  filter(!(model %in% c("UNC_IDD-InfluPaint", "NU_UCSD-GLEAM_AI_FLUH",
+                        "SigSci-CREG", "PSI-PROF_beta", "NIH-Flu_ARIMA",
+                        "GH-model", "UGA_flucast-OKeeffe"))) %>% 
   filter(model != "asg_disc2_nm_hosp_sq_ar1") %>% 
   left_join(best_nl, by = c("reference_date", "loc_abb", "horizon")) %>% 
   group_by(model, reference_date) %>% 
@@ -201,6 +210,9 @@ library(ggtext)
 # labels <- levels(team_ddiffs$model)
 # labels[labels == "FluSight-baseline"] <- "<b>FluSight-baseline</b>"
 date_ldiff <- team_ddiffs %>%
+  filter(!(model %in% c("UNC_IDD-InfluPaint", "NU_UCSD-GLEAM_AI_FLUH",
+                        "SigSci-CREG", "PSI-PROF_beta", "NIH-Flu_ARIMA",
+                        "GH-model", "UGA_flucast-OKeeffe"))) %>% 
   mutate(model = factor(model, levels = scores_ord$model)) %>%  
   ggplot() +
   geom_tile(aes(y = model,
@@ -227,8 +239,18 @@ date_ldiff <- team_ddiffs %>%
         axis.text.y = element_markdown())
 
 
+% UNC\_IDD-InfluPaint         & 107 & 0.35 & 16 & 0.24 & 0.043 & 78 & 0.58 & 0.95 \\ 
+% NU\_UCSD-GLEAM\_AI\_FLUH    & 98 & 0.39 & 22 & 0.24 & 0.014 & 74 & 0.68 & 0.83 \\ 
+% SigSci-CREG                 & 59 & 0.49 & 12 & 0.31 & 0.018 & 71 & 0.62 & 0.74 \\ 
+% PSI-PROF\_beta              & 77 & 0.32 & 18 & 0.20 & 0.004 & 67 & 0.87 & 0.93 \\ 
+% NIH-Flu\_ARIMA              & 230 & 0.34 & 28 & 0.23 & 0.001 & 20 & 0.57 & 0.88 \\ 
+% GH-model                    & 161 & 1.52 & 28 & 1.47 & 0.373 & 17 & 0.18 & 0.27 \\ 
+% UGA\_flucast-OKeeffe        & 27 & 0.59 & 8 & 0.43 & 0.003 & 10 & 0.60 & 0.58 \\ 
 
 date_diff <- team_ddiffs %>%
+  filter(!(model %in% c("UNC_IDD-InfluPaint", "NU_UCSD-GLEAM_AI_FLUH",
+                        "SigSci-CREG", "PSI-PROF_beta", "NIH-Flu_ARIMA",
+                        "GH-model", "UGA_flucast-OKeeffe"))) %>% 
   mutate(model = factor(model, levels = scores_ord$model)) %>%  
   ggplot() +
   geom_tile(aes(y = model,
@@ -290,6 +312,9 @@ ili_coverage <- readRDS("../flu_forecast_23/nl_cover.rds")
 #   mutate(model = ifelse(model == "sir_disc2_hosp_sq_ar1", "SIRD_NORM2",
 #                         model))
 pcover <- team_coverage %>% 
+  filter(!(model %in% c("UNC_IDD-InfluPaint", "NU_UCSD-GLEAM_AI_FLUH",
+                        "SigSci-CREG", "PSI-PROF_beta", "NIH-Flu_ARIMA",
+                        "GH-model", "UGA_flucast-OKeeffe"))) %>%
   filter(!str_detect(model, "FluSight-baseline")) %>% 
   dplyr::select(reference_date, horizon, location, model, contains("cover")) %>% 
   pivot_longer(contains("cover"), names_to = "coverage", 
@@ -369,6 +394,10 @@ plwis <- team_scores %>%
             mwis = mean(wis, na.rm = TRUE)) %>% 
   ggplot() +
   geom_line(data = team_scores %>% 
+              
+              filter(!(model %in% c("UNC_IDD-InfluPaint", "NU_UCSD-GLEAM_AI_FLUH",
+                                    "SigSci-CREG", "PSI-PROF_beta", "NIH-Flu_ARIMA",
+                                    "GH-model", "UGA_flucast-OKeeffe"))) %>%
               filter(!str_detect(model, "asg") & !str_detect(model, "FluSight-baseline")) %>% 
               group_by(model, reference_date) %>% 
               summarise(mlwis = mean(lwis, na.rm = TRUE),
@@ -407,6 +436,10 @@ pwis <- team_scores %>%
             mwis = mean(wis, na.rm = TRUE)) %>% 
   ggplot() +
   geom_line(data = team_scores %>% 
+              
+              filter(!(model %in% c("UNC_IDD-InfluPaint", "NU_UCSD-GLEAM_AI_FLUH",
+                                    "SigSci-CREG", "PSI-PROF_beta", "NIH-Flu_ARIMA",
+                                    "GH-model", "UGA_flucast-OKeeffe"))) %>% 
               filter(!str_detect(model, "asg") & !str_detect(model, "FluSight-baseline")) %>% 
               group_by(model, reference_date) %>% 
               summarise(mlwis = mean(lwis, na.rm = TRUE),
@@ -573,10 +606,10 @@ rel_scores <- team_scores %>%
 wis_sum %>% 
   left_join(cover_sum, by = "model") %>% 
   left_join(rel_scores, by = "model") %>% 
-  select(model, mwis, mlwis, mdwis, mdlwis, mcov, n, sdiff, sldiff) %>% 
+  select(model, sldiff, sdiff, mlwis, mwis, mcov, n) %>% # mdwis, mdlwis, mcov, n) %>% 
   arrange(desc(n), ) %>% 
   as.data.frame() %>% 
-  xtable(digits = c(0, 0, 0, 2, 0, 2, 3, 0, 2, 2)) %>% 
+  xtable(digits = c(0, 2, 2, 2, 2, 0, 3, 0)) %>% 
   print(include.rownames = FALSE)
 
 #Know about fMRI data analysis. Cross correlation. MIT stuff. 
