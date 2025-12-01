@@ -769,85 +769,13 @@ supplementary materials.
 
 
 \subsection{Hospitalization Forecasts Using the Bayesian Cut}
-\label{sec:implementation_posterior}
 
-Models (\ref{eq:ili_model}) and 
-(\ref{eq:final_hosp}) were fit via Bayesian posterior updating 
-in two separate stages and then fused together to produce hospitalization 
-forecasts. In the first stage, future ILI 
-forecasts were obtained from the posterior predictive distribution where for
-week $w$, the predictive distribution was obtained by integrating over the 
-parameters $\pi_s$, $\kappa_s$, $\sigma^2_{\gamma}$, and $\sigma^2_{\gamma_W}$ 
-as in (\ref{eq:ili_post}) where 
-$p(\boldsymbol{\pi}_s, \kappa_s, \sigma^2_{\gamma}, \sigma^2_{\gamma_W} | \textbf{ILI}_w)$ 
-is the density function of the posterior distribution for the model parameters
-and $\textbf{ILI}_w$ represents all observed ILI data up to week $w$. 
-The desired forecasts were for weeks $w + i$ 
-where $i$ is a positive integer. Here $\widetilde{ILI}_{s,w + i}$ represents the 
-predicted or forecasted ILI at $i$ weeks in the future.
-
-\begin{equation}
-    \label{eq:ili_post}
-    p(\widetilde{ILI}_{s,w +i} | \textbf{ILI}_w) = \int \int \int \int 
-    p(\widetilde{ILI}_{s,w + i} | \boldsymbol{\pi}_s, \kappa_s, 
-    \sigma^2_{\gamma}, \sigma^2_{\gamma_W}) p(\boldsymbol{\pi}_s, \kappa_s, 
-    \sigma^2_{\gamma}, \sigma^2_{\gamma_W} | \textbf{ILI}_w) 
-    d\boldsymbol{\pi}_s d \kappa_s d \sigma^2_{\gamma} d \sigma^2_{\gamma_W}
-\end{equation}
-% \jarad{It doesn't make sense to have 4 $\int$ here since $\pi_s$ is a vector.}
-% \spencer{Isn't that captured in $d \pi_s$?}
-
-In the second stage, the posterior distribution
-for parameters of model (\ref{eq:final_hosp}) given observed
-hospitalization data $\textbf{H}_w$, observed ILI data, and
-denoted as 
-$p(\boldsymbol{\alpha}_s, \sigma_{\epsilon_s} | \textbf{H}_w, \textbf{ILI}_w)$ 
-was obtained.
-The posterior predictive in (\ref{eq:ili_post}) was then combined with 
-the hospitalization parameter posterior distribution
-to produce a hospitalization forecast $\widetilde{H}_{s,w + i}$ 
-for week $w + i$.
-Both the ILI posterior predictive in (\ref{eq:ili_post}) and the hospitalization
-parameter posterior were estimated via Markov chain Monte Carlo (MCMC) sampling.
-That is, the first stage component model produced $K$ draws
-$(\widetilde{ILI}_{s,w +i}^{(1)}, ..., \widetilde{ILI}_{s,w +i}^{(K)})$ 
-and the second stage component model produced
-$K$ parameter draws 
-$(\boldsymbol{\alpha}_s^{(1)}, ..., \boldsymbol{\alpha}_s^{(K)})$ and 
-$(\epsilon_{s,w}^{(1)}, ..., \epsilon_{s,w}^{(K)})$. Each of the
-ILI and parameter posterior distribution draws was then plugged into equation
-(\ref{eq:final_hosp}) to produce
-
-\[
- \widetilde{H}_{s,w + i}^{(k)} = \alpha_{0s}^{(k)} + 
-                                  \alpha_{1s}^{(k)} 
-                                  (\widetilde{ILI}_{s,w +i}^{(k)} \times P) + 
-                                  \alpha_{2s}^{(k)} 
-                                  (\widetilde{ILI}_{s,w +i}^{(k)} \times P)^2 + 
-                                  \phi^{(k)} \widetilde{H}_{s,w + i - 1}^{(k)} + 
-                                  \epsilon_{s,w + i}^{(k)}
-\]
-where $k \in \{1, ..., K\}$. The hospitalization draws were then combined into
-$\{H^{(k)}_{s,w + i}\}^K = (\widetilde{H}_{s,w + i}^{(1)}, ..., \widetilde{H}_{s,w + i}^{(K)})$,
-from which
-the probabilistic hospitalization forecast was estimated. In practice we set
-$K = 50,000$, and forecasts were obtained for weeks $i \in \{1, 2, 3, 4\}$.
-
-Occasionally $\{H^{(k)}_{s,w + i}\}^K$ included a small number of negative 
-values,
-which do not make sense when the distribution is meant to forecast
-hospitalizations, a nonnegative number. We attempted to alleviate this problem
-by modeling log-hospitalizations or by assuming hospitalizations followed a
-distribution truncated at 0, but these models led to poorer forecasts
-and issues drawing from the posterior distribution.
-For the forecast competition analysis in 
-section \ref{sec:analysis}, all negative values of $\{H^{(k)}_{s,w + i}\}^K$ 
-were 
-set to 0 to reflect realistic values of hospitalizations and comply with the 
-FluSight forecasting rules.
-
-
-In this scheme, the posterior distribution of 
+Rather than combining the ILI model in equation (\ref{eq:ili_model}) with the 
+hospitalization model in equation (\ref{eq:final_hosp}) and fitting a single
+posterior distribution, both models were fit separately and 1 to 4 week ahead
+ILI forecasts from model (\ref{eq:ili_model}) were combined with the posterior
+predictive distribution of model (\ref{eq:final_hosp}) to obtain 1 to 4 week
+ahead hospitalization forecasts. In this scheme, the posterior distribution of 
 model (\ref{eq:ili_model}) parameters was not directly influenced by the 
 hospitalization data and the posterior distribution of model 
 (\ref{eq:final_hosp}) parameters was not directly influenced by model 
@@ -861,14 +789,12 @@ into two component models or ``modules`` may be justified for several reasons
 including to reduce time to fit the model, avoiding mixing issues of posterior
 sampling distributions, improving predictive performance or to prevent
 model misspecification in one model to influence the other 
-\cite[]{nott2023bayesian, jacob2020unbiased, jacob2017better, 
-lee2017rigorous, plummer2015cuts}.
+\cite[]{nott2023bayesian, jacob2020unbiased, jacob2017better, plummer2015cuts}.
 
 The decision to cut the forecast model into two component models
 was made for three major reasons.
-When fitting the fully Bayesian joint model, the time to fit a single model 
-using
-MCMC sampling and
+When fitting the fully Bayesian joint model, the time to fit a single model using
+Markov chain Monte Carlo (MCMC) sampling and
 obtain forecasts was sometimes many hours whereas fitting the two models
 separately took a fraction of the time. When assessing convergence of model
 parameters, it was rare that posterior sampling chains for the joint model
@@ -877,34 +803,44 @@ fits gave no signs which raised concern for convergence. And most importantly,
 the forecasts from the component models generally outperformed those of the 
 joint model in terms of minimizing proper scoring rules.
 
-Both component models were fit via MCMC sampling using the 
-\texttt{cmdstanr} package which was developed and is maintained by the Stan 
-Development Team \cite[]{stan2024manual} \cite[]{gabry2022stan}. Stan 
-implements Hamiltonian Monte Carlo (HMC) sampling with the No-U-turn 
-sampler \cite[]{hoffman2014no}. The \texttt{cmdstanr} package provides 
-several diagnostic statistics for assessing the sampler.
-Plots of prior and posterior distributions for select parameters from ILI and 
-hospitalization models are included in the supplementary material 
-\cite[]{wadsworth2025bas}.
 
-Model fit was assessed for four ILI models and for 
-the hospitalization model. The ILI models included the SIR and 
-ASG models and models with and without discrepancy modeling. When discrepancy 
-is included, the models are denoted as SIRD and ASGD. These models were fit 
-using US national data from 2010 to 2023 flu seasons, where data from the 
-2020 season was excluded because of the unique behavior during that season. 
-% Assessment for hospitalization modeling was done for six different models. 
-% These include NORM, LNORM, and LST models, and models where a quadratic ILI 
-% term is included or excluded. 
-Sampling was done with four chains where from each chain 
-60,000 posterior draws were sampled, and the first 10,000 draws were discarded 
-as a burn-in. The $\hat{R}$ statistic \cite[]{vehtari2021rank} and the 
-effective sample size ($ESS$) \cite[]{gelman2013bayesian} were calculated for 
-each parameter, and for all models fit, the largest $\hat{R}$ was below the 
-recommend threshold of 1.05, and the smallest $ESS$ was over 500.
+Model (\ref{eq:ili_model}) was fit via Bayesian posterior updating. Future ILI 
+forecasts were obtained via the posterior predictive distribution where for
+week $w$, the predictive distribution was obtained by integrating over the 
+parameters $\pi_s$, $\kappa_s$, $\sigma^2_{\gamma}$, and $\sigma^2_{\gamma_W}$ 
+as in (\ref{eq:ili_post}) where 
+$p(\boldsymbol{\pi}_s, \kappa_s, \sigma^2_{\gamma}, \sigma^2_{\gamma_W} | \textbf{ILI})$ 
+is the density function of the posterior distribution for the model parameters. 
+If the current week was $w$ then the desired forecasts were for weeks $w + i$ 
+where $i$ is a positive integer. Here $\widetilde{ILI}_{s,w + i}$ represents the 
+predicted or forecasted ILI at $i$ weeks in the future.
 
+\begin{equation}
+    \label{eq:ili_post}
+    p(\widetilde{ILI}_{s,w +i} | \textbf{ILI}) = \int \int \int \int 
+    p(\widetilde{ILI}_{s,w + i} | \boldsymbol{\pi}_s, \kappa_s, 
+    \sigma^2_{\gamma}, \sigma^2_{\gamma_W}) p(\boldsymbol{\pi}_s, \kappa_s, 
+    \sigma^2_{\gamma}, \sigma^2_{\gamma_W} | \textbf{ILI}) 
+    d\boldsymbol{\pi}_s d \kappa_s d \sigma^2_{\gamma} d \sigma^2_{\gamma_W}
+\end{equation}
+% \jarad{It doesn't make sense to have 4 $\int$ here since $\pi_s$ is a vector.}
+% \spencer{Isn't that captured in $d \pi_s$?}
+Hospitalization forecasts $\widetilde{H}_{s,w + i}$ at week $w + i$ were then
+obtained by combining the posterior predictive distribution of model 
+(\ref{eq:final_hosp}) with (\ref{eq:ili_post}) and integrating over 
+$\widetilde{ILI}_{s,w + i}$ as in (\ref{eq:hosp_post_forc}). Here,
+$\boldsymbol{\alpha}$ represents all regression and variance parameters in
+model (\ref{eq:final_hosp}).
 
-
+\begin{equation}
+\begin{aligned}
+\label{eq:hosp_post_forc}
+    p(\tilde{H}_{s,w + i} | \textbf{ILI}, \textbf{H}, \boldsymbol{\alpha}) &= 
+       \int p(\tilde{H}_{s,w + i} | \textbf{H}, \textbf{ILI}, 
+       \widetilde{ILI}_{s,w + i}, \boldsymbol{\alpha}) 
+       p(\widetilde{ILI}_{s,w + i} | \textbf{ILI}) d\widetilde{ILI}_{s,w + i}
+\end{aligned}
+\end{equation}
 
 
 
@@ -923,114 +859,114 @@ recommend threshold of 1.05, and the smallest $ESS$ was over 500.
 
 
 
-% \subsection{Parameter estimation and posterior predictive sampling}
-% \label{sec:implementation_posterior}
-% 
-% The models were fit via MCMC sampling using the 
-% \texttt{cmdstanr} package which was developed and is maintained by the Stan 
-% Development Team \cite[]{stan2024manual} \cite[]{gabry2022stan}. Stan 
-% implements Hamiltonian Monte Carlo (HMC) sampling with the No-U-turn 
-% sampler \cite[]{hoffman2014no}. The \texttt{cmdstanr} package provides 
-% several diagnostic statistics for assessing the sampler.
-% Plots of prior and posterior distributions for select parameters from ILI and 
-% hospitalization models are included in the supplementary material 
-% \cite[]{wadsworth2024bas}.
-% 
-% Model fit was assessed for four ILI models and for 
-% the hospitalization model. The ILI models included the SIR and 
-% ASG models and models with and without discrepancy modeling. When discrepancy 
-% is included, the models are denoted as SIRD and ASGD. These models were fit 
-% using US national data from 2010 to 2023 flu seasons, where data from the 
-% 2020 season was excluded because of the unique behavior during that season. 
-% % Assessment for hospitalization modeling was done for six different models. 
-% % These include NORM, LNORM, and LST models, and models where a quadratic ILI 
-% % term is included or excluded. 
-% Sampling was done with four chains where from each chain 
-% 60,000 posterior draws were sampled, and the first 10,000 draws were discarded 
-% as a burn-in. The $\hat{R}$ statistic \cite[]{vehtari2021rank} and the 
-% effective sample size ($ESS$) \cite[]{gelman2013bayesian} were calculated for 
-% each parameter, and for all models fit, the largest $\hat{R}$ was below the 
-% recommend threshold of 1.05, and the smallest $ESS$ was over 500.
-% % Tables \ref{tab:ili_diagnostics} and 
-% % \ref{tab:hsop_diagnostics} summarize the maximum $\hat{R}$ and the minimum 
-% % $ESS$ over all parameters for ILI and hospitalization models respectively. 
-% % Forecast models for all other weeks of the season were fit using one chain of 
-% % 60,000 draws where the first 10,000 draws were discarded as a burn-in. 
-% % % \jarad{How long does this take to run? 8,000 inferential iterations seems very small.}
-% % For parameters of the ASG models that were prone to cause trouble in posterior 
-% % sampling, the starting values were set to be the MLEs. 
-% 
-% % \begin{table}
-% % \caption{Maximum $\hat{R}$ and minimum $ESS$ over all parameters for four ILI 
-% % models fitted on US data for week 14 of the 2023 season}
-% % \label{tab:ili_diagnostics}
-% % \begin{center}
-% %     \begin{tabular}{c|cccc}
-% %      & ASG & ASGD & SIR & SIRD \\
-% %      \hline
-% %      $\hat{R}$ & $< 1.001$ & $< 1.001$ & $< 1.001$ & $1.001$ \\
-% %      $ESS$ & 72,057 & 9,980 & 17,745 & 6,259 \\
-% %     \end{tabular}
-% %     \end{center}
-% % \end{table}
-% 
-% 
-% % \begin{table}
-% % \caption{Maximum $\hat{R}$ and minimum $ESS$ over all parameters for six 
-% % hospitalization models fitted on US data for week 14 of the 2023 season}
-% % \label{tab:hsop_diagnostics}
-% % \begin{center}
-% %     \begin{tabular}{c|cccccc}
-% %      & NORM & NORM$^2$ & LNORM & LNORM$^2$ &  LST &  LST$^2$ \\
-% %      \hline
-% %      $\hat{R}$ & $< 1.001$ & $< 1.001$ & $< 1.001$ & $< 1.001$ & $< 1.001$ & 
-% %      $< 1.001$\\
-% %      $ESS$  & 71,266 & 73,554 & 46,747 & 54,975 & 7,660 & 62,663 \\
-% %     \end{tabular}
-% %     \end{center}
-% % \end{table}
-% 
-% 
-% 
-% 
-% 
-% 
-% To obtain forecast distributions of hospitalizations, draws from the posterior 
-% predictive distribution from the ILI model were used in conjunction with the 
-% posterior distribution of the hospitalizations model. When fitting model 
-% (\ref{eq:ili_post}), MCMC samples of $\widetilde{ILI}_{s,w:(w + 4)}$ were 
-% saved. Model (\ref{eq:final_hosp}) was fit and MCMC samples for the marginal 
-% distributions for the model parameters were saved. To obtain forecast 
-% distributions for $H_{s,w + i}$ where $i \in \{1,2,3,4\}$, the following 
-% steps were repeated $K$ times where $K$ is an integer for the number of desired 
-% samples. We set $K = 50,000$.
-% 
-% \begin{quote}
-% \begin{enumerate}[Step 1:]
-%   \item Sample $\widetilde{ILI}^*_{s,w:(w + 4)}$
-%   \item Sample $\alpha_{0s}^*$, $\alpha_{1s}^*$, $\alpha_{2s}^*$, $\phi^*$, 
-%   $\sigma^*_{\epsilon_s}$, $\omega^*_s$ from respective marginal posterior 
-%   distributions
-%   \item Sample $H^*_{s,w + i}$ from $D(\omega_s^*, \mu_{s, w + i}^*,\sigma^2_{\epsilon_s}$), where
-%   \begin{itemize}
-%     \item[] $\mu_{s,w + i}^* = \alpha_{0s}^* + \alpha_{1s}^* (ILI_{s,w + i}^* \times P) + \alpha_{2s}^* (ILI_{s,w + i}^* \times P)^2 + \phi^* H^*_{s,w + i - 1}$
-%   \end{itemize}
-%    \item Repeat step 3 for $i \in \{1,2,3,4\}$ to obtain $H^*_{s,(w + 1):(w + 4)}$
-%   \item Repeat steps 1-4 $K$ times
-% \end{enumerate}
-% \end{quote}
-% The sample $\{H^*_{s,w + i}\}^K$ was then used as the probabilistic forecast 
-% for hospitalizations at week $w + i$. 
-% Occasionally $\{H^*_{s,w + i}\}^K$ included a small number of negative values,
-% which do not make sense when the distribution is meant to forecast
-% hospitalizations, a nonnegative number. We attempted to alleviate this problem
-% by modeling log-hospitalizations or by assuming hospitalizations followed a
-% distribution truncated at 0, but these models led to poorer forecasts
-% and issues drawing from the posterior distribution.
-% For the forecast competition analysis in 
-% section \ref{sec:analysis}, all negative values of $\{H^*_{s,w + i}\}^K$ were 
-% set to 0 to reflect realistic values of hospitalizations and comply with the 
-% FluSight forecasting rules.
+\subsection{Parameter estimation and posterior predictive sampling}
+\label{sec:implementation_posterior}
+
+The models were fit via MCMC sampling using the 
+\texttt{cmdstanr} package which was developed and is maintained by the Stan 
+Development Team \cite[]{stan2024manual} \cite[]{gabry2022stan}. Stan 
+implements Hamiltonian Monte Carlo (HMC) sampling with the No-U-turn 
+sampler \cite[]{hoffman2014no}. The \texttt{cmdstanr} package provides 
+several diagnostic statistics for assessing the sampler.
+Plots of prior and posterior distributions for select parameters from ILI and 
+hospitalization models are included in the supplementary material 
+\cite[]{wadsworth2024bas}.
+
+Model fit was assessed for four ILI models and for 
+the hospitalization model. The ILI models included the SIR and 
+ASG models and models with and without discrepancy modeling. When discrepancy 
+is included, the models are denoted as SIRD and ASGD. These models were fit 
+using US national data from 2010 to 2023 flu seasons, where data from the 
+2020 season was excluded because of the unique behavior during that season. 
+% Assessment for hospitalization modeling was done for six different models. 
+% These include NORM, LNORM, and LST models, and models where a quadratic ILI 
+% term is included or excluded. 
+Sampling was done with four chains where from each chain 
+60,000 posterior draws were sampled, and the first 10,000 draws were discarded 
+as a burn-in. The $\hat{R}$ statistic \cite[]{vehtari2021rank} and the 
+effective sample size ($ESS$) \cite[]{gelman2013bayesian} were calculated for 
+each parameter, and for all models fit, the largest $\hat{R}$ was below the 
+recommend threshold of 1.05, and the smallest $ESS$ was over 500.
+% Tables \ref{tab:ili_diagnostics} and 
+% \ref{tab:hsop_diagnostics} summarize the maximum $\hat{R}$ and the minimum 
+% $ESS$ over all parameters for ILI and hospitalization models respectively. 
+% Forecast models for all other weeks of the season were fit using one chain of 
+% 60,000 draws where the first 10,000 draws were discarded as a burn-in. 
+% % \jarad{How long does this take to run? 8,000 inferential iterations seems very small.}
+% For parameters of the ASG models that were prone to cause trouble in posterior 
+% sampling, the starting values were set to be the MLEs. 
+
+% \begin{table}
+% \caption{Maximum $\hat{R}$ and minimum $ESS$ over all parameters for four ILI 
+% models fitted on US data for week 14 of the 2023 season}
+% \label{tab:ili_diagnostics}
+% \begin{center}
+%     \begin{tabular}{c|cccc}
+%      & ASG & ASGD & SIR & SIRD \\
+%      \hline
+%      $\hat{R}$ & $< 1.001$ & $< 1.001$ & $< 1.001$ & $1.001$ \\
+%      $ESS$ & 72,057 & 9,980 & 17,745 & 6,259 \\
+%     \end{tabular}
+%     \end{center}
+% \end{table}
+
+
+% \begin{table}
+% \caption{Maximum $\hat{R}$ and minimum $ESS$ over all parameters for six 
+% hospitalization models fitted on US data for week 14 of the 2023 season}
+% \label{tab:hsop_diagnostics}
+% \begin{center}
+%     \begin{tabular}{c|cccccc}
+%      & NORM & NORM$^2$ & LNORM & LNORM$^2$ &  LST &  LST$^2$ \\
+%      \hline
+%      $\hat{R}$ & $< 1.001$ & $< 1.001$ & $< 1.001$ & $< 1.001$ & $< 1.001$ & 
+%      $< 1.001$\\
+%      $ESS$  & 71,266 & 73,554 & 46,747 & 54,975 & 7,660 & 62,663 \\
+%     \end{tabular}
+%     \end{center}
+% \end{table}
+
+
+
+
+
+
+To obtain forecast distributions of hospitalizations, draws from the posterior 
+predictive distribution from the ILI model were used in conjunction with the 
+posterior distribution of the hospitalizations model. When fitting model 
+(\ref{eq:ili_post}), MCMC samples of $\widetilde{ILI}_{s,w:(w + 4)}$ were 
+saved. Model (\ref{eq:final_hosp}) was fit and MCMC samples for the marginal 
+distributions for the model parameters were saved. To obtain forecast 
+distributions for $H_{s,w + i}$ where $i \in \{1,2,3,4\}$, the following 
+steps were repeated $K$ times where $K$ is an integer for the number of desired 
+samples. We set $K = 50,000$.
+
+\begin{quote}
+\begin{enumerate}[Step 1:]
+  \item Sample $\widetilde{ILI}^*_{s,w:(w + 4)}$
+  \item Sample $\alpha_{0s}^*$, $\alpha_{1s}^*$, $\alpha_{2s}^*$, $\phi^*$, 
+  $\sigma^*_{\epsilon_s}$, $\omega^*_s$ from respective marginal posterior 
+  distributions
+  \item Sample $H^*_{s,w + i}$ from $D(\omega_s^*, \mu_{s, w + i}^*,\sigma^2_{\epsilon_s}$), where
+  \begin{itemize}
+    \item[] $\mu_{s,w + i}^* = \alpha_{0s}^* + \alpha_{1s}^* (ILI_{s,w + i}^* \times P) + \alpha_{2s}^* (ILI_{s,w + i}^* \times P)^2 + \phi^* H^*_{s,w + i - 1}$
+  \end{itemize}
+   \item Repeat step 3 for $i \in \{1,2,3,4\}$ to obtain $H^*_{s,(w + 1):(w + 4)}$
+  \item Repeat steps 1-4 $K$ times
+\end{enumerate}
+\end{quote}
+The sample $\{H^*_{s,w + i}\}^K$ was then used as the probabilistic forecast 
+for hospitalizations at week $w + i$. 
+Occasionally $\{H^*_{s,w + i}\}^K$ included a small number of negative values,
+which do not make sense when the distribution is meant to forecast
+hospitalizations, a nonnegative number. We attempted to alleviate this problem
+by modeling log-hospitalizations or by assuming hospitalizations followed a
+distribution truncated at 0, but these models led to poorer forecasts
+and issues drawing from the posterior distribution.
+For the forecast competition analysis in 
+section \ref{sec:analysis}, all negative values of $\{H^*_{s,w + i}\}^K$ were 
+set to 0 to reflect realistic values of hospitalizations and comply with the 
+FluSight forecasting rules.
 
 
 
