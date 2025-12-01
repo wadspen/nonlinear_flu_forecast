@@ -41,8 +41,9 @@ the questions on uncertainty propogation. Obviously the explanation we gave
 for how uncertainty propogation wasn't clear enough, so in this iteration of 
  we reworked sections 3.7 and 3.8 to make more clear how 
 uncertainty propogation was done. Specifics are found below and in the 
-revised manuscript. Our responses to each reviewers particular comments are
-\emph{italicized}, and specific changes/additions to the main manuscript are 
+revised manuscript. Reviewer comments are \emph{italicized}, our responses to 
+each reviewer's comments are in normal script, 
+and specific changes/additions to the main manuscript are 
 indented.
 \\~\\
 
@@ -52,33 +53,35 @@ indented.
 \normalsize
 \\~\\
 
-I think the authors did a great job in this newly submitted version and 
-addressed most of the earlier raised comments in a nice and convincing way. 
-The paper is well written and interesting to read. 
-
-I only have two remaining comments.
+% \emph{
+% I think the authors did a great job in this newly submitted version and 
+% addressed most of the earlier raised comments in a nice and convincing way. 
+% The paper is well written and interesting to read. 
+% }
+% I only have two remaining comments.
 
 \begin{enumerate}[-]
 
-  \item Section 3.7. End of of first paragraph: ``..., but propagation of 
+  \item \emph{Section 3.7. End of of first paragraph: ``..., but propagation of 
   uncertainty   in ILI forecasts was stil permitted in the estimating of 
   hospitalisation forecasts.``
-  
+  }
+  \emph{
   Please clarify more explicitly how uncertainty was propagated between the two 
   model components. My understanding is that this was achieved by incorporating 
   not only point estimates of the parameters but also samples from the predictive 
   distribution of the ILI model. If this is correct, please state it clearly 
   already at this stage and consider adding a brief discussion of the advantages 
-  and disadvantages of this approach.
+  and disadvantages of this approach.}
   \\~\\
-  \emph{To clarify how uncertainty was propogated, we consildated sections
+  To clarify how uncertainty was propogated, we consildated sections
   3.7 and 3.8, reordered the main ideas, and removed redundant information. We
   also added some advantages/disadvantages of our approach. The changes now
-  read:}
+  read:
   \begin{quote}
         \subsection*{3.7 Hospitalization Forecasts Using the Bayesian Cut}
         \label{sec:implementation_posterior}
-        \emph{
+        
         Rather than combine the ILI and hopsitalization models into a single model,
         (1) and 
         (6) were fit separately via Bayesian posterior updating 
@@ -93,7 +96,7 @@ I only have two remaining comments.
         and $\textbf{ILI}_w$ represents all observed ILI data up to week $w$. 
         The desired forecasts were for weeks $w + i$ 
         where $i$ is a positive integer. Here $\widetilde{ILI}_{s,w + i}$ represents the 
-        predicted or forecasted ILI at $i$ weeks in the future.}
+        predicted or forecasted ILI at $i$ weeks in the future.
         
         \begin{equation}
             \label{eq:ili_post}
@@ -107,7 +110,7 @@ I only have two remaining comments.
         % \jarad{It doesn't make sense to have 4 $\int$ here since $\pi_s$ is a vector.}
         % \spencer{Isn't that captured in $d \pi_s$?}
         
-        \emph{\indent In the second stage, the posterior distribution
+        \indent In the second stage, the posterior distribution
         for parameters of model (6) given observed
         hospitalization data $\textbf{H}_w$, observed ILI data, and
         denoted as 
@@ -126,7 +129,7 @@ I only have two remaining comments.
         $(\boldsymbol{\alpha}_s^{(1)}, ..., \boldsymbol{\alpha}_s^{(K)})$ and 
         $(\epsilon_{s,w}^{(1)}, ..., \epsilon_{s,w}^{(K)})$. Each of the
         ILI and parameter posterior distribution draws was then plugged into equation
-        (6) to produce}
+        (6) to produce
         
         \[
          \widetilde{H}_{s,w + i}^{(k)} = \alpha_{0s}^{(k)} + 
@@ -137,7 +140,7 @@ I only have two remaining comments.
                                           \phi^{(k)} \widetilde{H}_{s,w + i - 1}^{(k)} + 
                                           \epsilon_{s,w + i}^{(k)}
         \]
-        \emph{where $k \in \{1, ..., K\}$. The hospitalization draws were then combined into
+        where $k \in \{1, ..., K\}$. The hospitalization draws were then combined into
         $\{H^{(k)}_{s,w + i}\}^K = (\widetilde{H}_{s,w + i}^{(1)}, ..., \widetilde{H}_{s,w + i}^{(K)})$,
         from which
         the probabilistic hospitalization forecast was estimated. In practice we set
@@ -154,9 +157,9 @@ I only have two remaining comments.
         section 5, all negative values of $\{H^{(k)}_{s,w + i}\}^K$ 
         were 
         set to 0 to reflect realistic values of hospitalizations and comply with the 
-        FluSight forecasting rules.}
+        FluSight forecasting rules.
         \\~\\
-        \emph{
+    
         \indent In the two-stage scheme, the posterior distribution of 
         model (1) parameters was not directly influenced by the 
         hospitalization data and the posterior distribution of model 
@@ -188,29 +191,29 @@ I only have two remaining comments.
         showed convergence even after 55,000 iterations, whereas the component model 
         fits gave no signs which raised concern for convergence. And most importantly,
         the forecasts from the component models generally outperformed those of the 
-        joint model in terms of minimizing proper scoring rules.}
+        joint model in terms of minimizing proper scoring rules.
         \\~\\
   \end{quote}
-  
+  \emph{
   \item I recommend including the statement raised by the reviewer in the first 
   submission—that WIS approximates CRPS (ideally supported with a reference)—and 
   therefore leads to essentially the same conclusions. I think the motivation for 
   using WIS instead of CRPS is well explained, especially given that WIS is the 
-  primary evaluation measure used in the FluSight competition 
+  primary evaluation measure used in the FluSight competition} 
   \\~\\
   
-  \emph{The following statements were added to page 17.}
+  The following statements were added to page 17.
   \begin{quote}
-  \emph{
+
       Commonly used proper scoring rules for continuous distribution forecasts
       include the log score and the continuously
-      ranked probability score (CRPS).}
+      ranked probability score (CRPS).
       \\~\\  
-  \emph{
+
       We note that as the number of forecast intervals $B$ increases, the WIS becomes 
       arbitrarily close to
       the CRPS. Thus, forecast scores under the CRPS and the WIS should be similar
-      \cite[]{bracher2021evaluating}.}
+      \cite[]{bracher2021evaluating}.
       \\~\\
 \end{quote}
 
@@ -222,25 +225,25 @@ I only have two remaining comments.
 \noindent R1
 \normalsize
 \\~\\
-\noindent The authors have addressed all my comments from the first round. I only have two remaining points
-on the extended empirical analysis on FluSight.
+\noindent \emph{The authors have addressed all my comments from the first round. I only have two remaining points
+on the extended empirical analysis on FluSight.}
 
 \begin{enumerate}[1.]
 
-  \item The authors mention the difficulty of missing submissions during the FluSight season (hence the
+  \item \emph{The authors mention the difficulty of missing submissions during the FluSight season (hence the
     display chosen for Figure 10). How was this handled for Table 2? Do the averages refer to different
     sets of forecasting tasks for each model? If so the results are not fully comparable. The referenced
     paper by Cramer et al contains a (heuristic) scheme to compare scores in such a setting, which
     resembles what was done for Figure 10. This may be more appropriate than reporting raw averages.
     Models with very small submission fractions (maybe those with less than 80\%, definitely those with
-    less than 50\%) in my opinion should just be removed altogether.
+    less than 50\%) in my opinion should just be removed altogether.}
     \\~\\
-    \emph{The columns RLWIS and RWIS in table 2 correspond directly to the 
+          The columns RLWIS and RWIS in table 2 correspond directly to the 
           values plotted in figure 10. We rearranged the table so that RLWIS and
           RWIS come first. The updated table, shown as "Table 1" is below.
           To clarify what's given in table 2 we stated the
-          following.}
-     \emph{     
+          following.
+     
     \begin{quote}
       Table 2 gives the numerical values for RLWIS 
       and relative WIS (RWIS) over
@@ -249,32 +252,32 @@ on the extended empirical analysis on FluSight.
       overall mean scores for all forecasts submitted regardless of submission overlap
       with another model.
     \end{quote}
-    }
+    
     
     \begin{quote}
-    \emph{
+    
       During the FluSight competition, most participating teams would occasionally 
       miss a forecast submission for some week, location, or horizon.
       The FluSight 
       models which are used for comparison are the
       13 non-ensemble models which submitted forecasts for at least 80\% of 
       FluSight targets during the 2023 season. 
-      }
-      \emph{
+      
+      
       Because forecast submissions for some targets were occassionally missed
       by participating teams, for any two models there was often a mismatch between
       targets for which forecasts were included or exlcuded. This makes a
-      simple average of scores is an imperfect measure for comparison.}
+      simple average of scores is an imperfect measure for comparison.
     \end{quote}
   
   
-  \item It is uncommon to report median scores as their statistical properties are unclear. As mean score
+  \item \emph{It is uncommon to report median scores as their statistical properties are unclear. As mean score
     are also there I'm not fundamentally opposed to reporting them, but in my opinion mean scores
-    alone are sufficient.  
+    alone are sufficient.}  
     \\~\\
-    \emph{Thank you for this comment. Because of it, we removed the median scores
+    Thank you for this comment. Because of it, we removed the median scores
     from the table which improved the aesthetic of the table as well as simplified
-    it. See the new table below.}
+    it. See the new table below.
 \\~\\    
 \end{enumerate}
 
@@ -359,7 +362,7 @@ targets during the 2023 season (\% Forcs).}
 % Journal of the Royal Statistical Society, Series A (2014).
 
 % In spite of the above criticisms, 
-I appreciate the hierarchical modeling 
+\emph{I appreciate the hierarchical modeling 
 approach of fitting the two models separately in components. But I wonder how 
 the uncertainty has been propagated from one component model to another. 
 Cutting the feedback idea is well understood but one still needs to integrate 
@@ -369,18 +372,18 @@ suggest one way to propagate this uncertainty is by using MCMC samples
 (and methods), see for example, the paper,  ``A rigorous statistical framework 
 for spatio-temporal pollution prediction and estimation of its long-term impact 
 on health`` by 
-D Lee, S Mukhopadhyay, A Rushworth, and SK Sahu, in Biostatistics (2017).
+D Lee, S Mukhopadhyay, A Rushworth, and SK Sahu, in Biostatistics (2017).}
 \\~\\
-\emph{We appreciated this comment and the included reference. We used the reference
+We appreciated this comment and the included reference. We used the reference
 to assist in our new explanation, and made sure to cite it. 
 To clarify how uncertainty was propogated, we consildated sections
   3.7 and 3.8, reordered the main ideas, and removed redundant information. We
   also added some advantages/disadvantages of our approach. The changes now
-  read:}
+  read:
   \begin{quote}
         \subsection*{3.7 Hospitalization Forecasts Using the Bayesian Cut}
         \label{sec:implementation_posterior}
-        \emph{
+        
         Rather than combine the ILI and hopsitalization models into a single model,
         (1) and 
         (6) were fit separately via Bayesian posterior updating 
@@ -395,7 +398,7 @@ To clarify how uncertainty was propogated, we consildated sections
         and $\textbf{ILI}_w$ represents all observed ILI data up to week $w$. 
         The desired forecasts were for weeks $w + i$ 
         where $i$ is a positive integer. Here $\widetilde{ILI}_{s,w + i}$ represents the 
-        predicted or forecasted ILI at $i$ weeks in the future.}
+        predicted or forecasted ILI at $i$ weeks in the future.
         
         \begin{equation}
             \label{eq:ili_post}
@@ -409,7 +412,7 @@ To clarify how uncertainty was propogated, we consildated sections
         % \jarad{It doesn't make sense to have 4 $\int$ here since $\pi_s$ is a vector.}
         % \spencer{Isn't that captured in $d \pi_s$?}
         
-        \emph{\indent In the second stage, the posterior distribution
+        \indent In the second stage, the posterior distribution
         for parameters of model (6) given observed
         hospitalization data $\textbf{H}_w$, observed ILI data, and
         denoted as 
@@ -428,7 +431,7 @@ To clarify how uncertainty was propogated, we consildated sections
         $(\boldsymbol{\alpha}_s^{(1)}, ..., \boldsymbol{\alpha}_s^{(K)})$ and 
         $(\epsilon_{s,w}^{(1)}, ..., \epsilon_{s,w}^{(K)})$. Each of the
         ILI and parameter posterior distribution draws was then plugged into equation
-        (6) to produce}
+        (6) to produce
         
         \[
          \widetilde{H}_{s,w + i}^{(k)} = \alpha_{0s}^{(k)} + 
@@ -439,7 +442,7 @@ To clarify how uncertainty was propogated, we consildated sections
                                           \phi^{(k)} \widetilde{H}_{s,w + i - 1}^{(k)} + 
                                           \epsilon_{s,w + i}^{(k)}
         \]
-        \emph{where $k \in \{1, ..., K\}$. The hospitalization draws were then combined into
+        where $k \in \{1, ..., K\}$. The hospitalization draws were then combined into
         $\{H^{(k)}_{s,w + i}\}^K = (\widetilde{H}_{s,w + i}^{(1)}, ..., \widetilde{H}_{s,w + i}^{(K)})$,
         from which
         the probabilistic hospitalization forecast was estimated. In practice we set
@@ -456,9 +459,9 @@ To clarify how uncertainty was propogated, we consildated sections
         section 5, all negative values of $\{H^{(k)}_{s,w + i}\}^K$ 
         were 
         set to 0 to reflect realistic values of hospitalizations and comply with the 
-        FluSight forecasting rules.}
+        FluSight forecasting rules.
         \\~\\
-        \emph{
+        
         \indent In the two-stage scheme, the posterior distribution of 
         model (1) parameters was not directly influenced by the 
         hospitalization data and the posterior distribution of model 
@@ -490,20 +493,20 @@ To clarify how uncertainty was propogated, we consildated sections
         showed convergence even after 55,000 iterations, whereas the component model 
         fits gave no signs which raised concern for convergence. And most importantly,
         the forecasts from the component models generally outperformed those of the 
-        joint model in terms of minimizing proper scoring rules.}
+        joint model in terms of minimizing proper scoring rules.
         \\~\\
   \end{quote}
   
 
-In conclusion, I do think that the authors have done a good job of analysis and 
+\emph{In conclusion, I do think that the authors have done a good job of analysis and 
 simulation based demonstrations of the results. These can be further improved 
 by including some better measures of assessing prediction/forecasting accuracy, 
 e.g. the CRPS (Continuous Ranked Probability Score), see for example Chapter 6 
 of the book
 ``Bayesian modeling of spatio-temporal data with R`` by Sahu 
-(Chapman and Hall, 2022). 
+(Chapman and Hall, 2022).} 
 \\~\\
-\emph{In the simulation study in section 4 of the first version of this paper, 
+In the simulation study in section 4 of the first version of this paper, 
 scoring was
 done using the CRPS, but in the FluSight analysis in section 5 scoring was done
 using the WIS because the available forecasts are not amenable to being scored
@@ -511,10 +514,10 @@ the with the CRPS. A recommendation from one of the reviewers was to simplify
 by choosing one or the other scores, and we chose the WIS. To respond to this 
 point, however, we modified the first paragraph on page 17. The paragraph is 
 below and the added statements are bolded.
-}
+
 
 \begin{quote}
-\emph{
+
 Model comparison was done by calculating a proper scoring rule for each 
 forecast.
 Proper scoring rules are the 
@@ -553,7 +556,7 @@ $\vmathbb{1}\{\cdot\}$ is the indicator function.
 \textbf{We note that as the number of forecast intervals $B$ increases, the WIS becomes 
 arbitrarily close to
 the CRPS. Thus, forecast scores under the CRPS and the WIS should be similar
-\cite[]{bracher2021evaluating}.}}
+\cite[]{bracher2021evaluating}.}
 \end{quote}
 
 
