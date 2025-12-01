@@ -771,9 +771,10 @@ supplementary materials.
 \subsection{Hospitalization Forecasts Using the Bayesian Cut}
 \label{sec:implementation_posterior}
 
-Models (\ref{eq:ili_model}) and 
-(\ref{eq:final_hosp}) were fit via Bayesian posterior updating 
-in two separate stages and then fused together to produce hospitalization 
+Rather than combine the ILI and hopsitalization models into a single model,
+(\ref{eq:ili_model}) and 
+(\ref{eq:final_hosp}) were fit separately via Bayesian posterior updating 
+in two stages and then fused together to produce hospitalization 
 forecasts. In the first stage, future ILI 
 forecasts were obtained from the posterior predictive distribution where for
 week $w$, the predictive distribution was obtained by integrating over the 
@@ -847,22 +848,25 @@ set to 0 to reflect realistic values of hospitalizations and comply with the
 FluSight forecasting rules.
 
 
-In this scheme, the posterior distribution of 
+In the two-stage scheme, the posterior distribution of 
 model (\ref{eq:ili_model}) parameters was not directly influenced by the 
 hospitalization data and the posterior distribution of model 
 (\ref{eq:final_hosp}) parameters was not directly influenced by model 
 (\ref{eq:ili_model}) parameters. Hence there was limited feedback between the
 two components, but propagation of uncertainty in ILI forecasts was still 
 permitted in the estimating of hospitalization forecasts.
-
-This two-component modeling is remeniscent of the Bayesian cut 
+This two-stage modeling is remeniscent of the Bayesian cut 
 described in \cite{plummer2015cuts} and \cite{nott2023bayesian}. Cutting a model
 into two component models or ``modules`` may be justified for several reasons
 including to reduce time to fit the model, avoiding mixing issues of posterior
 sampling distributions, improving predictive performance or to prevent
 model misspecification in one model to influence the other 
 \cite[]{nott2023bayesian, jacob2020unbiased, jacob2017better, 
-lee2017rigorous, plummer2015cuts}.
+lee2017rigorous, plummer2015cuts}. A drawback
+from cutting a model is potential loss of useful information. 
+In our current 
+application for example, the ILI model parameters receive no potentially 
+useful information from hospiatlization data.
 
 The decision to cut the forecast model into two component models
 was made for three major reasons.
