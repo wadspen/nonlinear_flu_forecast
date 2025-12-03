@@ -83,93 +83,125 @@ indented.
         \label{sec:implementation_posterior}
         
         Rather than combine the ILI and hopsitalization models into a single model,
-        (1) and 
+        the ILI model (1) and hospitalization model
         (6) were fit separately via Bayesian posterior updating 
         in two stages and then fused together to produce hospitalization 
         forecasts. In the first stage, future ILI 
-        forecasts were obtained from the posterior predictive distribution where for
-        week $w$, the predictive distribution was obtained by integrating over the 
-        parameters $\pi_s$, $\kappa_s$, $\sigma^2_{\gamma}$, and $\sigma^2_{\gamma_W}$ 
-        as in (\ref{eq:ili_post}) where 
-        $p(\boldsymbol{\pi}_s, \kappa_s, \sigma^2_{\gamma}, \sigma^2_{\gamma_W} | \textbf{ILI}_w)$ 
-        is the density function of the posterior distribution for the model parameters
-        and $\textbf{ILI}_w$ represents all observed ILI data up to week $w$. 
-        The desired forecasts were for weeks $w + i$ 
-        where $i$ is a positive integer. Here $\widetilde{ILI}_{s,w + i}$ represents the 
+        forecasts were obtained from the ILI forecast model in (7).
+        Here 
+        $p(\xi | \textbf{ILI}_w)$ 
+        is posterior distribution from the ILI model (1)
+        and $\textbf{ILI}_w$ represents all observed ILI data up to week $w$.
+        The ILI forecast model was obtained by integrating over the 
+        parameters 
+        $\xi = (\pi$, $\kappa$, $\sigma^2_{\gamma}$, $\sigma^2_{\gamma_W})$.
+        The desired forecasts are for weeks $w + i$ 
+        where $i$ is a positive integer, and $\widetilde{ILI}_{w + i}$ represents the 
         predicted or forecasted ILI at $i$ weeks in the future.
+        Note that
+        in this section
+        the parameter subscript for season $s$ is dropped to simplify notation.
+        
+        % \begin{equation}
+        %     \label{eq:ili_post}
+        %     p(\widetilde{ILI}_{s,w +i} | \textbf{ILI}_w) = \int \int \int \int 
+        %     p(\widetilde{ILI}_{s,w + i} | \boldsymbol{\pi}_s, \kappa_s, 
+        %     \sigma^2_{\gamma}, \sigma^2_{\gamma_W}) p(\boldsymbol{\pi}_s, \kappa_s, 
+        %     \sigma^2_{\gamma}, \sigma^2_{\gamma_W} | \textbf{ILI}_w) 
+        %     d\boldsymbol{\pi}_s d \kappa_s d \sigma^2_{\gamma} d \sigma^2_{\gamma_W}
+        % \end{equation}
         
         \begin{equation}
+        \tag{7}
             \label{eq:ili_post}
-            \tag{7}
-            p(\widetilde{ILI}_{s,w +i} | \textbf{ILI}_w) = \int \int \int \int 
-            p(\widetilde{ILI}_{s,w + i} | \boldsymbol{\pi}_s, \kappa_s, 
-            \sigma^2_{\gamma}, \sigma^2_{\gamma_W}) p(\boldsymbol{\pi}_s, \kappa_s, 
-            \sigma^2_{\gamma}, \sigma^2_{\gamma_W} | \textbf{ILI}_w) 
-            d\boldsymbol{\pi}_s d \kappa_s d \sigma^2_{\gamma} d \sigma^2_{\gamma_W}
+            p(\widetilde{ILI}_{w +i} | \textbf{ILI}_w) = \int  
+            p(\widetilde{ILI}_{w + i} | \xi) 
+            p(\xi | \textbf{ILI}_w) 
+            d\xi
         \end{equation}
         % \jarad{It doesn't make sense to have 4 $\int$ here since $\pi_s$ is a vector.}
         % \spencer{Isn't that captured in $d \pi_s$?}
         
-        \indent In the second stage, the posterior distribution
-        for parameters of model (6) given observed
-        hospitalization data $\textbf{H}_w$, observed ILI data, and
-        denoted as 
-        $p(\boldsymbol{\alpha}_s, \sigma_{\epsilon_s} | \textbf{H}_w, \textbf{ILI}_w)$ 
-        was obtained.
-        The posterior predictive in (\ref{eq:ili_post}) was then combined with 
-        the hospitalization parameter posterior distribution
-        to produce a hospitalization forecast $\widetilde{H}_{s,w + i}$ 
-        for week $w + i$.
-        Both the ILI posterior predictive in (\ref{eq:ili_post}) and the hospitalization
-        parameter posterior were estimated via Markov chain Monte Carlo (MCMC) sampling.
-        That is, the first stage component model produced $K$ draws
-        $(\widetilde{ILI}_{s,w +i}^{(1)}, ..., \widetilde{ILI}_{s,w +i}^{(K)})$ 
-        and the second stage component model produced
-        $K$ parameter draws 
-        $(\boldsymbol{\alpha}_s^{(1)}, ..., \boldsymbol{\alpha}_s^{(K)})$ and 
-        $(\epsilon_{s,w}^{(1)}, ..., \epsilon_{s,w}^{(K)})$. Each of the
-        ILI and parameter posterior distribution draws was then plugged into equation
-        (6) to produce
         
-        \[
-         \widetilde{H}_{s,w + i}^{(k)} = \alpha_{0s}^{(k)} + 
-                                          \alpha_{1s}^{(k)} 
-                                          (\widetilde{ILI}_{s,w +i}^{(k)} \times P) + 
-                                          \alpha_{2s}^{(k)} 
-                                          (\widetilde{ILI}_{s,w +i}^{(k)} \times P)^2 + 
-                                          \phi^{(k)} \widetilde{H}_{s,w + i - 1}^{(k)} + 
-                                          \epsilon_{s,w + i}^{(k)}
-        \]
-        where $k \in \{1, ..., K\}$. The hospitalization draws were then combined into
-        $\{H^{(k)}_{s,w + i}\}^K = (\widetilde{H}_{s,w + i}^{(1)}, ..., \widetilde{H}_{s,w + i}^{(K)})$,
-        from which
-        the probabilistic hospitalization forecast was estimated. In practice we set
-        $K = 50,000$, and forecasts were obtained for weeks $i \in \{1, 2, 3, 4\}$.
-        \\~\\
-        \indent Occasionally $\{H^{(k)}_{s,w + i}\}^K$ included a small number of negative 
-        values,
-        which do not make sense when the distribution is meant to forecast
-        hospitalizations, a nonnegative number. We attempted to alleviate this problem
-        by modeling log-hospitalizations or by assuming hospitalizations followed a
-        distribution truncated at 0, but these models led to poorer forecasts
-        and issues drawing from the posterior distribution.
-        For the forecast competition analysis in 
-        section 5, all negative values of $\{H^{(k)}_{s,w + i}\}^K$ 
-        were 
-        set to 0 to reflect realistic values of hospitalizations and comply with the 
-        FluSight forecasting rules.
-        \\~\\
-    
-        \indent In the two-stage scheme, the posterior distribution of 
+        
+        In the second stage, the posterior distribution
+        for parameters of the hospitalization 
+        model (6) given observed
+        hospitalization data $\textbf{H}_w$ and $\textbf{ILI}_w$ was obtained.
+        The posterior distribution is denoted as
+        $p(\psi | \textbf{H}_w, \textbf{ILI}_w)$.
+        The ILI forecast model in (7) was then combined with 
+        the hospitalization posterior distribution
+        to produce a hospitalization forecast $\widetilde{H}_{w + i}$ 
+        for week $w + i$.
+        Both the ILI forecast model in (7) and the hospitalization
+        posterior distributions were estimated via Markov chain Monte Carlo 
+        (MCMC) sampling.
+        In the first or ILI stage, $K$ MCMC draws
+        $(\widetilde{ILI}_{w +i}^{(1)}, ..., \widetilde{ILI}_{w +i}^{(K)})$
+        from the forecast model were produced,
+        and in the second or hospitalization stage
+        $K$ draws $(\psi^{(1)}, ..., \psi^{(K)})$ 
+        from the hospitalization posterior 
+        were produced. Each of the
+        ILI forecast and hospitalization draws was then plugged into 
+        the hospitalization model
+        (6) to produce the approximate hospitalization forecast
+        distribution in the bottom line of(8). 
+        Here $k \in \{1, ..., K\}$, 
+        and forecasts were obtained for weeks $i \in \{1, 2, 3, 4\}$.
+        In the analyses in sections \ref{sec:simulation2} and \ref{sec:analysis}
+        we set $K = 50,000$ draws. 
+        
+        
+        \begin{equation}
+        \tag{8}
+        \begin{aligned}
+        \label{eq:hosp_post_pred}
+          &p(\widetilde{H}_{w + i} | \textbf{H}_w, \textbf{ILI}_w)\\
+          &= \int p(\widetilde{H}_{w +i} | 
+               \psi, \widetilde{ILI}_{w +i}, \textbf{H}_w)
+               p(\psi | \textbf{H}_w, \textbf{ILI}_w) d \psi d\widetilde{ILI} \\
+          &\approx \frac{1}{K} p(\widetilde{H}_{w + i}^{(k)} | \psi^{(k)},  
+                              \tilde{ILI}_{w +i}^{(k)}, \textbf{H}_w, \textbf{ILI}_w) 
+        \end{aligned}
+        \end{equation}
+        % \[
+        %  \widetilde{H}_{s,w + i}^{(k)} = \alpha_{0s}^{(k)} + 
+        %                                   \alpha_{1s}^{(k)} 
+        %                                   (\widetilde{ILI}_{s,w +i}^{(k)} \times P) + 
+        %                                   \alpha_{2s}^{(k)} 
+        %                                   (\widetilde{ILI}_{s,w +i}^{(k)} \times P)^2 + 
+        %                                   \phi^{(k)} \widetilde{H}_{s,w + i - 1}^{(k)} + 
+        %                                   \epsilon_{s,w + i}^{(k)}
+        % \]
+        % where $k \in \{1, ..., K\}$. 
+        % The hospitalization draws were then combined into
+        % $\{H^{(k)}_{s,w + i}\}^K = (\widetilde{H}_{s,w + i}^{(1)}, ..., \widetilde{H}_{s,w + i}^{(K)})$,
+        % from which
+        % the probabilistic hospitalization forecast was estimated.
+        % In practice we set
+        % $K = 50,000$, and forecasts were obtained for weeks $i \in \{1, 2, 3, 4\}$.
+        
+        % \[ \begin{array}{rl}
+        % p(\tilde{H}_w | H_w, ILI_w) 
+        % &=               \int p(\tilde{H}_w | \tilde{ILI}_w, H_w) p (\tilde{ILI}_w | H_w, ILI_w)  d\tilde{ILI}_w \\
+        % &\approx  \int p(\tilde{H}_w | \tilde{ILI}_w, H_w) p (\tilde{ILI}_w | ILI_w)  d\tilde{ILI}_w
+        % \end{array} \]
+        
+        
+        
+        In the two-stage scheme, the posterior distribution of the ILI
         model (1) parameters was not directly influenced by the 
-        hospitalization data and the posterior distribution of model 
-        (6) parameters was not directly influenced by model 
-        (1) parameters. Hence there was limited feedback between the
-        two components, but propagation of uncertainty in ILI forecasts was still 
-        permitted in the estimating of hospitalization forecasts.
-        This two-stage modeling is remeniscent of the Bayesian cut 
+        hospitalization data and the posterior distribution of the hospitalization model 
+        (6) was not directly influenced by ILI model 
+        parameters. Hence there was limited feedback between the
+        two components, but the propagation of uncertainty in ILI forecasts was still 
+        accomplished in the estimating of hospitalization forecasts through
+        the forecast model (8).
+        This two-stage modeling is reminiscent of the Bayesian cut 
         described in \cite{plummer2015cuts} and \cite{nott2023bayesian}. Cutting a model
-        into two component models or ``modules`` may be justified for several reasons
+        into two component models or ``modules'' may be justified for several reasons
         including to reduce time to fit the model, avoiding mixing issues of posterior
         sampling distributions, improving predictive performance or to prevent
         model misspecification in one model to influence the other 
@@ -179,8 +211,8 @@ indented.
         In our current 
         application for example, the ILI model parameters receive no potentially 
         useful information from hospiatlization data.
-        \\~\\
-        \indent The decision to cut the forecast model into two component models
+        
+        The decision to cut the forecast model into two component models
         was made for three major reasons.
         When fitting the fully Bayesian joint model, the time to fit a single model 
         using
@@ -385,93 +417,125 @@ To clarify how uncertainty was propogated, we consildated sections
         \label{sec:implementation_posterior}
         
         Rather than combine the ILI and hopsitalization models into a single model,
-        (1) and 
+        the ILI model (1) and hospitalization model
         (6) were fit separately via Bayesian posterior updating 
         in two stages and then fused together to produce hospitalization 
         forecasts. In the first stage, future ILI 
-        forecasts were obtained from the posterior predictive distribution where for
-        week $w$, the predictive distribution was obtained by integrating over the 
-        parameters $\pi_s$, $\kappa_s$, $\sigma^2_{\gamma}$, and $\sigma^2_{\gamma_W}$ 
-        as in (\ref{eq:ili_post}) where 
-        $p(\boldsymbol{\pi}_s, \kappa_s, \sigma^2_{\gamma}, \sigma^2_{\gamma_W} | \textbf{ILI}_w)$ 
-        is the density function of the posterior distribution for the model parameters
-        and $\textbf{ILI}_w$ represents all observed ILI data up to week $w$. 
-        The desired forecasts were for weeks $w + i$ 
-        where $i$ is a positive integer. Here $\widetilde{ILI}_{s,w + i}$ represents the 
+        forecasts were obtained from the ILI forecast model in (7).
+        Here 
+        $p(\xi | \textbf{ILI}_w)$ 
+        is posterior distribution from the ILI model (1)
+        and $\textbf{ILI}_w$ represents all observed ILI data up to week $w$.
+        The ILI forecast model was obtained by integrating over the 
+        parameters 
+        $\xi = (\pi$, $\kappa$, $\sigma^2_{\gamma}$, $\sigma^2_{\gamma_W})$.
+        The desired forecasts are for weeks $w + i$ 
+        where $i$ is a positive integer, and $\widetilde{ILI}_{w + i}$ represents the 
         predicted or forecasted ILI at $i$ weeks in the future.
+        Note that
+        in this section
+        the parameter subscript for season $s$ is dropped to simplify notation.
+        
+        % \begin{equation}
+        %     \label{eq:ili_post}
+        %     p(\widetilde{ILI}_{s,w +i} | \textbf{ILI}_w) = \int \int \int \int 
+        %     p(\widetilde{ILI}_{s,w + i} | \boldsymbol{\pi}_s, \kappa_s, 
+        %     \sigma^2_{\gamma}, \sigma^2_{\gamma_W}) p(\boldsymbol{\pi}_s, \kappa_s, 
+        %     \sigma^2_{\gamma}, \sigma^2_{\gamma_W} | \textbf{ILI}_w) 
+        %     d\boldsymbol{\pi}_s d \kappa_s d \sigma^2_{\gamma} d \sigma^2_{\gamma_W}
+        % \end{equation}
         
         \begin{equation}
+        \tag{7}
             \label{eq:ili_post}
-            \tag{7}
-            p(\widetilde{ILI}_{s,w +i} | \textbf{ILI}_w) = \int \int \int \int 
-            p(\widetilde{ILI}_{s,w + i} | \boldsymbol{\pi}_s, \kappa_s, 
-            \sigma^2_{\gamma}, \sigma^2_{\gamma_W}) p(\boldsymbol{\pi}_s, \kappa_s, 
-            \sigma^2_{\gamma}, \sigma^2_{\gamma_W} | \textbf{ILI}_w) 
-            d\boldsymbol{\pi}_s d \kappa_s d \sigma^2_{\gamma} d \sigma^2_{\gamma_W}
+            p(\widetilde{ILI}_{w +i} | \textbf{ILI}_w) = \int  
+            p(\widetilde{ILI}_{w + i} | \xi) 
+            p(\xi | \textbf{ILI}_w) 
+            d\xi
         \end{equation}
         % \jarad{It doesn't make sense to have 4 $\int$ here since $\pi_s$ is a vector.}
         % \spencer{Isn't that captured in $d \pi_s$?}
         
-        \indent In the second stage, the posterior distribution
-        for parameters of model (6) given observed
-        hospitalization data $\textbf{H}_w$, observed ILI data, and
-        denoted as 
-        $p(\boldsymbol{\alpha}_s, \sigma_{\epsilon_s} | \textbf{H}_w, \textbf{ILI}_w)$ 
-        was obtained.
-        The posterior predictive in (\ref{eq:ili_post}) was then combined with 
-        the hospitalization parameter posterior distribution
-        to produce a hospitalization forecast $\widetilde{H}_{s,w + i}$ 
+        
+        
+        In the second stage, the posterior distribution
+        for parameters of the hospitalization 
+        model (6) given observed
+        hospitalization data $\textbf{H}_w$ and $\textbf{ILI}_w$ was obtained.
+        The posterior distribution is denoted as
+        $p(\psi | \textbf{H}_w, \textbf{ILI}_w)$.
+        The ILI forecast model in (7) was then combined with 
+        the hospitalization posterior distribution
+        to produce a hospitalization forecast $\widetilde{H}_{w + i}$ 
         for week $w + i$.
-        Both the ILI posterior predictive in (\ref{eq:ili_post}) and the hospitalization
-        parameter posterior were estimated via Markov chain Monte Carlo (MCMC) sampling.
-        That is, the first stage component model produced $K$ draws
-        $(\widetilde{ILI}_{s,w +i}^{(1)}, ..., \widetilde{ILI}_{s,w +i}^{(K)})$ 
-        and the second stage component model produced
-        $K$ parameter draws 
-        $(\boldsymbol{\alpha}_s^{(1)}, ..., \boldsymbol{\alpha}_s^{(K)})$ and 
-        $(\epsilon_{s,w}^{(1)}, ..., \epsilon_{s,w}^{(K)})$. Each of the
-        ILI and parameter posterior distribution draws was then plugged into equation
-        (6) to produce
+        Both the ILI forecast model in (7) and the hospitalization
+        posterior distributions were estimated via Markov chain Monte Carlo 
+        (MCMC) sampling.
+        In the first or ILI stage, $K$ MCMC draws
+        $(\widetilde{ILI}_{w +i}^{(1)}, ..., \widetilde{ILI}_{w +i}^{(K)})$
+        from the forecast model were produced,
+        and in the second or hospitalization stage
+        $K$ draws $(\psi^{(1)}, ..., \psi^{(K)})$ 
+        from the hospitalization posterior 
+        were produced. Each of the
+        ILI forecast and hospitalization draws was then plugged into 
+        the hospitalization model
+        (6) to produce the approximate hospitalization forecast
+        distribution in the bottom line of(8). 
+        Here $k \in \{1, ..., K\}$, 
+        and forecasts were obtained for weeks $i \in \{1, 2, 3, 4\}$.
+        In the analyses in sections \ref{sec:simulation2} and \ref{sec:analysis}
+        we set $K = 50,000$ draws. 
         
-        \[
-         \widetilde{H}_{s,w + i}^{(k)} = \alpha_{0s}^{(k)} + 
-                                          \alpha_{1s}^{(k)} 
-                                          (\widetilde{ILI}_{s,w +i}^{(k)} \times P) + 
-                                          \alpha_{2s}^{(k)} 
-                                          (\widetilde{ILI}_{s,w +i}^{(k)} \times P)^2 + 
-                                          \phi^{(k)} \widetilde{H}_{s,w + i - 1}^{(k)} + 
-                                          \epsilon_{s,w + i}^{(k)}
-        \]
-        where $k \in \{1, ..., K\}$. The hospitalization draws were then combined into
-        $\{H^{(k)}_{s,w + i}\}^K = (\widetilde{H}_{s,w + i}^{(1)}, ..., \widetilde{H}_{s,w + i}^{(K)})$,
-        from which
-        the probabilistic hospitalization forecast was estimated. In practice we set
-        $K = 50,000$, and forecasts were obtained for weeks $i \in \{1, 2, 3, 4\}$.
-        \\~\\
-        \indent Occasionally $\{H^{(k)}_{s,w + i}\}^K$ included a small number of negative 
-        values,
-        which do not make sense when the distribution is meant to forecast
-        hospitalizations, a nonnegative number. We attempted to alleviate this problem
-        by modeling log-hospitalizations or by assuming hospitalizations followed a
-        distribution truncated at 0, but these models led to poorer forecasts
-        and issues drawing from the posterior distribution.
-        For the forecast competition analysis in 
-        section 5, all negative values of $\{H^{(k)}_{s,w + i}\}^K$ 
-        were 
-        set to 0 to reflect realistic values of hospitalizations and comply with the 
-        FluSight forecasting rules.
-        \\~\\
         
-        \indent In the two-stage scheme, the posterior distribution of 
+        \begin{equation}
+        \tag{8}
+        \begin{aligned}
+        \label{eq:hosp_post_pred}
+          &p(\widetilde{H}_{w + i} | \textbf{H}_w, \textbf{ILI}_w)\\
+          &= \int p(\widetilde{H}_{w +i} | 
+               \psi, \widetilde{ILI}_{w +i}, \textbf{H}_w)
+               p(\psi | \textbf{H}_w, \textbf{ILI}_w) d \psi d\widetilde{ILI} \\
+          &\approx \frac{1}{K} p(\widetilde{H}_{w + i}^{(k)} | \psi^{(k)},  
+                              \tilde{ILI}_{w +i}^{(k)}, \textbf{H}_w, \textbf{ILI}_w) 
+        \end{aligned}
+        \end{equation}
+        % \[
+        %  \widetilde{H}_{s,w + i}^{(k)} = \alpha_{0s}^{(k)} + 
+        %                                   \alpha_{1s}^{(k)} 
+        %                                   (\widetilde{ILI}_{s,w +i}^{(k)} \times P) + 
+        %                                   \alpha_{2s}^{(k)} 
+        %                                   (\widetilde{ILI}_{s,w +i}^{(k)} \times P)^2 + 
+        %                                   \phi^{(k)} \widetilde{H}_{s,w + i - 1}^{(k)} + 
+        %                                   \epsilon_{s,w + i}^{(k)}
+        % \]
+        % where $k \in \{1, ..., K\}$. 
+        % The hospitalization draws were then combined into
+        % $\{H^{(k)}_{s,w + i}\}^K = (\widetilde{H}_{s,w + i}^{(1)}, ..., \widetilde{H}_{s,w + i}^{(K)})$,
+        % from which
+        % the probabilistic hospitalization forecast was estimated.
+        % In practice we set
+        % $K = 50,000$, and forecasts were obtained for weeks $i \in \{1, 2, 3, 4\}$.
+        
+        % \[ \begin{array}{rl}
+        % p(\tilde{H}_w | H_w, ILI_w) 
+        % &=               \int p(\tilde{H}_w | \tilde{ILI}_w, H_w) p (\tilde{ILI}_w | H_w, ILI_w)  d\tilde{ILI}_w \\
+        % &\approx  \int p(\tilde{H}_w | \tilde{ILI}_w, H_w) p (\tilde{ILI}_w | ILI_w)  d\tilde{ILI}_w
+        % \end{array} \]
+        
+        
+        
+        In the two-stage scheme, the posterior distribution of the ILI
         model (1) parameters was not directly influenced by the 
-        hospitalization data and the posterior distribution of model 
-        (6) parameters was not directly influenced by model 
-        (1) parameters. Hence there was limited feedback between the
-        two components, but propagation of uncertainty in ILI forecasts was still 
-        permitted in the estimating of hospitalization forecasts.
-        This two-stage modeling is remeniscent of the Bayesian cut 
+        hospitalization data and the posterior distribution of the hospitalization model 
+        (6) was not directly influenced by ILI model 
+        parameters. Hence there was limited feedback between the
+        two components, but the propagation of uncertainty in ILI forecasts was still 
+        accomplished in the estimating of hospitalization forecasts through
+        the forecast model (8).
+        This two-stage modeling is reminiscent of the Bayesian cut 
         described in \cite{plummer2015cuts} and \cite{nott2023bayesian}. Cutting a model
-        into two component models or ``modules`` may be justified for several reasons
+        into two component models or ``modules'' may be justified for several reasons
         including to reduce time to fit the model, avoiding mixing issues of posterior
         sampling distributions, improving predictive performance or to prevent
         model misspecification in one model to influence the other 
@@ -481,8 +545,8 @@ To clarify how uncertainty was propogated, we consildated sections
         In our current 
         application for example, the ILI model parameters receive no potentially 
         useful information from hospiatlization data.
-        \\~\\
-        \indent The decision to cut the forecast model into two component models
+        
+        The decision to cut the forecast model into two component models
         was made for three major reasons.
         When fitting the fully Bayesian joint model, the time to fit a single model 
         using
