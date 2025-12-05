@@ -773,14 +773,16 @@ supplementary materials.
 \label{sec:implementation_posterior}
 
 Rather than combine the ILI and hopsitalization models into a single model,
+forecasts were made via a two-stage fitting process. In the first stage,
 the ILI model (\ref{eq:ili_model}) and hospitalization model
-(\ref{eq:final_hosp}) were fit separately via Bayesian posterior updating 
-in two stages and then fused together to produce hospitalization 
-forecasts. In the first stage, future ILI 
+(\ref{eq:final_hosp}) were fit separately via Bayesian posterior updating. 
+In the second stage, the two model fits were
+fused together to produce hospitalization 
+forecasts. Future ILI 
 forecasts were obtained from the ILI forecast model in (\ref{eq:ili_post}).
 Here 
 $p(\xi | \textbf{ILI}_w)$ 
-is posterior distribution from the ILI model (\ref{eq:ili_model})
+is the posterior distribution of the ILI model (\ref{eq:ili_model})
 and $\textbf{ILI}_w$ represents all observed ILI data up to week $w$.
 The ILI forecast model was obtained by integrating over the 
 parameters 
@@ -810,33 +812,30 @@ the parameter subscript for season $s$ is dropped to simplify notation.
 \end{equation}
 % \jarad{It doesn't make sense to have 4 $\int$ here since $\pi_s$ is a vector.}
 % \spencer{Isn't that captured in $d \pi_s$?}
-
-
-
-In the second stage, the posterior distribution
-for parameters of the hospitalization 
+Also in the first stage, the posterior distribution of the hospitalization 
 model (\ref{eq:final_hosp}) given observed
 hospitalization data $\textbf{H}_w$ and $\textbf{ILI}_w$ was obtained.
 The posterior distribution is denoted as
 $p(\psi | \textbf{H}_w, \textbf{ILI}_w)$.
-The ILI forecast model in (\ref{eq:ili_post}) was then combined with 
+In the second stage,
+the ILI forecast model in (\ref{eq:ili_post}) was then combined with 
 the hospitalization posterior distribution
 to produce a hospitalization forecast $\widetilde{H}_{w + i}$ 
 for week $w + i$.
+
 Both the ILI forecast model in (\ref{eq:ili_post}) and the hospitalization
 posterior distributions were estimated via Markov chain Monte Carlo 
 (MCMC) sampling.
-In the first or ILI stage, $K$ MCMC draws
+From the fit ILI model, $K$ MCMC draws
 $(\widetilde{ILI}_{w +i}^{(1)}, ..., \widetilde{ILI}_{w +i}^{(K)})$
-from the forecast model were produced,
-and in the second or hospitalization stage
-$K$ draws $(\psi^{(1)}, ..., \psi^{(K)})$ 
-from the hospitalization posterior 
+from the forecast model were produced, 
+$K$ draws $(\psi^{(1)}, ..., \psi^{(K)})$
+from the hospitalization model posterior distribution
 were produced. Each of the
 ILI forecast and hospitalization draws was then plugged into 
 the hospitalization model
 (\ref{eq:final_hosp}) to produce the approximate hospitalization forecast
-distribution in the bottom line of(\ref{eq:hosp_post_pred}). 
+distribution in the bottom line of (\ref{eq:hosp_post_pred}). 
 Here $k \in \{1, ..., K\}$, 
 and forecasts were obtained for weeks $i \in \{1, 2, 3, 4\}$.
 In the analyses in sections \ref{sec:simulation2} and \ref{sec:analysis}
@@ -909,7 +908,7 @@ obtain forecasts was sometimes many hours whereas fitting the two models
 separately took a fraction of the time. When assessing convergence of model
 parameters, it was rare that posterior sampling chains for the joint model
 showed convergence even after 55,000 iterations, whereas the component model 
-fits gave no signs which raised concern for convergence. And most importantly,
+fits gave no signs which raised concern about convergence. And most importantly,
 the forecasts from the component models generally outperformed those of the 
 joint model in terms of minimizing proper scoring rules.
 
