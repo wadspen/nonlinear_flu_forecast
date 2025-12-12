@@ -35,12 +35,18 @@
 \\~\\
 \normalsize
 We are grateful to the three reviewers and their insightful comments and 
-questions. Overall, they made a huge difference in improving the content of
+questions. We apologize for the omission of responses to some comments in our
+resubmission on 12/5/25, and are embarassed for having somehow overlooked that.
+We thank the editor for the chance to correct that mistake, and we have 
+corrected it.
+\\~\\
+Overall, the reviewer comments
+made a huge impact on improving the content of
 the manuscript. In the most recent revision, we are particularly grateful for 
-the questions on uncertainty propogation. Obviously the explanation we gave
-for how uncertainty was propogated wasn't clear enough, so in this iteration of 
-we reworked sections 3.7 and 3.8 to make more clear how 
-it was done. Specifics are found below and in the 
+the questions on uncertainty propagation. Obviously the explanation we gave
+for how uncertainty was propagated wasn't clear enough, so in this revision
+we reworked sections 3.7 and 3.8 to clarify the procedure.
+Specifics are found below and in the 
 revised manuscript. Reviewer comments are \emph{italicized}, our responses to 
 each reviewer's comments are in normal script, 
 and specific changes/additions to the main manuscript are 
@@ -62,7 +68,7 @@ indented.
 
 \begin{enumerate}[-]
 
-  \item \emph{Section 3.7. End of of first paragraph: ``..., but propagation of 
+  \item \emph{Section 3.7. End of first paragraph: ``..., but propagation of 
   uncertainty   in ILI forecasts was still permitted in the estimating of 
   hospitalisation forecasts.``
   }
@@ -74,15 +80,15 @@ indented.
   already at this stage and consider adding a brief discussion of the advantages 
   and disadvantages of this approach.}
   \\~\\
-  To clarify how uncertainty was propogated, we consolidated sections
+  To clarify how uncertainty was propagated, we consolidated sections
   3.7 and 3.8, reordered the main ideas, and removed redundant information. We
   also added some advantages/disadvantages of our approach. The changes now
   read:
   \begin{quote}
-        \subsection{3.7 Hospitalization Forecasts Using the Bayesian Cut}
+        \subsection*{3.7 Hospitalization Forecasts Using the Bayesian Cut}
         \label{sec:implementation_posterior}
         
-        Rather than combine the ILI and hopsitalization models into a single model,
+        Rather than combine the ILI and hospitalization models into a single model,
         forecasts were made via a two-stage fitting process. In the first stage,
         the ILI model (1) and hospitalization model
         (6) were fit separately via Bayesian posterior updating. 
@@ -147,6 +153,10 @@ indented.
         the hospitalization model
         (6) to produce the approximate hospitalization forecast
         distribution in the bottom line of (\ref{eq:hosp_post_pred}). 
+        This has 
+        similarities to the procedure used in section 3.2.2 of 
+        \cite[]{sahu2014hierarchical} who use it to propagate the uncertainty of 
+        temperature forecasts into forecast model for hospitalizations.
         Here $k \in \{1, ..., K\}$, 
         and forecasts were obtained for weeks $i \in \{1, 2, 3, 4\}$.
         In the analyses in sections 4 and 5
@@ -196,10 +206,10 @@ indented.
         (6) was not directly influenced by ILI model 
         parameters. Hence there was limited feedback between the
         two components, but the propagation of uncertainty in ILI forecasts was still 
-        accomplished in the estimating of hospitalization forecasts through
+        accomplished in estimating hospitalization forecasts through
         the forecast model (\ref{eq:hosp_post_pred}).
         This two-stage modeling is reminiscent of the Bayesian cut 
-        described in \cite{plummer2015cuts} and \cite{nott2023bayesian}. Cutting a model
+        described in \cite[]{plummer2015cuts} and \cite[]{nott2023bayesian}. Cutting a model
         into two component models or ``modules'' may be justified for several reasons
         including to reduce time to fit the model, avoiding mixing issues of posterior
         sampling distributions, improving predictive performance or to prevent
@@ -209,7 +219,7 @@ indented.
         from cutting a model is potential loss of useful information. 
         In our current 
         application for example, the ILI model parameters receive no potentially 
-        useful information from hospiatlization data.
+        useful information from hospitalization data.
         
         The decision to cut the forecast model into two component models
         was made for three major reasons.
@@ -220,7 +230,7 @@ indented.
         separately took a fraction of the time. When assessing convergence of model
         parameters, it was rare that posterior sampling chains for the joint model
         showed convergence even after 55,000 iterations, whereas the component model 
-        fits gave no signs which raised concern about convergence. And most importantly,
+        fits gave no signs which raised concerns about convergence. And most importantly,
         the forecasts from the component models generally outperformed those of the 
         joint model in terms of minimizing proper scoring rules.
         \\~\\
@@ -233,7 +243,7 @@ indented.
   primary evaluation measure used in the FluSight competition} 
   \\~\\
   
-  The following statements were added to page 17.
+  The following statements were added on page 17.
   \begin{quote}
 
       Commonly used proper scoring rules for continuous distribution forecasts
@@ -273,7 +283,7 @@ on the extended empirical analysis on FluSight.}
           values plotted in figure 10, except that in the figure the scores
           are faceted by region or week. 
           We rearranged the table so that RLWIS and
-          RWIS come first. The updated table, shown as "Table 1" is below.
+          RWIS come first. The updated table, shown as "Table 1" below.
           To clarify what's given in table 2 we stated the
           following on page 22
      
@@ -300,10 +310,10 @@ on the extended empirical analysis on FluSight.}
       FluSight targets during the 2023 season. 
       \\~\\
       
-      Because forecast submissions for some targets were occassionally missed
+      Because forecast submissions for some targets were occasionally missed
       by participating teams, for any two models there was often a mismatch between
-      targets for which forecasts were included or exlcuded. This makes a
-      simple average of scores is an imperfect measure for comparison.
+      targets for which forecasts were included or excluded. This makes a
+      simple average of scores an imperfect measure for comparison.
     \end{quote}
   
   
@@ -377,26 +387,130 @@ targets during the 2023 season (\% Forcs).}
 % Model with Discrepancy
 % 
 % 
-% This manuscript seems to be a very reasonable attempt at forecasting influenza 
-% induced hospitalizations. The
-% manuscript also puts the methodology in the context of the FluSight competition 
-% organised by the CDC in the US.
-% Apologies, I have found it hard to review as it is conceptually very hard to do 
-% so in my opinion. Firstly,
-% I do not find comfortable modelling the proportion, rather a natural outcome to 
-% model will be the number of hospitalization using a Generalized Linear model 
-% (Poisson distribution). Secondly, I find it un-intuitive to model the
-% flu curve using an Asymmetric Gaussian (ASG) Function. For a statistical model 
-% we focus on two aspects: the systematic part and the random part. Here, as far 
-% as  I understand the systematic part is the ASG function. The random
-% part has several components, which are hidden in Equation (5). My difficulty in 
-% modelling using the ASG
-% function lies in my inability to relate any meaningful meteorological variables 
-% (which are very much drivers of the seasonal flu outbreaks). See for example 
-% the paper,  ``A hierarchical Bayesian model for improving short-term forecasting 
-% of hospital demand by including meteorological information`` by  SK Sahu, 
-% B Baffour, PR Harper, JH Minty, C Sarran
-% Journal of the Royal Statistical Society, Series A (2014).
+\emph{This manuscript seems to be a very reasonable attempt at forecasting influenza
+induced hospitalizations. The
+manuscript also puts the methodology in the context of the FluSight competition
+organised by the CDC in the US.
+Apologies, I have found it hard to review as it is conceptually very hard to do
+so in my opinion.}
+
+\emph{Firstly,
+I do not find comfortable modelling the proportion, rather a natural outcome to
+model will be the number of hospitalization using a Generalized Linear model
+(Poisson distribution).} 
+
+The influenza like illness (ILI) data model in equation (1) is indeed 
+proportion data, and is reported as the proportion of patients visiting
+a provider who display flu like symptoms. This is stated in the introduction
+on page 2, but in the revision we restate it again as below on page 4
+
+\begin{quote}
+An ILI case is defined as a 
+``fever (temperature of $100^{\circ}$F[$37.8^{\circ}$C] or greater) and a cough 
+and/or a sore throat,'' and ILI data is reported as the proportion 
+or percentage of patients who display these symptoms.
+\end{quote}
+
+For that reason, we argue that 
+model (1) is appropriate for ILI data. 
+To clarify that the purpose of this paper is
+to use historically accurate ILI forecasts as a predictor of hospitalizations,
+we added the following two statements; the first in the introduction on page
+3 and the second in section 3 on page 7.
+
+\begin{quote}
+The contribution of this manuscript is to introduce a two component 
+Bayesian modeling framework 
+for modeling HHS hospitalization forecasts where hospitalization data and 
+years of ILI data are used to inform forecast models. 
+As is shown in this manuscript,
+ILI is a good predictor of hospitalizations, 
+and years of experience have led
+to effective ILI forecast methods. Thus producing accurate ILI forecasts 
+and using them to inform hospitalizations greatly assists in producing
+accurate hospitalization forecasts.
+\end{quote}
+
+\begin{quote}
+Presented in this section is methodology for forecasting hospitalizations
+using ILI forecasts as a predictor of hospitalization forecasts. 
+The availability of nearly a decade of ILI data along with accurate forecast
+models allows us to make accurate forecasts of ILI which are used as a linear
+predictor for hospitalization forecasts.
+\end{quote}
+
+
+Hospitalization data which we are trying to forecast is
+count data. Thus a Poisson is certainly a natural modeling choice. To 
+keep the model simple, however, we modeled hospitalizations using a normal
+distribution, a location-scale t distribution,
+or log transformed hospitalizations and modeled the transformed data with
+a normal linear model. See model (6).
+This choice was made because the forecasts were accurate,
+the modeling is simpler, and fitting the model using a Poisson was much slower
+making it more difficult to meet the forecast deadlines. This argument was 
+added on page 12.
+
+\begin{quote}
+Another natural choice would have been to
+model hospitalizations with a Poisson response generalized linear model. 
+However, a generalized linear model adds additional complexity and we found that
+fitting the model required significantly more time than
+model (6) making it more difficult to produce forecasts
+for all 54 locations and meet the FluSight 
+submission deadline which was roughly 12 hours after data were released.
+Also to avoid complexity, the authors of \cite[]{sahu2014hierarchical} opted to 
+forecast hospitalizations using a normal response model rather than a Poisson
+response model.
+\end{quote}
+
+
+
+\emph{Secondly, I find it un-intuitive to model the
+flu curve using an Asymmetric Gaussian (ASG) Function. For a statistical model
+we focus on two aspects: the systematic part and the random part. Here, as far
+as  I understand the systematic part is the ASG function. The random
+part has several components, which are hidden in Equation (5). My difficulty in
+modelling using the ASG
+function lies in my inability to relate any meaningful meteorological variables
+(which are very much drivers of the seasonal flu outbreaks). See for example
+the paper,  ``A hierarchical Bayesian model for improving short-term forecasting
+of hospital demand by including meteorological information`` by  SK Sahu,
+B Baffour, PR Harper, JH Minty, C Sarran
+Journal of the Royal Statistical Society, Series A (2014).}
+
+The ASG function, and likewise the susceptible-infectious-recovered (SIR)
+mechanistic model, are used to model
+ILI data because of known annual trajectory, the relationship to 
+mathematical infection disease models, and most importantly
+the success they've had in 
+producing accurate ILI forecasts.
+ILI data and forecasts are used as 
+linear predictors for hospitalizations in model (6).
+Neither model (1) nor (6) preclude the use of additional linear predictors
+for prediciting ILI or hospitalizations, but if additional predictors 
+were to be used it would make more sense to add them to model (6).
+We added the following two statements to discuss this important point.
+The first is near the beginning of section 3.5 on page 12, and the second is 
+in the discussion on page 24.
+
+\begin{quote}
+In model (6), the data is limited to the ILI and 
+hospitalization data provided by FluSight, but including additional
+linear predictors would be straightforward. In fact it has been shown that 
+meteorological predictors and forecasts such as temperature can lead
+to improved forecasts as well as geographic variables such as patient
+age and sex \cite[]{sahu2014hierarchical}.  
+\end{quote}
+
+\begin{quote}
+Additionally, it has been shown that meteorological variables
+such as local temperature forecasts and geographic variables such as age can 
+lead to improved hospitalization forecasts \cite[]{sahu2014hierarchical}. 
+A straightforward and useful extension of the methodology herein would be to 
+collect such variables and incorporate them as added hospitalization 
+predictors.
+\end{quote}
 
 % In spite of the above criticisms, 
 \emph{I appreciate the hierarchical modeling 
@@ -413,15 +527,15 @@ D Lee, S Mukhopadhyay, A Rushworth, and SK Sahu, in Biostatistics (2017).}
 \\~\\
 We appreciated this comment and the included reference. We used the reference
 to assist in our new explanation, and made sure to cite it. 
-To clarify how uncertainty was propogated, we consildated sections
+To clarify how uncertainty was propagated, we consolidated sections
   3.7 and 3.8, reordered the main ideas, and removed redundant information. We
   also added some advantages/disadvantages of our approach. The changes now
   read:
   \begin{quote}
-        \subsection{3.7 Hospitalization Forecasts Using the Bayesian Cut}
+        \subsection*{3.7 Hospitalization Forecasts Using the Bayesian Cut}
         \label{sec:implementation_posterior}
         
-        Rather than combine the ILI and hopsitalization models into a single model,
+        Rather than combine the ILI and hospitalization models into a single model,
         forecasts were made via a two-stage fitting process. In the first stage,
         the ILI model (1) and hospitalization model
         (6) were fit separately via Bayesian posterior updating. 
@@ -486,6 +600,11 @@ To clarify how uncertainty was propogated, we consildated sections
         the hospitalization model
         (6) to produce the approximate hospitalization forecast
         distribution in the bottom line of (\ref{eq:hosp_post_pred}). 
+        This has 
+        similarities to the procedure used in section 3.2.2 of 
+        \cite[]{sahu2014hierarchical}, which uses it to 
+        propagate the uncertainty of 
+        temperature forecasts into forecast model for hospitalizations.
         Here $k \in \{1, ..., K\}$, 
         and forecasts were obtained for weeks $i \in \{1, 2, 3, 4\}$.
         In the analyses in sections 4 and 5
@@ -535,10 +654,10 @@ To clarify how uncertainty was propogated, we consildated sections
         (6) was not directly influenced by ILI model 
         parameters. Hence there was limited feedback between the
         two components, but the propagation of uncertainty in ILI forecasts was still 
-        accomplished in the estimating of hospitalization forecasts through
+        accomplished in estimating hospitalization forecasts through
         the forecast model (\ref{eq:hosp_post_pred}).
         This two-stage modeling is reminiscent of the Bayesian cut 
-        described in \cite{plummer2015cuts} and \cite{nott2023bayesian}. Cutting a model
+        described in \cite[]{plummer2015cuts} and \cite[]{nott2023bayesian}. Cutting a model
         into two component models or ``modules'' may be justified for several reasons
         including to reduce time to fit the model, avoiding mixing issues of posterior
         sampling distributions, improving predictive performance or to prevent
@@ -548,7 +667,7 @@ To clarify how uncertainty was propogated, we consildated sections
         from cutting a model is potential loss of useful information. 
         In our current 
         application for example, the ILI model parameters receive no potentially 
-        useful information from hospiatlization data.
+        useful information from hospitalization data.
         
         The decision to cut the forecast model into two component models
         was made for three major reasons.
@@ -559,7 +678,7 @@ To clarify how uncertainty was propogated, we consildated sections
         separately took a fraction of the time. When assessing convergence of model
         parameters, it was rare that posterior sampling chains for the joint model
         showed convergence even after 55,000 iterations, whereas the component model 
-        fits gave no signs which raised concern about convergence. And most importantly,
+        fits gave no signs which raised concerns about convergence. And most importantly,
         the forecasts from the component models generally outperformed those of the 
         joint model in terms of minimizing proper scoring rules.
         \\~\\
@@ -610,7 +729,7 @@ weighted interval score (WIS)
 The WIS is used for scoring quantile or interval 
 forecasts \textbf{--the forecast format used in both FluSight and the 
 COVID-19 Forecast Hub--}
-or forecasts made up of predicitive intervals of several nominal 
+or forecasts made up of predictive intervals of several nominal 
 levels
 \cite[]{gneiting2007strictly, gneiting2014probabilistic, bracher2021evaluating}. 
 The WIS is 
